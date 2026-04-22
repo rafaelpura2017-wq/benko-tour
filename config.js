@@ -1,10 +1,13 @@
+const isLocalEnvironment = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+const localApiBase = "http://localhost:8787/api";
+
 window.BENKO_CONFIG = {
   businessName: "Benko Tour",
   whatsappNumber: "573245065560",
 
   channels: {
-    reservationApiUrl: "http://localhost:8787/api/reservations",
-    orderApiUrl: "http://localhost:8787/api/orders",
+    reservationApiUrl: isLocalEnvironment ? `${localApiBase}/reservations` : "",
+    orderApiUrl: isLocalEnvironment ? `${localApiBase}/orders` : "",
     reservationApiToken: "",
     reservationEmail: "reservas@benkotour.com",
     enableWhatsAppFallback: true
@@ -13,12 +16,12 @@ window.BENKO_CONFIG = {
   payments: {
     wompi: {
       provider: "Wompi",
-      checkoutEndpoint: "http://localhost:8787/api/payments/wompi/checkout",
+      checkoutEndpoint: isLocalEnvironment ? `${localApiBase}/payments/wompi/checkout` : "",
       fallbackCheckoutUrl: ""
     },
     mercadopago: {
       provider: "Mercado Pago",
-      preferenceEndpoint: "http://localhost:8787/api/payments/mercadopago/preference",
+      preferenceEndpoint: isLocalEnvironment ? `${localApiBase}/payments/mercadopago/preference` : "",
       fallbackCheckoutUrl: ""
     }
   }

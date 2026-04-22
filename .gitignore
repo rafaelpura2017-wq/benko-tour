@@ -12,3 +12,5 @@ Thumbs.db
 
 # Local runtime data that can be regenerated if needed
 backend/data/*.tmp
+
+.vercel
