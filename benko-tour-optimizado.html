@@ -1,0 +1,875 @@
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap");
+
+  .benko-tour {
+    --bg: #f7f1e8;
+    --surface: #fffdf9;
+    --surface-strong: #ffffff;
+    --text: #201814;
+    --muted: #6d5a52;
+    --line: rgba(32, 24, 20, 0.1);
+    --brand: #9d4c1f;
+    --brand-dark: #6e3312;
+    --accent: #d6862b;
+    --accent-soft: rgba(214, 134, 43, 0.14);
+    --emerald: #174f47;
+    --emerald-soft: rgba(23, 79, 71, 0.12);
+    --shadow: 0 20px 50px rgba(38, 26, 18, 0.12);
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+    background:
+      radial-gradient(circle at top left, rgba(214, 134, 43, 0.18), transparent 34%),
+      linear-gradient(180deg, #f4ecdf 0%, #fcfaf7 100%);
+    color: var(--text);
+    font-family: "DM Sans", "Segoe UI", sans-serif;
+    margin: 0;
+    padding: 24px 16px 80px;
+  }
+
+  .benko-tour *,
+  .benko-tour *::before,
+  .benko-tour *::after {
+    box-sizing: border-box;
+  }
+
+  .benko-tour a {
+    color: inherit;
+  }
+
+  .benko-tour img {
+    display: block;
+    max-width: 100%;
+  }
+
+  .benko-tour__shell {
+    max-width: 1240px;
+    margin: 0 auto;
+  }
+
+  .benko-tour__topbar {
+    background: rgba(15, 12, 10, 0.92);
+    color: #fff;
+    border-radius: 999px;
+    padding: 14px 24px;
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.12);
+    position: sticky;
+    top: 12px;
+    z-index: 20;
+    backdrop-filter: blur(10px);
+  }
+
+  .benko-tour__menu {
+    display: flex;
+    justify-content: center;
+    gap: 18px 28px;
+    flex-wrap: wrap;
+    font-size: 0.96rem;
+  }
+
+  .benko-tour__menu a {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.92);
+    transition: color 0.25s ease, opacity 0.25s ease;
+  }
+
+  .benko-tour__menu a:hover,
+  .benko-tour__menu a:focus-visible {
+    color: #ffd6a8;
+    outline: none;
+  }
+
+  .benko-tour__masthead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 24px 4px 10px;
+  }
+
+  .benko-tour__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .benko-tour__eyebrow {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--brand);
+    font-weight: 800;
+  }
+
+  .benko-tour__logo {
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    line-height: 1;
+    margin: 0;
+  }
+
+  .benko-tour__subtitle {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.98rem;
+  }
+
+  .benko-tour__login {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    padding: 0 24px;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  }
+
+  .benko-tour__login:hover,
+  .benko-tour__login:focus-visible,
+  .benko-tour__button:hover,
+  .benko-tour__button:focus-visible,
+  .benko-tour__ghost:hover,
+  .benko-tour__ghost:focus-visible,
+  .benko-tour__gallery-link:hover,
+  .benko-tour__gallery-link:focus-visible,
+  .benko-tour__destination-card:hover,
+  .benko-tour__destination-card:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 28px rgba(30, 18, 10, 0.14);
+    outline: none;
+  }
+
+  .benko-tour__hero {
+    position: relative;
+    overflow: hidden;
+    margin-top: 12px;
+    padding: clamp(32px, 5vw, 60px);
+    border-radius: 34px;
+    background:
+      linear-gradient(100deg, rgba(15, 12, 10, 0.82) 0%, rgba(15, 12, 10, 0.36) 52%, rgba(15, 12, 10, 0.68) 100%),
+      url("https://benkotour.wordpress.com/wp-content/uploads/2026/04/647e3dd44c0bc.webp") center/cover no-repeat;
+    min-height: 560px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(290px, 0.75fr);
+    gap: 28px;
+    align-items: end;
+    color: #fff;
+    box-shadow: var(--shadow);
+  }
+
+  .benko-tour__hero::after {
+    content: "";
+    position: absolute;
+    inset: auto -80px -120px auto;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(214, 134, 43, 0.4) 0%, rgba(214, 134, 43, 0) 72%);
+    pointer-events: none;
+  }
+
+  .benko-tour__hero-content,
+  .benko-tour__hero-panel {
+    position: relative;
+    z-index: 1;
+  }
+
+  .benko-tour__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(6px);
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .benko-tour__hero h1 {
+    font-family: "Playfair Display", serif;
+    font-size: clamp(2.7rem, 6vw, 5.2rem);
+    line-height: 0.96;
+    margin: 18px 0 16px;
+    max-width: 11ch;
+  }
+
+  .benko-tour__hero p {
+    margin: 0;
+    max-width: 640px;
+    font-size: 1.08rem;
+    line-height: 1.75;
+    color: rgba(255, 247, 239, 0.92);
+  }
+
+  .benko-tour__actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+  }
+
+  .benko-tour__button,
+  .benko-tour__ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 54px;
+    padding: 0 24px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 800;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, color 0.25s ease;
+  }
+
+  .benko-tour__button {
+    background: linear-gradient(135deg, var(--accent) 0%, #eb9b46 100%);
+    color: #23150b;
+  }
+
+  .benko-tour__ghost {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .benko-tour__hero-panel {
+    align-self: stretch;
+    background: rgba(255, 250, 244, 0.92);
+    color: var(--text);
+    border-radius: 26px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+    backdrop-filter: blur(10px);
+  }
+
+  .benko-tour__panel-title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 800;
+  }
+
+  .benko-tour__panel-copy {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 0.96rem;
+  }
+
+  .benko-tour__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .benko-tour__stat {
+    padding: 14px 12px;
+    border-radius: 18px;
+    background: var(--surface-strong);
+    border: 1px solid rgba(32, 24, 20, 0.08);
+  }
+
+  .benko-tour__stat strong {
+    display: block;
+    font-size: 1.15rem;
+    color: var(--emerald);
+  }
+
+  .benko-tour__stat span {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+
+  .benko-tour__section {
+    margin-top: 34px;
+  }
+
+  .benko-tour__section-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+
+  .benko-tour__section-title {
+    margin: 0;
+    font-family: "Playfair Display", serif;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    line-height: 1.05;
+  }
+
+  .benko-tour__section-copy {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.75;
+    max-width: 640px;
+  }
+
+  .benko-tour__story {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+    gap: 24px;
+  }
+
+  .benko-tour__story-card,
+  .benko-tour__sidebar-card,
+  .benko-tour__destination-card,
+  .benko-tour__gallery-link {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+  }
+
+  .benko-tour__story-card {
+    padding: 28px;
+  }
+
+  .benko-tour__story-card p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.85;
+    text-align: justify;
+  }
+
+  .benko-tour__story-card p + p {
+    margin-top: 18px;
+  }
+
+  .benko-tour__highlights {
+    display: grid;
+    gap: 14px;
+  }
+
+  .benko-tour__highlight {
+    padding: 22px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, #fff9f1 0%, #fffdf9 100%);
+    border: 1px solid rgba(157, 76, 31, 0.12);
+  }
+
+  .benko-tour__highlight strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--brand-dark);
+    font-size: 1rem;
+  }
+
+  .benko-tour__highlight span {
+    color: var(--muted);
+    line-height: 1.65;
+    font-size: 0.96rem;
+  }
+
+  .benko-tour__gallery {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .benko-tour__gallery-link {
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .benko-tour__gallery-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+  }
+
+  .benko-tour__gallery-body {
+    padding: 18px 20px 22px;
+  }
+
+  .benko-tour__gallery-body h3,
+  .benko-tour__destination-card h3 {
+    margin: 0 0 8px;
+    font-size: 1.18rem;
+  }
+
+  .benko-tour__gallery-body p,
+  .benko-tour__destination-card p,
+  .benko-tour__sidebar-card p,
+  .benko-tour__sidebar-list li {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .benko-tour__layout {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  .benko-tour__sidebar {
+    display: grid;
+    gap: 18px;
+    position: sticky;
+    top: 104px;
+  }
+
+  .benko-tour__sidebar-card {
+    padding: 24px;
+  }
+
+  .benko-tour__sidebar-title {
+    margin: 0 0 10px;
+    font-size: 1.08rem;
+    font-weight: 800;
+  }
+
+  .benko-tour__sidebar-list {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 0;
+    display: grid;
+    gap: 12px;
+  }
+
+  .benko-tour__sidebar-list li {
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(23, 79, 71, 0.05);
+    border: 1px solid rgba(23, 79, 71, 0.08);
+  }
+
+  .benko-tour__tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .benko-tour__tag {
+    display: inline-flex;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    background: var(--accent-soft);
+    color: var(--brand-dark);
+  }
+
+  .benko-tour__destinations {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .benko-tour__destination-card {
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .benko-tour__destination-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+  }
+
+  .benko-tour__destination-body {
+    padding: 18px 20px 22px;
+  }
+
+  .benko-tour__footer {
+    margin-top: 40px;
+    padding: 28px 24px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, #1b1917 0%, #2a211d 100%);
+    color: rgba(255, 248, 240, 0.88);
+    text-align: center;
+  }
+
+  .benko-tour__footer strong {
+    color: #fff;
+  }
+
+  .benko-tour__whatsapp {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #25d366 0%, #1aa74f 100%);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 800;
+    box-shadow: 0 18px 32px rgba(37, 211, 102, 0.24);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .benko-tour__whatsapp:hover,
+  .benko-tour__whatsapp:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 22px 34px rgba(37, 211, 102, 0.34);
+    outline: none;
+  }
+
+  .benko-tour__whatsapp svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+
+  @media (max-width: 1080px) {
+    .benko-tour__hero,
+    .benko-tour__story,
+    .benko-tour__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .benko-tour__sidebar {
+      position: static;
+    }
+
+    .benko-tour__gallery,
+    .benko-tour__destinations {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 720px) {
+    .benko-tour {
+      padding: 16px 12px 96px;
+    }
+
+    .benko-tour__topbar {
+      border-radius: 28px;
+      padding: 16px 18px;
+      position: static;
+    }
+
+    .benko-tour__masthead,
+    .benko-tour__section-head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .benko-tour__hero {
+      min-height: auto;
+      border-radius: 28px;
+      padding: 28px 22px;
+    }
+
+    .benko-tour__stats,
+    .benko-tour__gallery,
+    .benko-tour__destinations {
+      grid-template-columns: 1fr;
+    }
+
+    .benko-tour__story-card,
+    .benko-tour__sidebar-card,
+    .benko-tour__gallery-body,
+    .benko-tour__destination-body {
+      padding-left: 18px;
+      padding-right: 18px;
+    }
+
+    .benko-tour__whatsapp {
+      right: 12px;
+      left: 12px;
+      justify-content: center;
+      bottom: 12px;
+    }
+  }
+</style>
+
+<div class="benko-tour">
+  <div class="benko-tour__shell">
+    <header>
+      <div class="benko-tour__topbar">
+        <nav class="benko-tour__menu" aria-label="Menú principal">
+          <a href="https://benkotour.wordpress.com/viajes-con-proposito/">Viajes con propósito</a>
+          <a href="https://benkotour.wordpress.com/para-empresas/">Para Empresas</a>
+          <a href="https://benkotour.wordpress.com/ofertas/">Ofertas</a>
+          <a href="https://benkotour.wordpress.com/regalas-vivencias/">Regala Vivencias</a>
+          <a href="https://benkotour.wordpress.com/quienes-somos/">¿Quiénes Somos?</a>
+          <a href="https://benkotour.wordpress.com/blog/">Blog</a>
+          <a href="https://benkotour.wordpress.com/contactanos/">Contáctanos</a>
+        </nav>
+      </div>
+
+      <div class="benko-tour__masthead">
+        <div class="benko-tour__brand">
+          <span class="benko-tour__eyebrow">Turismo cultural en Colombia</span>
+          <p class="benko-tour__logo">Benko Tour</p>
+          <p class="benko-tour__subtitle">Experiencias auténticas con propósito desde San Basilio de Palenque.</p>
+        </div>
+
+        <a class="benko-tour__login" href="https://benkotour.wordpress.com/wp-login.php">Iniciar sesión</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="benko-tour__hero" aria-label="Presentación principal">
+        <div class="benko-tour__hero-content">
+          <span class="benko-tour__pill">Patrimonio, identidad y experiencias memorables</span>
+          <h1>Descubre Palenque con una mirada real y transformadora</h1>
+          <p>
+            Vive el turismo de una manera más humana y significativa. En Benko Tour conectamos a cada visitante con la historia,
+            la lengua, la música y la fuerza cultural de San Basilio de Palenque a través de experiencias auténticas.
+          </p>
+
+          <div class="benko-tour__actions">
+            <a class="benko-tour__button" href="https://docs.google.com/forms/d/e/1FAIpQLSe79IFpBECsy951jyYh0pyN_72bnsSmnQqv4pAj7_JeY-7JgA/viewform">
+              Reservar ahora
+            </a>
+            <a class="benko-tour__ghost" href="https://wa.me/573245065560">
+              Hablar por WhatsApp
+            </a>
+          </div>
+        </div>
+
+        <aside class="benko-tour__hero-panel" aria-label="Información destacada">
+          <div>
+            <h2 class="benko-tour__panel-title">Una experiencia con valor cultural</h2>
+            <p class="benko-tour__panel-copy">
+              Diseñamos vivencias para viajeros, familias, grupos y empresas que quieren conocer el territorio desde el respeto,
+              la historia viva y el encuentro con la comunidad.
+            </p>
+          </div>
+
+          <div class="benko-tour__stats">
+            <div class="benko-tour__stat">
+              <strong>50 km</strong>
+              <span>Desde Cartagena</span>
+            </div>
+            <div class="benko-tour__stat">
+              <strong>4.200+</strong>
+              <span>Habitantes aprox.</span>
+            </div>
+            <div class="benko-tour__stat">
+              <strong>2 idiomas</strong>
+              <span>Español e inglés</span>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="benko-tour__section" aria-labelledby="palenque-title">
+        <div class="benko-tour__section-head">
+          <div>
+            <span class="benko-tour__eyebrow">Destino insignia</span>
+            <h2 class="benko-tour__section-title" id="palenque-title">San Basilio de Palenque</h2>
+          </div>
+          <p class="benko-tour__section-copy">
+            Un destino único en Colombia donde la memoria, la resistencia y la cultura afrodescendiente siguen vivas en cada calle,
+            en la lengua palenquera y en sus tradiciones.
+          </p>
+        </div>
+
+        <div class="benko-tour__story">
+          <article class="benko-tour__story-card">
+            <p>
+              San Basilio de Palenque es un centro poblado del departamento de Bolívar, bajo la jurisdicción del municipio de Mahates.
+              Es reconocido por su inmensa riqueza cultural, por preservar la lengua palenquera y por mantener tradiciones afrocolombianas
+              que lo convierten en uno de los lugares más valiosos del país.
+            </p>
+            <p>
+              Su cercanía al Canal del Dique y su ubicación estratégica, a unos 50 kilómetros de Cartagena, lo convierten en un destino ideal
+              para viajeros que buscan una experiencia distinta: más auténtica, más consciente y profundamente conectada con la historia viva de Colombia.
+            </p>
+            <p>
+              Visitar Palenque no es solo hacer turismo. Es acercarse a un territorio que representa resistencia, identidad y patrimonio cultural
+              con un valor excepcional para el mundo.
+            </p>
+          </article>
+
+          <div class="benko-tour__highlights">
+            <div class="benko-tour__highlight">
+              <strong>Herencia viva</strong>
+              <span>La lengua, la oralidad, la música y la memoria colectiva hacen de este territorio una experiencia cultural irrepetible.</span>
+            </div>
+            <div class="benko-tour__highlight">
+              <strong>Turismo con propósito</strong>
+              <span>Cada visita puede convertirse en una conexión respetuosa con la comunidad, su historia y su identidad.</span>
+            </div>
+            <div class="benko-tour__highlight">
+              <strong>Valor patrimonial</strong>
+              <span>Es reconocido por su importancia cultural y por su aporte a la preservación del legado afrodescendiente en América Latina.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="benko-tour__section" aria-labelledby="experiencias-title">
+        <div class="benko-tour__section-head">
+          <div>
+            <span class="benko-tour__eyebrow">Experiencias</span>
+            <h2 class="benko-tour__section-title" id="experiencias-title">Rutas para vivir el territorio</h2>
+          </div>
+        </div>
+
+        <div class="benko-tour__gallery">
+          <a class="benko-tour__gallery-link" href="https://benkotour.wordpress.com/real/" target="_blank" rel="noopener noreferrer">
+            <img
+              class="benko-tour__gallery-image"
+              src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=900"
+              alt="Viajeros disfrutando una experiencia auténtica"
+              loading="lazy"
+              decoding="async"
+            >
+            <div class="benko-tour__gallery-body">
+              <h3>Experiencias reales</h3>
+              <p>Conecta con historias, saberes y recorridos diseñados para generar impacto y recordación.</p>
+            </div>
+          </a>
+
+          <a class="benko-tour__gallery-link" href="https://benkotour.wordpress.com/tpt/" target="_blank" rel="noopener noreferrer">
+            <img
+              class="benko-tour__gallery-image"
+              src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900"
+              alt="Turismo con propósito y estadías memorables"
+              loading="lazy"
+              decoding="async"
+            >
+            <div class="benko-tour__gallery-body">
+              <h3>Turismo con propósito</h3>
+              <p>Una propuesta pensada para quienes valoran el viaje como una forma de aprendizaje y conexión.</p>
+            </div>
+          </a>
+
+          <a class="benko-tour__gallery-link" href="https://benkotour.wordpress.com/aventura/" target="_blank" rel="noopener noreferrer">
+            <img
+              class="benko-tour__gallery-image"
+              src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=900"
+              alt="Aventura cultural y recorridos inmersivos"
+              loading="lazy"
+              decoding="async"
+            >
+            <div class="benko-tour__gallery-body">
+              <h3>Aventura y tradición</h3>
+              <p>Descubre recorridos que mezclan patrimonio, emoción y una narrativa poderosa del territorio.</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="benko-tour__section">
+        <div class="benko-tour__layout">
+          <aside class="benko-tour__sidebar" aria-label="Información de reserva y filtros">
+            <div class="benko-tour__sidebar-card">
+              <h3 class="benko-tour__sidebar-title">Planea tu visita</h3>
+              <p>
+                Define tus fechas y reserva con anticipación para organizar una experiencia cultural bien acompañada y a la medida de tu grupo.
+              </p>
+              <div class="benko-tour__tag-row">
+                <span class="benko-tour__tag">Reserva previa</span>
+                <span class="benko-tour__tag">Atención personalizada</span>
+              </div>
+            </div>
+
+            <div class="benko-tour__sidebar-card">
+              <h3 class="benko-tour__sidebar-title">Categorías</h3>
+              <ul class="benko-tour__sidebar-list">
+                <li>Tours culturales</li>
+                <li>Tours históricos</li>
+                <li>Actividades vivenciales</li>
+              </ul>
+            </div>
+
+            <div class="benko-tour__sidebar-card">
+              <h3 class="benko-tour__sidebar-title">Idiomas disponibles</h3>
+              <ul class="benko-tour__sidebar-list">
+                <li>Español</li>
+                <li>Inglés</li>
+              </ul>
+            </div>
+          </aside>
+
+          <div>
+            <div class="benko-tour__section-head">
+              <div>
+                <span class="benko-tour__eyebrow">Expande el viaje</span>
+                <h2 class="benko-tour__section-title">Destinos en Colombia</h2>
+              </div>
+              <p class="benko-tour__section-copy">
+                Complementa tu experiencia con destinos estratégicos del Caribe colombiano y construye itinerarios más completos.
+              </p>
+            </div>
+
+            <div class="benko-tour__destinations">
+              <article class="benko-tour__destination-card">
+                <img
+                  src="https://benkotour.wordpress.com/wp-content/uploads/2026/04/9495889e-54f9-40d2-939d-b04bf30b47c7-1.webp"
+                  alt="Vista turística de Cartagena"
+                  loading="lazy"
+                  decoding="async"
+                >
+                <div class="benko-tour__destination-body">
+                  <h3>Cartagena</h3>
+                  <p>Patrimonio histórico, gastronomía, arquitectura colonial y una excelente conexión con Palenque.</p>
+                </div>
+              </article>
+
+              <article class="benko-tour__destination-card">
+                <img
+                  src="https://benkotour.wordpress.com/wp-content/uploads/2026/04/92187718_santa-marta-sign-with-the-caribbean-sea-in-the-background-colombia-1-696x442-1-2.jpg"
+                  alt="Santa Marta frente al mar Caribe"
+                  loading="lazy"
+                  decoding="async"
+                >
+                <div class="benko-tour__destination-body">
+                  <h3>Santa Marta</h3>
+                  <p>Naturaleza, mar y conexión con rutas de descanso o aventura para ampliar la experiencia del viajero.</p>
+                </div>
+              </article>
+
+              <article class="benko-tour__destination-card">
+                <img
+                  src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=900"
+                  alt="Escena urbana y cultural de Barranquilla"
+                  loading="lazy"
+                  decoding="async"
+                >
+                <div class="benko-tour__destination-body">
+                  <h3>Barranquilla</h3>
+                  <p>Ciudad vibrante ideal para sumar cultura, eventos, tradición caribeña y experiencias urbanas.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="benko-tour__footer">
+      <strong>Benko Tour</strong><br>
+      Turismo con identidad, propósito y experiencias memorables en San Basilio de Palenque.<br>
+      © 2026 Todos los derechos reservados.
+    </footer>
+  </div>
+
+  <a
+    class="benko-tour__whatsapp"
+    href="https://wa.me/573245065560"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Escribir a Benko Tour por WhatsApp"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20.52 3.48A11.88 11.88 0 0 0 12.06 0C5.47 0 .1 5.34.1 11.92c0 2.1.55 4.16 1.6 5.98L0 24l6.3-1.64a11.92 11.92 0 0 0 5.75 1.47h.01c6.58 0 11.94-5.35 11.94-11.93 0-3.18-1.24-6.17-3.48-8.42Zm-8.46 18.33h-.01a9.92 9.92 0 0 1-5.05-1.38l-.36-.21-3.74.98 1-3.65-.24-.38A9.9 9.9 0 0 1 2.15 11.92c0-5.47 4.45-9.92 9.92-9.92 2.65 0 5.14 1.03 7.01 2.9a9.85 9.85 0 0 1 2.9 7.01c0 5.47-4.45 9.92-9.92 9.92Zm5.44-7.43c-.3-.15-1.78-.88-2.05-.98-.27-.1-.47-.15-.66.15-.2.3-.76.98-.94 1.18-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.78-1.67-2.08-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.66-1.6-.91-2.2-.24-.57-.48-.49-.66-.5h-.56c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.89.12.58-.09 1.78-.73 2.03-1.43.25-.7.25-1.31.17-1.43-.07-.12-.27-.2-.56-.35Z"></path>
+    </svg>
+    WhatsApp
+  </a>
+</div>
