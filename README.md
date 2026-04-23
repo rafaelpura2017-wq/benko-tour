@@ -8,6 +8,9 @@ Landing page comercial para turismo cultural en San Basilio de Palenque, con res
 - `styles.css`: estilos visuales y responsive
 - `script.js`: lógica del formulario, carrito y llamadas al backend
 - `config.js`: configuración rápida del frontend
+- `assets/images/products/`: fotos reales de tienda y placeholders listos para reemplazo
+- `assets/images/brand/`: logos, favicon y piezas de marca propias
+- `assets/images/experience/`: fotos del tour, comunidad y experiencia cultural
 - `backend/server.js`: backend de ejemplo para guardar reservas, guardar pedidos, enviar correo y generar checkout
 - `backend/.env.example`: variables necesarias para backend, correo, Wompi y Mercado Pago
 - `backend/data/reservations.json`: almacenamiento local simple de reservas
@@ -104,3 +107,15 @@ Si llenas las variables SMTP, el backend enviará copia de reservas y pedidos al
 - conectar dominio propio
 - agregar analítica
 - montar respaldo en base de datos real si luego creces más
+
+## Mantenimiento visual de tienda
+
+- Guarda las fotos reales de producto en `assets/images/products/`
+- Usa formato `webp` cuando puedas, con proporción recomendada `4:3`
+- Mantén estos nombres para reemplazo directo:
+  - `assets/images/products/camiseta-benko.webp`
+  - `assets/images/products/tambor-alegre.webp`
+  - `assets/images/products/mochila-artesanal.webp`
+  - `assets/images/products/dulces-tipicos.webp`
+- Cuando exista una foto real, reemplaza el bloque `benko-tour__product-media--placeholder` por `benko-tour__product-media--real` con una etiqueta `<img loading="lazy" decoding="async">`
+- Escribe textos `alt` descriptivos del producto real y evita imágenes genéricas o de stock para la tienda
