@@ -18,6 +18,8 @@
     rel="stylesheet"
   >
   <link rel="stylesheet" href="./styles.css">
+  <script src="./config.js"></script>
+  <script src="./script.js" defer></script>
 </head>
 <body>
   <div class="benko-tour">
@@ -43,7 +45,7 @@
             <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
             <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
           </nav>
-          <a class="benko-tour__login" href="./index.html#acceso">Iniciar sesión</a>
+          <a class="benko-tour__login" href="./acceso.html#acceso">Iniciar sesión</a>
         </div>
       </header>
 
@@ -126,40 +128,43 @@
           </div>
 
           <div class="benko-tour__experience-gallery" aria-label="Momentos reales de la experiencia en San Basilio de Palenque">
-            <figure class="benko-tour__experience-card benko-tour__experience-card--wide">
+            <figure class="benko-tour__experience-card benko-tour__experience-card--wide" data-experience-rotator="community">
               <img
-                src="./assets/images/experience/san-basilio-de-palenque-tour-edited-1536x864.jpeg"
-                alt="Grupo de visitantes compartiendo una muestra cultural con la comunidad en San Basilio de Palenque"
+                src="./assets/images/experience/IMG_4836.JPG"
+                alt="Grupo de visitantes caminando por San Basilio de Palenque durante un tour cultural realizado por Benko Tour"
                 loading="lazy"
                 decoding="async"
+                data-experience-image
               >
               <figcaption>
-                <span class="benko-tour__experience-tag">Experiencia viva</span>
-                <strong>Encuentro real con comunidad y muestra cultural</strong>
-                <p>La visita no se queda en un recorrido superficial: se vive desde el intercambio, la presencia y la memoria del territorio.</p>
+                <span class="benko-tour__experience-tag">Tour realizado</span>
+                <strong>Recorrido real por las calles y murales del pueblo</strong>
+                <p>La galería ahora mezcla escenas reales de grupos que ya vivieron la ruta con comunidad, guía local y memoria compartida.</p>
               </figcaption>
             </figure>
 
-            <figure class="benko-tour__experience-card">
+            <figure class="benko-tour__experience-card" data-experience-rotator="guide">
               <img
-                src="./assets/images/experience/2FF12B6C-0A0F-4E69-8735-1F1DDA7A0548.jpg"
-                alt="Guía local explicando un mural poético durante el recorrido cultural"
+                src="./assets/images/experience/IMG_4834.JPG"
+                alt="Guía local explicando una parada cultural durante un tour realizado en San Basilio de Palenque"
                 loading="lazy"
                 decoding="async"
+                data-experience-image
               >
               <figcaption>
                 <span class="benko-tour__experience-tag">Recorrido guiado</span>
-                <strong>Relato local durante la ruta</strong>
-                <p>El acompañamiento humano hace que cada parada tenga contexto, historia y cercanía.</p>
+                <strong>Relato local con grupos reales de visitantes</strong>
+                <p>Las imágenes van rotando solas para mostrar cómo se vive el acompañamiento humano en distintos momentos del recorrido.</p>
               </figcaption>
             </figure>
 
-            <figure class="benko-tour__experience-card">
+            <figure class="benko-tour__experience-card" data-experience-rotator="music">
               <img
                 src="./assets/images/experience/9645eddd-2a0c-487b-a7f2-eeb04d64471e.jpg"
                 alt="Visitantes y guía posando entre instrumentos tradicionales dentro de un espacio cultural"
                 loading="lazy"
                 decoding="async"
+                data-experience-image
               >
               <figcaption>
                 <span class="benko-tour__experience-tag">Musica y territorio</span>
@@ -168,17 +173,18 @@
               </figcaption>
             </figure>
 
-            <figure class="benko-tour__experience-card">
+            <figure class="benko-tour__experience-card" data-experience-rotator="history">
               <img
-                src="./assets/images/experience/img_4599-1-edited-1536x864 (1).jpg"
-                alt="Monumento de Kid Pambelé como símbolo histórico y deportivo del territorio"
+                src="./assets/images/experience/PHOTO-2024-02-06-11-35-11.jpg"
+                alt="Grupo de visitantes frente a un mural colorido durante un tour cultural realizado en San Basilio de Palenque"
                 loading="lazy"
                 decoding="async"
+                data-experience-image
               >
               <figcaption>
-                <span class="benko-tour__experience-tag">Memoria histórica</span>
-                <strong>Plaza, símbolos y resistencia</strong>
-                <p>La experiencia conecta el viaje con lugares emblemáticos que sostienen la identidad palenquera.</p>
+                <span class="benko-tour__experience-tag">Memoria y murales</span>
+                <strong>Paradas que conectan historia, símbolos y barrio</strong>
+                <p>Además de los monumentos, la experiencia se siente en escenas reales de grupos frente a murales, plazas y señales del territorio.</p>
               </figcaption>
             </figure>
           </div>

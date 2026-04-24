@@ -8,6 +8,7 @@ window.BENKO_CONFIG = {
   channels: {
     reservationApiUrl: isLocalEnvironment ? `${localApiBase}/reservations` : "",
     orderApiUrl: isLocalEnvironment ? `${localApiBase}/orders` : "",
+    accessApiUrl: isLocalEnvironment ? `${localApiBase}/access/users` : "",
     reservationApiToken: "",
     reservationEmail: "reservas@benkotour.com",
     enableWhatsAppFallback: true

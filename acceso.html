@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="Accede a tu cuenta de Benko Tour o crea una nueva para guardar tus datos y reservar más rápido."
+  >
+  <meta name="theme-color" content="#20392b">
+  <link rel="canonical" href="https://benkotour.wordpress.com/acceso">
+  <link rel="icon" type="image/jpeg" href="./assets/images/brand/favicon-benko.jpg">
+  <title>Acceso | Benko Tour</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./config.js"></script>
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <div class="benko-tour">
+    <div class="benko-tour__shell">
+      <header class="benko-tour__header">
+        <div class="benko-tour__topbar">
+          <a class="benko-tour__topbar-brand" href="./index.html" aria-label="Benko Tour, ir al inicio">
+            <img
+              src="./assets/images/brand/logo-sello.jpg"
+              alt=""
+              loading="eager"
+              decoding="async"
+            >
+            <span>Benko Tour</span>
+          </a>
+          <nav class="benko-tour__menu" aria-label="Secciones principales">
+            <a href="./experiencia.html" target="_blank" rel="noopener noreferrer">Experiencia</a>
+            <a href="./nosotros.html" target="_blank" rel="noopener noreferrer">Nosotros</a>
+            <a href="./index.html#paquetes" target="_blank" rel="noopener noreferrer">Paquetes</a>
+            <a href="./index.html#itinerario" target="_blank" rel="noopener noreferrer">Itinerario</a>
+            <a href="./index.html#sabores" target="_blank" rel="noopener noreferrer">Sabores y guías</a>
+            <a href="./index.html#opiniones" target="_blank" rel="noopener noreferrer">Opiniones</a>
+            <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
+            <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
+          </nav>
+          <a class="benko-tour__login" href="./acceso.html#acceso">Iniciar sesión</a>
+        </div>
+      </header>
+
+      <main>
+        <section class="benko-tour__hero" aria-label="Acceso principal a Benko Tour">
+          <div class="benko-tour__hero-content">
+            <span class="benko-tour__pill">Acceso Benko</span>
+            <h1>Guarda tus datos y vuelve al tour con una entrada más clara</h1>
+            <p>
+              Ahora el inicio de sesión vive en una página propia para que la portada respire mejor. Desde aquí puedes crear
+              tu cuenta, volver a entrar y dejar listos tus datos para futuras reservas.
+            </p>
+
+            <div class="benko-tour__actions">
+              <a class="benko-tour__button" href="#acceso">Abrir acceso</a>
+              <a class="benko-tour__ghost" href="./reservas.html" target="_blank" rel="noopener noreferrer">Ir a reservas</a>
+            </div>
+          </div>
+
+          <aside class="benko-tour__hero-panel" aria-label="Ventajas del acceso">
+            <span class="benko-tour__card-tag">Cuenta dedicada</span>
+            <h2 class="benko-tour__panel-title">Una sesión pensada para volver más rápido</h2>
+            <p class="benko-tour__panel-copy">
+              Si el backend está activo, cada cuenta nueva también queda registrada para el equipo de Benko Tour sin tocar reservas ni carrito.
+            </p>
+
+            <ul class="benko-tour__panel-list">
+              <li>Nombre, ciudad y WhatsApp listos para próximas reservas</li>
+              <li>Acceso separado de la home para navegar con más calma</li>
+              <li>Registro enviado al equipo cuando el backend está conectado</li>
+              <li>Botón visible desde el menú principal</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section class="benko-tour__section benko-tour__section--access benko-tour__section--access-compact" id="acceso" aria-labelledby="acceso-title">
+          <div class="benko-tour__access-banner">
+            <div>
+              <span class="benko-tour__eyebrow">Acceso dedicado</span>
+              <h2 class="benko-tour__section-title benko-tour__section-title--access" id="acceso-title">Inicia sesión o crea tu cuenta sin recargar la portada</h2>
+              <p class="benko-tour__section-copy benko-tour__section-copy--access">
+                Tu acceso queda concentrado aquí. Así la landing principal se mantiene más corta y tu información básica queda lista para volver a reservar.
+              </p>
+            </div>
+
+            <div class="benko-tour__access-points" aria-label="Beneficios del acceso">
+              <span class="benko-tour__access-point">Sesión más rápida</span>
+              <span class="benko-tour__access-point">Datos listos para reservar</span>
+              <span class="benko-tour__access-point">Registro guardado para Benko Tour</span>
+            </div>
+          </div>
+
+          <div class="benko-tour__access-layout benko-tour__access-layout--compact">
+            <article class="benko-tour__access-card benko-tour__access-card--intro">
+              <span class="benko-tour__card-tag">Comunidad Benko</span>
+              <h3>Tu perfil queda listo para regresar</h3>
+              <p>
+                Guarda tu nombre, tu correo y tu WhatsApp para que la próxima visita tenga menos pasos y un proceso más tranquilo.
+              </p>
+              <ul class="benko-tour__feature-list benko-tour__feature-list--compact">
+                <li>Ingreso más rápido</li>
+                <li>Datos listos para reservar</li>
+                <li>Sesión persistente en este navegador</li>
+              </ul>
+              <div class="benko-tour__access-session" id="access-session"></div>
+            </article>
+
+            <div class="benko-tour__access-card benko-tour__access-card--forms">
+              <div class="benko-tour__access-tabs" role="tablist" aria-label="Acceso de usuarios">
+                <button class="benko-tour__access-tab benko-tour__access-tab--active" type="button" data-access-tab="login">
+                  Iniciar sesión
+                </button>
+                <button class="benko-tour__access-tab" type="button" data-access-tab="register">
+                  Crear cuenta
+                </button>
+              </div>
+
+              <div class="benko-tour__access-logged benko-tour__hidden" id="access-logged-panel">
+                <span class="benko-tour__card-tag">Sesión activa</span>
+                <h3>Ya haces parte de la comunidad Benko</h3>
+                <p id="access-logged-copy">
+                  Tu acceso quedó listo. Ahora tus datos básicos quedan guardados en este navegador para reservar más rápido cuando quieras.
+                </p>
+                <div class="benko-tour__form-actions">
+                  <a class="benko-tour__button" href="./reservas.html" target="_blank" rel="noopener noreferrer">Ir a reservas</a>
+                  <button class="benko-tour__ghost benko-tour__ghost--dark" id="logout-button" type="button">
+                    Cerrar sesión
+                  </button>
+                </div>
+              </div>
+
+              <form class="benko-tour__access-form" id="login-form" data-access-panel="login">
+                <div class="benko-tour__field-grid">
+                  <label class="benko-tour__field benko-tour__field--full">
+                    <span>Correo electrónico</span>
+                    <input type="email" name="email" placeholder="tucorreo@ejemplo.com" required>
+                  </label>
+
+                  <label class="benko-tour__field benko-tour__field--full">
+                    <span>Contraseña</span>
+                    <input type="password" name="password" placeholder="Ingresa tu contraseña" minlength="6" required>
+                  </label>
+                </div>
+
+                <div class="benko-tour__form-actions">
+                  <button class="benko-tour__button" type="submit">Entrar a mi cuenta</button>
+                </div>
+              </form>
+
+              <form class="benko-tour__access-form benko-tour__access-form--hidden" id="register-form" data-access-panel="register">
+                <div class="benko-tour__field-grid">
+                  <label class="benko-tour__field">
+                    <span>Nombre completo</span>
+                    <input type="text" name="name" placeholder="Tu nombre" required>
+                  </label>
+
+                  <label class="benko-tour__field">
+                    <span>Ciudad</span>
+                    <input type="text" name="city" placeholder="Ejemplo: Bogotá">
+                  </label>
+
+                  <label class="benko-tour__field benko-tour__field--full">
+                    <span>WhatsApp</span>
+                    <input type="tel" name="phone" placeholder="+57 300 000 0000">
+                  </label>
+
+                  <label class="benko-tour__field benko-tour__field--full">
+                    <span>Correo electrónico</span>
+                    <input type="email" name="email" placeholder="tucorreo@ejemplo.com" required>
+                  </label>
+
+                  <label class="benko-tour__field benko-tour__field--full">
+                    <span>Contraseña</span>
+                    <input type="password" name="password" placeholder="Mínimo 6 caracteres" minlength="6" required>
+                  </label>
+                </div>
+
+                <div class="benko-tour__form-actions">
+                  <button class="benko-tour__button" type="submit">Crear mi cuenta</button>
+                </div>
+              </form>
+
+              <div class="benko-tour__status" id="access-status" aria-live="polite">
+                Crea tu cuenta o inicia sesión para guardar tus datos básicos y preparar tus próximas reservas con menos pasos.
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="benko-tour__footer">
+        <div class="benko-tour__footer-brand">
+          <img
+            class="benko-tour__footer-logo"
+            src="./assets/images/brand/logo-horizontal.jpg"
+            alt="Logo horizontal de Benko Tour"
+            loading="lazy"
+            decoding="async"
+          >
+          <p>
+            Turismo cultural con reservas claras, itinerarios vendibles y productos artesanales para aumentar el valor de cada visita.
+          </p>
+        </div>
+        <div class="benko-tour__footer-links">
+          <a href="./index.html">Inicio</a>
+          <a href="./experiencia.html" target="_blank" rel="noopener noreferrer">Experiencia</a>
+          <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
+        </div>
+      </footer>
+    </div>
+
+    <a
+      class="benko-tour__whatsapp"
+      href="https://wa.me/573245065560"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Escribir a Benko Tour por WhatsApp"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20.52 3.48A11.88 11.88 0 0 0 12.06 0C5.47 0 .1 5.34.1 11.92c0 2.1.55 4.16 1.6 5.98L0 24l6.3-1.64a11.92 11.92 0 0 0 5.75 1.47h.01c6.58 0 11.94-5.35 11.94-11.93 0-3.18-1.24-6.17-3.48-8.42Zm-8.46 18.33h-.01a9.92 9.92 0 0 1-5.05-1.38l-.36-.21-3.74.98 1-3.65-.24-.38A9.9 9.9 0 0 1 2.15 11.92c0-5.47 4.45-9.92 9.92-9.92 2.65 0 5.14 1.03 7.01 2.9a9.85 9.85 0 0 1 2.9 7.01c0 5.47-4.45 9.92-9.92 9.92Zm5.44-7.43c-.3-.15-1.78-.88-2.05-.98-.27-.1-.47-.15-.66.15-.2.3-.76.98-.94 1.18-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.78-1.67-2.08-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.66-1.6-.91-2.2-.24-.57-.48-.49-.66-.5h-.56c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.89.12.58-.09 1.78-.73 2.03-1.43.25-.7.25-1.31.17-1.43-.07-.12-.27-.2-.56-.35Z"></path>
+      </svg>
+      WhatsApp
+    </a>
+  </div>
+</body>
+</html>

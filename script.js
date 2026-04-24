@@ -4,6 +4,7 @@ const defaultConfig = {
   channels: {
     reservationApiUrl: "",
     orderApiUrl: "",
+    accessApiUrl: "",
     reservationApiToken: "",
     reservationEmail: "",
     enableWhatsAppFallback: true
@@ -130,6 +131,14 @@ const defaultReviews = [
 const experienceSlideDecks = {
   community: [
     {
+      src: "./assets/images/experience/IMG_4836.JPG",
+      alt: "Grupo de visitantes caminando por San Basilio de Palenque durante un tour cultural realizado por Benko Tour"
+    },
+    {
+      src: "./assets/images/experience/PHOTO-2024-02-06-11-35-11.jpg",
+      alt: "Grupo de visitantes frente a un mural colorido durante un tour cultural realizado en San Basilio de Palenque"
+    },
+    {
       src: "./assets/images/experience/san-basilio-de-palenque-tour-edited-1536x864.jpeg",
       alt: "Grupo de visitantes compartiendo una muestra cultural con la comunidad en San Basilio de Palenque"
     },
@@ -148,8 +157,12 @@ const experienceSlideDecks = {
   ],
   guide: [
     {
-      src: "./assets/images/experience/san-basilio-de-palenque-tour-guide.jpeg",
-      alt: "Guía local conversando con viajeras durante un recorrido por San Basilio de Palenque"
+      src: "./assets/images/experience/IMG_4834.JPG",
+      alt: "Guía local explicando una parada cultural durante un tour realizado en San Basilio de Palenque"
+    },
+    {
+      src: "./assets/images/experience/IMG_6685.JPG",
+      alt: "Guía de Benko Tour sonriendo durante una parada del recorrido cultural en Palenque"
     },
     {
       src: "./assets/images/experience/2FF12B6C-0A0F-4E69-8735-1F1DDA7A0548.jpg",
@@ -416,6 +429,7 @@ function renderAccessState() {
 
   if (topLoginLink) {
     topLoginLink.textContent = currentUser ? "Mi cuenta" : "Iniciar sesión";
+    topLoginLink.setAttribute("href", "./acceso.html#acceso");
   }
 
   if (!accessTabsContainer || !accessLoggedPanel || !accessLoggedCopy) {
@@ -673,6 +687,26 @@ async function submitOrder(payload) {
   }
 
   return postJson(appConfig.channels.orderApiUrl, payload);
+}
+
+async function submitAccessUser(payload) {
+  if (!appConfig.channels.accessApiUrl) {
+    return { skipped: true };
+  }
+
+  return postJson(appConfig.channels.accessApiUrl, payload);
+}
+
+function buildAccessUserPayload(user) {
+  return {
+    id: user.id,
+    name: user.name,
+    city: user.city,
+    phone: user.phone,
+    email: user.email,
+    createdAt: user.createdAt,
+    source: "acceso-web"
+  };
 }
 
 function buildBookingPayload() {
@@ -1205,6 +1239,20 @@ if (registerForm) {
     setSessionUserId(newUser.id);
     registerForm.reset();
     renderAccessState();
+
+    try {
+      const response = await submitAccessUser(buildAccessUserPayload(newUser));
+
+      if (!response.skipped) {
+        setStatus(accessStatus, "success", `Tu cuenta quedó creada, ${newUser.name}. El registro también quedó guardado para el equipo de Benko Tour.`);
+        return;
+      }
+    } catch (error) {
+      console.error("No se pudo enviar el registro de acceso al backend.", error);
+      setStatus(accessStatus, "success", `Tu cuenta quedó creada, ${newUser.name}. Tus datos quedaron guardados en este navegador, pero no se pudo confirmar el envío al equipo en este momento.`);
+      return;
+    }
+
     setStatus(accessStatus, "success", `Tu cuenta quedó creada, ${newUser.name}.`);
   });
 }
@@ -1225,7 +1273,9 @@ if (logoutButton) {
       reviewForm.reset();
     }
 
-    reviewRatingInput.value = "";
+    if (reviewRatingInput) {
+      reviewRatingInput.value = "";
+    }
     updateRatingButtons(0);
     setActiveAccessTab("login");
     renderAccessState();

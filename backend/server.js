@@ -16,6 +16,7 @@ const __dirname = path.dirname(__filename);
 const dataDir = path.join(__dirname, "data");
 const reservationsFile = path.join(dataDir, "reservations.json");
 const ordersFile = path.join(dataDir, "orders.json");
+const accessUsersFile = path.join(dataDir, "access-users.json");
 
 const app = express();
 const port = Number(process.env.PORT || 8787);
@@ -145,6 +146,31 @@ function buildOrderEmail(payload) {
   };
 }
 
+function buildAccessUserEmail(payload) {
+  return {
+    subject: `Nuevo registro de acceso ${payload.id} - ${payload.name}`,
+    text: [
+      `ID: ${payload.id}`,
+      `Nombre: ${payload.name}`,
+      `Correo: ${payload.email}`,
+      `WhatsApp: ${payload.phone || "Sin WhatsApp"}`,
+      `Ciudad: ${payload.city || "Sin ciudad"}`,
+      `Origen: ${payload.source || "web"}`,
+      `Creado: ${payload.createdAt || "Sin fecha"}`
+    ].join("\n"),
+    html: `
+      <h2>Nuevo registro de acceso</h2>
+      <p><strong>ID:</strong> ${payload.id}</p>
+      <p><strong>Nombre:</strong> ${payload.name}</p>
+      <p><strong>Correo:</strong> ${payload.email}</p>
+      <p><strong>WhatsApp:</strong> ${payload.phone || "Sin WhatsApp"}</p>
+      <p><strong>Ciudad:</strong> ${payload.city || "Sin ciudad"}</p>
+      <p><strong>Origen:</strong> ${payload.source || "web"}</p>
+      <p><strong>Creado:</strong> ${payload.createdAt || "Sin fecha"}</p>
+    `
+  };
+}
+
 function createWompiSignature({ reference, amountInCents, currency, integritySecret, expirationTime }) {
   const base = `${reference}${amountInCents}${currency}${integritySecret}${expirationTime || ""}`;
   return crypto.createHash("sha256").update(base).digest("hex");
@@ -206,6 +232,25 @@ app.post("/api/orders", async (req, res, next) => {
       saved: true,
       emailed: Boolean(emailStatus.delivered),
       reference: req.body.reference
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post("/api/access/users", async (req, res, next) => {
+  try {
+    validateRequiredFields(req.body, ["id", "name", "email"]);
+    await appendRecord(accessUsersFile, req.body);
+
+    const email = buildAccessUserEmail(req.body);
+    const emailStatus = await sendOperationalEmail(email.subject, email.html, email.text);
+
+    res.json({
+      ok: true,
+      saved: true,
+      emailed: Boolean(emailStatus.delivered),
+      userId: req.body.id
     });
   } catch (error) {
     next(error);
@@ -298,7 +343,7 @@ app.use((error, _req, res, _next) => {
   res.status(status).send(error.message || "Error interno del servidor.");
 });
 
-Promise.all([ensureDataFile(reservationsFile), ensureDataFile(ordersFile)]).then(() => {
+Promise.all([ensureDataFile(reservationsFile), ensureDataFile(ordersFile), ensureDataFile(accessUsersFile)]).then(() => {
   app.listen(port, () => {
     console.log(`Benko Tour backend escuchando en http://localhost:${port}`);
   });

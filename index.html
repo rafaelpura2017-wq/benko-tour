@@ -85,7 +85,7 @@
             <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
             <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
           </nav>
-          <a class="benko-tour__login" href="#acceso">Iniciar sesión</a>
+          <a class="benko-tour__login" href="./acceso.html#acceso">Iniciar sesión</a>
         </div>
 
         <div class="benko-tour__masthead" id="inicio">
@@ -134,7 +134,78 @@
         </div>
       </header>
 
-      <main>
+      <div class="benko-tour__page-frame">
+        <aside class="benko-tour__quick-nav" aria-label="Menú rápido lateral de la landing">
+          <figure class="benko-tour__quick-nav-visual">
+            <img
+              src="./assets/images/experience/palenque-mural-fattume.png"
+              alt="Mural colorido en San Basilio de Palenque con formas, memoria e identidad comunitaria"
+              loading="lazy"
+              decoding="async"
+            >
+            <figcaption>
+              <span class="benko-tour__quick-nav-kicker">Ruta viva</span>
+              <strong>Muévete por la portada con una lectura más clara del recorrido</strong>
+            </figcaption>
+          </figure>
+
+          <div class="benko-tour__quick-nav-copy">
+            <span class="benko-tour__eyebrow">Menú rápido</span>
+            <p>De la historia del territorio al cierre de reserva, cada bloque queda más fácil de ubicar.</p>
+          </div>
+
+          <nav class="benko-tour__quick-nav-links" aria-label="Atajos de la portada">
+            <a href="#inicio">
+              <span>Inicio</span>
+              <strong>Portada y marca</strong>
+            </a>
+            <a href="#explora">
+              <span>Mapa</span>
+              <strong>Páginas dedicadas</strong>
+            </a>
+            <a href="#paquetes">
+              <span>Venta</span>
+              <strong>Paquetes y precios</strong>
+            </a>
+            <a href="#itinerario">
+              <span>Ruta</span>
+              <strong>Cómo se vive el tour</strong>
+            </a>
+            <a href="#sabores">
+              <span>Sabores</span>
+              <strong>Guías y extras</strong>
+            </a>
+            <a href="#opiniones">
+              <span>Voces</span>
+              <strong>Opiniones reales</strong>
+            </a>
+            <a href="#conversion">
+              <span>Acción</span>
+              <strong>Reservas y tienda</strong>
+            </a>
+          </nav>
+
+          <div class="benko-tour__quick-nav-actions">
+            <a
+              class="benko-tour__quick-nav-action benko-tour__quick-nav-action--primary"
+              href="./experiencia.html"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Abrir experiencia
+            </a>
+            <a
+              class="benko-tour__quick-nav-action"
+              href="./reservas.html"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ir a reservas
+            </a>
+          </div>
+        </aside>
+
+        <main>
         <section class="benko-tour__hero" aria-label="Presentación principal">
           <div class="benko-tour__hero-content">
             <span class="benko-tour__pill">Patrimonio, identidad, música y gastronomía viva</span>
@@ -210,137 +281,28 @@
           </aside>
         </section>
 
-        <section class="benko-tour__section benko-tour__section--access" id="acceso" aria-labelledby="acceso-title">
-          <div class="benko-tour__section-head">
-            <div>
-              <span class="benko-tour__eyebrow">Acceso de viajeros</span>
-              <h2 class="benko-tour__section-title" id="acceso-title">Guarda tus datos y vuelve con un solo paso</h2>
-            </div>
-            <p class="benko-tour__section-copy">
-              El inicio de sesión queda solo para guardar datos básicos del viajero en este navegador y hacer más rápida la reserva cuando regrese.
-            </p>
-          </div>
-
-          <div class="benko-tour__access-layout">
-            <article class="benko-tour__access-card benko-tour__access-card--intro">
-              <span class="benko-tour__card-tag">Comunidad Benko</span>
-              <h3>Tu perfil de viajero queda listo para próximas visitas</h3>
-              <p>
-                Guarda tus datos, vuelve más rápido a la página y deja lista tu información básica para futuras reservas sin tener que escribir todo otra vez.
-              </p>
-              <ul class="benko-tour__feature-list">
-                <li>Ingreso más rápido desde la misma página</li>
-                <li>Nombre y contacto listos para futuras reservas</li>
-                <li>Estado de sesión persistente en este navegador</li>
-              </ul>
-              <div class="benko-tour__access-session" id="access-session"></div>
-            </article>
-
-            <div class="benko-tour__access-card benko-tour__access-card--forms">
-              <div class="benko-tour__access-tabs" role="tablist" aria-label="Acceso de usuarios">
-                <button class="benko-tour__access-tab benko-tour__access-tab--active" type="button" data-access-tab="login">
-                  Iniciar sesión
-                </button>
-                <button class="benko-tour__access-tab" type="button" data-access-tab="register">
-                  Crear cuenta
-                </button>
-              </div>
-
-              <div class="benko-tour__access-logged benko-tour__hidden" id="access-logged-panel">
-                <span class="benko-tour__card-tag">Sesión activa</span>
-                <h3>Ya haces parte de la comunidad Benko</h3>
-                <p id="access-logged-copy">
-                  Tu acceso quedó listo. Ahora tus datos básicos quedan guardados en este navegador para reservar más rápido cuando quieras.
-                </p>
-                <div class="benko-tour__form-actions">
-                  <a class="benko-tour__button" href="#reservas">Ir a reservas</a>
-                  <button class="benko-tour__ghost benko-tour__ghost--dark" id="logout-button" type="button">
-                    Cerrar sesión
-                  </button>
-                </div>
-              </div>
-
-              <form class="benko-tour__access-form" id="login-form" data-access-panel="login">
-                <div class="benko-tour__field-grid">
-                  <label class="benko-tour__field benko-tour__field--full">
-                    <span>Correo electrónico</span>
-                    <input type="email" name="email" placeholder="tucorreo@ejemplo.com" required>
-                  </label>
-
-                  <label class="benko-tour__field benko-tour__field--full">
-                    <span>Contraseña</span>
-                    <input type="password" name="password" placeholder="Ingresa tu contraseña" minlength="6" required>
-                  </label>
-                </div>
-
-                <div class="benko-tour__form-actions">
-                  <button class="benko-tour__button" type="submit">Entrar a mi cuenta</button>
-                </div>
-              </form>
-
-              <form class="benko-tour__access-form benko-tour__access-form--hidden" id="register-form" data-access-panel="register">
-                <div class="benko-tour__field-grid">
-                  <label class="benko-tour__field">
-                    <span>Nombre completo</span>
-                    <input type="text" name="name" placeholder="Tu nombre" required>
-                  </label>
-
-                  <label class="benko-tour__field">
-                    <span>Ciudad</span>
-                    <input type="text" name="city" placeholder="Ejemplo: Bogotá">
-                  </label>
-
-                  <label class="benko-tour__field benko-tour__field--full">
-                    <span>WhatsApp</span>
-                    <input type="tel" name="phone" placeholder="+57 300 000 0000">
-                  </label>
-
-                  <label class="benko-tour__field benko-tour__field--full">
-                    <span>Correo electrónico</span>
-                    <input type="email" name="email" placeholder="tucorreo@ejemplo.com" required>
-                  </label>
-
-                  <label class="benko-tour__field benko-tour__field--full">
-                    <span>Contraseña</span>
-                    <input type="password" name="password" placeholder="Mínimo 6 caracteres" minlength="6" required>
-                  </label>
-                </div>
-
-                <div class="benko-tour__form-actions">
-                  <button class="benko-tour__button" type="submit">Crear mi cuenta</button>
-                </div>
-              </form>
-
-              <div class="benko-tour__status" id="access-status" aria-live="polite">
-                Crea tu cuenta o inicia sesión para guardar tus datos básicos y volver más rápido cuando quieras reservar.
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section class="benko-tour__section" id="explora" aria-labelledby="explora-title">
-          <div class="benko-tour__section-head">
+          <div class="benko-tour__section-head benko-tour__section-head--balanced">
             <div>
               <span class="benko-tour__eyebrow">Explora más</span>
-              <h2 class="benko-tour__section-title" id="explora-title">La portada queda más ligera y cada tema vive en su propia página</h2>
+              <h2 class="benko-tour__section-title" id="explora-title">La portada respira mejor y cada tema vive por separado</h2>
             </div>
             <p class="benko-tour__section-copy">
-              Ahora la home se concentra en mostrar la propuesta, los paquetes y la prueba social. Experiencia, nosotros, reservas y tienda
-              se abren en espacios dedicados para que el visitante navegue con más calma y convierta con menos ruido.
+              La home se queda con lo esencial. Experiencia, nosotros, reservas y tienda se abren en páginas dedicadas para navegar con menos ruido.
             </p>
           </div>
 
-          <div class="benko-tour__packages">
+          <div class="benko-tour__packages benko-tour__packages--hub">
             <article class="benko-tour__package-card benko-tour__package-card--featured">
               <span class="benko-tour__card-tag">Experiencia viva</span>
               <h3>Comunidad, música y recorrido</h3>
               <p class="benko-tour__package-copy">
-                Una página completa para mostrar ambiente, memoria, guía local y escenas reales del territorio sin recargar la portada.
+                Una página propia para mostrar ambiente, memoria y escenas reales del territorio sin cargar la home.
               </p>
-              <ul class="benko-tour__feature-list">
-                <li>Galería con imágenes reales de la experiencia</li>
-                <li>Relato del tour desde la comunidad</li>
-                <li>Acceso directo a opiniones y reservas</li>
+              <ul class="benko-tour__feature-list benko-tour__feature-list--compact">
+                <li>Galería real</li>
+                <li>Relato desde la comunidad</li>
+                <li>Acceso a opiniones y reservas</li>
               </ul>
               <a class="benko-tour__button" href="./experiencia.html" target="_blank" rel="noopener noreferrer">
                 Abrir experiencia
@@ -351,12 +313,12 @@
               <span class="benko-tour__card-tag">Quiénes somos</span>
               <h3>Identidad, lengua y valor cultural</h3>
               <p class="benko-tour__package-copy">
-                Una vista aparte para contar la voz de Benko Tour, la lengua palenquera y el valor educativo del proyecto.
+                Una vista aparte para contar la voz de Benko Tour, la lengua palenquera y el valor cultural del proyecto.
               </p>
-              <ul class="benko-tour__feature-list">
-                <li>Historia contada desde adentro</li>
-                <li>Lengua palenquera como diferencial</li>
-                <li>Más confianza para quien reserva</li>
+              <ul class="benko-tour__feature-list benko-tour__feature-list--compact">
+                <li>Historia desde adentro</li>
+                <li>Lengua como diferencial</li>
+                <li>Más confianza al reservar</li>
               </ul>
               <a class="benko-tour__ghost benko-tour__ghost--dark" href="./nosotros.html" target="_blank" rel="noopener noreferrer">
                 Conocer Benko Tour
@@ -367,10 +329,10 @@
               <span class="benko-tour__card-tag">Reserva directa</span>
               <h3>Formulario y pago en una página limpia</h3>
               <p class="benko-tour__package-copy">
-                El formulario de reserva ya no compite con todo el home. Se abre en una página pensada solo para convertir.
+                El formulario ya no compite con toda la home. Se abre en una página pensada solo para convertir.
               </p>
-              <ul class="benko-tour__feature-list">
-                <li>Resumen en vivo del precio</li>
+              <ul class="benko-tour__feature-list benko-tour__feature-list--compact">
+                <li>Resumen en vivo</li>
                 <li>Paquetes, idiomas y recogida</li>
                 <li>Salida a WhatsApp, correo o pago</li>
               </ul>
@@ -383,16 +345,13 @@
               <span class="benko-tour__card-tag">Tienda dedicada</span>
               <h3>Productos reales con fotos tuyas</h3>
               <p class="benko-tour__package-copy">
-                La tienda ahora puede crecer aparte con carrito, fotos reales y más foco comercial sin llenar de bloques la portada.
+                La tienda puede crecer aparte con carrito, fotos reales y más foco comercial sin llenar la portada.
               </p>
-              <ul class="benko-tour__feature-list">
-                <li>Tambor, plato y cocina con imagen real</li>
+              <ul class="benko-tour__feature-list benko-tour__feature-list--compact">
+                <li>Productos con imagen real</li>
                 <li>Carrito propio para pedidos</li>
-                <li>Más espacio para seguir sumando productos</li>
+                <li>Espacio para seguir creciendo</li>
               </ul>
-              <a class="benko-tour__ghost benko-tour__ghost--dark" href="./tienda.html" target="_blank" rel="noopener noreferrer">
-                Ir a la tienda
-              </a>
             </article>
           </div>
         </section>
@@ -566,13 +525,13 @@
         </section>
 
         <section class="benko-tour__section" id="sabores" aria-labelledby="sabores-title">
-          <div class="benko-tour__section-head">
+          <div class="benko-tour__section-head benko-tour__section-head--balanced">
             <div>
               <span class="benko-tour__eyebrow">Sabores y guías</span>
-              <h2 class="benko-tour__section-title" id="sabores-title">Comida típica, idiomas y extras que ayudan a vender</h2>
+              <h2 class="benko-tour__section-title" id="sabores-title">Comida, idiomas y extras para vender mejor</h2>
             </div>
             <p class="benko-tour__section-copy">
-              Aquí el visitante entiende qué puede comer, qué idiomas manejas y cuánto cuestan los servicios adicionales más relevantes.
+              El visitante entiende rápido qué puede comer, qué idiomas manejas y cuánto cuestan los extras más relevantes.
             </p>
           </div>
 
@@ -611,13 +570,13 @@
         </section>
 
         <section class="benko-tour__section" id="opiniones" aria-labelledby="testimonios-title">
-          <div class="benko-tour__section-head">
+          <div class="benko-tour__section-head benko-tour__section-head--balanced">
             <div>
               <span class="benko-tour__eyebrow">Prueba social</span>
-              <h2 class="benko-tour__section-title" id="testimonios-title">Valoraciones reales que se van rotando en la página</h2>
+              <h2 class="benko-tour__section-title" id="testimonios-title">Opiniones que refuerzan la confianza del viaje</h2>
             </div>
             <p class="benko-tour__section-copy">
-              Después del tour, cualquier visitante puede dejar estrellas y un comentario. Si además guarda su sesión, sus datos básicos quedarán listos para futuras reservas.
+              Cualquier visitante puede dejar estrellas y comentario. Si además guarda su sesión, sus datos básicos quedarán listos para volver.
             </p>
           </div>
 
@@ -637,7 +596,7 @@
               <span class="benko-tour__card-tag">Tu opinión</span>
               <h3>Cuéntanos cómo te fue en el tour</h3>
               <p class="benko-tour__note">
-                No necesitas iniciar sesión para valorar. Si ya guardaste tu sesión, completamos tus datos básicos automáticamente.
+                No necesitas iniciar sesión para valorar. Si ya la guardaste, completamos tus datos básicos automáticamente.
               </p>
 
               <form class="benko-tour__feedback-form" id="review-form">
@@ -672,7 +631,7 @@
 
                   <label class="benko-tour__field benko-tour__field--full">
                     <span>Tu comentario</span>
-                    <textarea name="comment" rows="5" placeholder="Cuéntanos qué fue lo que más te marcó del tour." required></textarea>
+                    <textarea name="comment" rows="4" placeholder="Cuéntanos qué fue lo que más te marcó del tour." required></textarea>
                   </label>
                 </div>
 
@@ -691,13 +650,13 @@
         </section>
 
         <section class="benko-tour__section" id="conversion" aria-labelledby="conversion-title">
-          <div class="benko-tour__section-head">
+          <div class="benko-tour__section-head benko-tour__section-head--balanced">
             <div>
               <span class="benko-tour__eyebrow">Siguiente paso</span>
-              <h2 class="benko-tour__section-title" id="conversion-title">Cuando quieran avanzar, la página los lleva directo a la acción</h2>
+              <h2 class="benko-tour__section-title" id="conversion-title">Reserva o compra sin perderte en la portada</h2>
             </div>
             <p class="benko-tour__section-copy">
-              Reservas y tienda ya no cargan dentro de la portada. Se abren en páginas separadas para que el usuario encuentre más rápido lo que quiere hacer.
+              Las acciones principales quedan separadas para que el visitante llegue más rápido a reservar o comprar.
             </p>
           </div>
 
@@ -735,7 +694,8 @@
             </article>
           </div>
         </section>
-      </main>
+        </main>
+      </div>
 
       <footer class="benko-tour__footer">
         <div class="benko-tour__footer-brand">
@@ -753,7 +713,7 @@
         <div class="benko-tour__footer-links">
           <a href="https://benkotour.wordpress.com/quienes-somos/">Quiénes somos</a>
           <a href="https://benkotour.wordpress.com/blog/">Blog</a>
-          <a href="#acceso">Iniciar sesión</a>
+          <a href="./acceso.html#acceso">Iniciar sesión</a>
         </div>
       </footer>
     </div>

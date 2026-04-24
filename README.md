@@ -5,6 +5,7 @@ Landing page comercial para turismo cultural en San Basilio de Palenque, con res
 ## Estructura
 
 - `index.html`: estructura principal de la landing
+- `acceso.html`: página dedicada para iniciar sesión o crear cuenta
 - `styles.css`: estilos visuales y responsive
 - `script.js`: lógica del formulario, carrito y llamadas al backend
 - `config.js`: configuración rápida del frontend
@@ -15,6 +16,7 @@ Landing page comercial para turismo cultural en San Basilio de Palenque, con res
 - `backend/.env.example`: variables necesarias para backend, correo, Wompi y Mercado Pago
 - `backend/data/reservations.json`: almacenamiento local simple de reservas
 - `backend/data/orders.json`: almacenamiento local simple de pedidos
+- `backend/data/access-users.json`: almacenamiento local simple de registros creados desde acceso
 - `benko-tour-optimizado.html`: versión previa de referencia
 
 ## Cómo abrir el frontend
@@ -48,6 +50,8 @@ Por defecto quedará en `http://localhost:8787`.
   Guarda reservas en `backend/data/reservations.json`
 - `POST /api/orders`
   Guarda pedidos de tienda en `backend/data/orders.json`
+- `POST /api/access/users`
+  Guarda nuevos registros de acceso en `backend/data/access-users.json`
 - `POST /api/payments/wompi/checkout`
   Genera la información necesaria para abrir Wompi Checkout Web
 - `POST /api/payments/mercadopago/preference`
@@ -63,6 +67,7 @@ En `config.js`:
 
 - `channels.reservationApiUrl`
 - `channels.orderApiUrl`
+- `channels.accessApiUrl`
 - `channels.reservationEmail`
 - `payments.wompi.checkoutEndpoint`
 - `payments.mercadopago.preferenceEndpoint`

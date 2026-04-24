@@ -78,6 +78,186 @@ body {
   z-index: 20;
 }
 
+.benko-tour__page-frame {
+  display: grid;
+  grid-template-columns: minmax(220px, 248px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+  margin-top: 12px;
+}
+
+.benko-tour__page-frame main {
+  min-width: 0;
+}
+
+.benko-tour__quick-nav {
+  position: sticky;
+  top: 104px;
+  z-index: 15;
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 30px;
+  border: 1px solid rgba(80, 60, 34, 0.12);
+  background: linear-gradient(180deg, rgba(255, 252, 246, 0.98) 0%, rgba(246, 239, 226, 0.96) 100%);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.benko-tour__quick-nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  pointer-events: none;
+  background: url("./assets/images/brand/patron-marca.jpg") center/280px auto repeat;
+  mix-blend-mode: multiply;
+}
+
+.benko-tour__quick-nav > * {
+  position: relative;
+  z-index: 1;
+}
+
+.benko-tour__quick-nav-visual {
+  position: relative;
+  min-height: 168px;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(36, 150, 192, 0.18), rgba(239, 122, 93, 0.18));
+  box-shadow: 0 18px 32px rgba(38, 26, 18, 0.16);
+}
+
+.benko-tour__quick-nav-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.benko-tour__quick-nav-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 15, 18, 0.04) 24%, rgba(10, 15, 18, 0.82) 100%);
+}
+
+.benko-tour__quick-nav-visual figcaption {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 1;
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  color: #fff;
+}
+
+.benko-tour__quick-nav-kicker {
+  display: inline-flex;
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(10px);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.benko-tour__quick-nav-visual strong {
+  font-size: 1.02rem;
+  line-height: 1.32;
+}
+
+.benko-tour__quick-nav-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.benko-tour__quick-nav-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.68;
+  font-size: 0.95rem;
+}
+
+.benko-tour__quick-nav-links {
+  display: grid;
+  gap: 10px;
+}
+
+.benko-tour__quick-nav-links a {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  background: rgba(255, 255, 255, 0.76);
+  text-decoration: none;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.benko-tour__quick-nav-links a span {
+  color: var(--brand);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.benko-tour__quick-nav-links a strong {
+  font-size: 0.95rem;
+  line-height: 1.28;
+}
+
+.benko-tour__quick-nav-links a:hover,
+.benko-tour__quick-nav-links a:focus-visible {
+  transform: translateX(4px);
+  border-color: rgba(19, 99, 108, 0.18);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 16px 28px rgba(42, 29, 18, 0.08);
+  outline: none;
+}
+
+.benko-tour__quick-nav-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.benko-tour__quick-nav-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(19, 99, 108, 0.12);
+  background: rgba(19, 99, 108, 0.08);
+  color: var(--emerald);
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.benko-tour__quick-nav-action--primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, #1d3523 0%, #355c3f 100%);
+  color: #fff;
+}
+
+.benko-tour__quick-nav-action:hover,
+.benko-tour__quick-nav-action:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px rgba(38, 26, 18, 0.14);
+  outline: none;
+}
+
 .benko-tour__topbar {
   display: flex;
   align-items: center;
@@ -148,6 +328,7 @@ body {
   gap: 24px;
   align-items: stretch;
   padding: 24px 4px 10px;
+  scroll-margin-top: 104px;
 }
 
 .benko-tour__brand {
@@ -310,9 +491,12 @@ body {
 }
 
 .benko-tour__login {
-  background: linear-gradient(135deg, rgba(255, 247, 235, 0.98), rgba(255, 255, 255, 0.96));
-  color: #17232a;
+  background: linear-gradient(135deg, rgba(255, 232, 196, 0.98), rgba(255, 244, 231, 0.96));
+  border: 1px solid rgba(123, 53, 18, 0.12);
+  color: #6f2f10;
+  font-weight: 800;
   white-space: nowrap;
+  box-shadow: 0 14px 26px rgba(17, 29, 23, 0.16);
 }
 
 .benko-tour__button {
@@ -606,8 +790,35 @@ body {
 }
 
 .benko-tour__section {
+  position: relative;
   margin-top: 38px;
   scroll-margin-top: 104px;
+}
+
+.benko-tour__section::before {
+  content: "";
+  position: absolute;
+  left: -18px;
+  top: 14px;
+  width: 4px;
+  height: 68px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(239, 176, 58, 0), rgba(239, 122, 93, 0));
+  opacity: 0;
+  transform: scaleY(0.4);
+  transform-origin: top;
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease;
+}
+
+.benko-tour__section:target::before {
+  opacity: 1;
+  transform: scaleY(1);
+  background: linear-gradient(180deg, var(--accent) 0%, var(--coral) 100%);
+}
+
+.benko-tour__masthead:target .benko-tour__brand,
+.benko-tour__masthead:target .benko-tour__mural-card {
+  box-shadow: 0 28px 52px rgba(38, 26, 18, 0.18);
 }
 
 .benko-tour__section--access {
@@ -636,6 +847,42 @@ body {
   color: var(--muted);
 }
 
+.benko-tour__page-frame .benko-tour__section {
+  margin-top: 32px;
+}
+
+.benko-tour__page-frame .benko-tour__section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(260px, 0.95fr);
+  align-items: end;
+  gap: 16px 28px;
+  margin-bottom: 16px;
+}
+
+.benko-tour__page-frame .benko-tour__section-head > div {
+  min-width: 0;
+}
+
+.benko-tour__page-frame .benko-tour__section-title {
+  max-width: 18ch;
+  font-size: clamp(1.8rem, 3.2vw, 2.55rem);
+  letter-spacing: -0.02em;
+}
+
+.benko-tour__page-frame .benko-tour__section-copy {
+  max-width: 58ch;
+  line-height: 1.7;
+}
+
+.benko-tour__section-title--access {
+  max-width: 16ch;
+  font-size: clamp(1.65rem, 2.7vw, 2.2rem);
+}
+
+.benko-tour__section-copy--access {
+  margin-top: 10px;
+}
+
 .benko-tour__story,
 .benko-tour__split,
 .benko-tour__booking-layout,
@@ -650,8 +897,47 @@ body {
   gap: 24px;
 }
 
+.benko-tour__access-banner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px 20px;
+  align-items: end;
+  padding: 20px 22px;
+  border: 1px solid rgba(80, 60, 34, 0.1);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at top right, rgba(239, 176, 58, 0.14), transparent 28%),
+    linear-gradient(180deg, rgba(255, 249, 241, 0.98) 0%, rgba(255, 253, 249, 0.98) 100%);
+  box-shadow: var(--shadow);
+}
+
+.benko-tour__access-points {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.benko-tour__access-point {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  color: var(--brand-dark);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
 .benko-tour__access-layout {
   grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+}
+
+.benko-tour__access-layout--compact {
+  grid-template-columns: minmax(230px, 0.82fr) minmax(320px, 1.18fr);
+  gap: 18px;
 }
 
 .benko-tour__feedback-layout {
@@ -700,6 +986,17 @@ body {
   gap: 16px;
 }
 
+.benko-tour__page-frame .benko-tour__access-card,
+.benko-tour__page-frame .benko-tour__feedback-showcase,
+.benko-tour__page-frame .benko-tour__feedback-form-card,
+.benko-tour__page-frame .benko-tour__review-spotlight {
+  padding: 22px;
+}
+
+.benko-tour__page-frame .benko-tour__access-card {
+  gap: 14px;
+}
+
 .benko-tour__access-card--intro {
   background:
     radial-gradient(circle at top right, rgba(36, 150, 192, 0.12), transparent 28%),
@@ -720,6 +1017,11 @@ body {
   border: 1px solid rgba(19, 99, 108, 0.1);
   color: var(--muted);
   line-height: 1.7;
+}
+
+.benko-tour__page-frame .benko-tour__access-session {
+  padding: 16px;
+  border-radius: 18px;
 }
 
 .benko-tour__access-session strong {
@@ -782,6 +1084,10 @@ body {
   gap: 18px;
 }
 
+.benko-tour__page-frame .benko-tour__feedback-layout {
+  gap: 18px;
+}
+
 .benko-tour__feedback-score {
   display: grid;
   gap: 8px;
@@ -814,6 +1120,10 @@ body {
   background:
     radial-gradient(circle at top right, rgba(36, 150, 192, 0.12), transparent 22%),
     linear-gradient(180deg, rgba(255, 252, 248, 0.98) 0%, rgba(255, 249, 243, 0.98) 100%);
+}
+
+.benko-tour__page-frame .benko-tour__review-spotlight {
+  min-height: 236px;
 }
 
 .benko-tour__review-spotlight-quote {
@@ -868,6 +1178,11 @@ body {
   line-height: 1;
   cursor: pointer;
   transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.benko-tour__page-frame .benko-tour__rating-star {
+  width: 48px;
+  height: 48px;
 }
 
 .benko-tour__rating-star:hover,
@@ -1006,10 +1321,31 @@ body {
   gap: 22px;
 }
 
+.benko-tour__packages--hub {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+}
+
 .benko-tour__package-card {
   display: grid;
   gap: 16px;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.benko-tour__page-frame .benko-tour__packages,
+.benko-tour__page-frame .benko-tour__service-grid,
+.benko-tour__page-frame .benko-tour__reviews {
+  gap: 18px;
+}
+
+.benko-tour__page-frame .benko-tour__package-card,
+.benko-tour__page-frame .benko-tour__service-card,
+.benko-tour__page-frame .benko-tour__review-card {
+  padding: 20px;
+}
+
+.benko-tour__page-frame .benko-tour__packages--hub .benko-tour__package-card {
+  gap: 14px;
 }
 
 .benko-tour__package-card--featured {
@@ -1557,6 +1893,44 @@ body {
 }
 
 @media (max-width: 1140px) {
+  .benko-tour__page-frame {
+    grid-template-columns: 1fr;
+  }
+
+  .benko-tour__page-frame .benko-tour__section-head {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 0.92fr);
+    gap: 14px 22px;
+  }
+
+  .benko-tour__quick-nav {
+    position: static;
+    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .benko-tour__quick-nav-visual {
+    grid-row: 1 / span 3;
+    min-height: 100%;
+  }
+
+  .benko-tour__quick-nav-copy,
+  .benko-tour__quick-nav-links,
+  .benko-tour__quick-nav-actions {
+    grid-column: 2;
+  }
+
+  .benko-tour__quick-nav-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .benko-tour__quick-nav-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .benko-tour__packages--hub {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .benko-tour__hero,
   .benko-tour__access-layout,
   .benko-tour__feedback-layout,
@@ -1590,7 +1964,47 @@ body {
     padding: 14px 12px 100px;
   }
 
-  .benko-tour__topbar,
+  .benko-tour__page-frame .benko-tour__section-head {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .benko-tour__page-frame .benko-tour__section-title {
+    max-width: 16ch;
+    font-size: clamp(1.65rem, 6vw, 2.2rem);
+  }
+
+  .benko-tour__access-banner {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .benko-tour__access-points {
+    justify-content: flex-start;
+  }
+
+  .benko-tour__quick-nav {
+    grid-template-columns: 1fr;
+    padding: 18px;
+    border-radius: 26px;
+  }
+
+  .benko-tour__quick-nav-visual {
+    grid-row: auto;
+    min-height: 220px;
+  }
+
+  .benko-tour__quick-nav-copy,
+  .benko-tour__quick-nav-links,
+  .benko-tour__quick-nav-actions {
+    grid-column: auto;
+  }
+
+  .benko-tour__quick-nav-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .benko-tour__section-head,
   .benko-tour__footer {
     flex-direction: column;
@@ -1602,8 +2016,32 @@ body {
   }
 
   .benko-tour__topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    width: 100%;
+    padding: 16px 18px 20px;
+    row-gap: 16px;
+    column-gap: 12px;
     border-radius: 28px;
     position: static;
+  }
+
+  .benko-tour__topbar-brand {
+    min-width: 0;
+  }
+
+  .benko-tour__menu {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 10px 16px;
+  }
+
+  .benko-tour__login {
+    justify-self: end;
+    min-height: 46px;
+    padding: 0 20px;
   }
 
   .benko-tour__topbar-brand img {
@@ -1660,6 +2098,19 @@ body {
 }
 
 @media (max-width: 560px) {
+  .benko-tour__quick-nav-links,
+  .benko-tour__quick-nav-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .benko-tour__packages--hub {
+    grid-template-columns: 1fr;
+  }
+
+  .benko-tour__section::before {
+    left: -8px;
+  }
+
   .benko-tour__logo {
     font-size: 1.8rem;
   }
@@ -1672,8 +2123,42 @@ body {
     font-size: 1.12rem;
   }
 
+  .benko-tour__topbar {
+    padding: 14px 16px 18px;
+    row-gap: 14px;
+  }
+
+  .benko-tour__menu {
+    gap: 8px 14px;
+  }
+
+  .benko-tour__menu a {
+    font-size: 0.88rem;
+  }
+
+  .benko-tour__login {
+    min-height: 44px;
+    padding: 0 18px;
+    font-size: 0.92rem;
+  }
+
+  .benko-tour__hero {
+    padding: 22px 18px;
+  }
+
   .benko-tour__hero h1 {
     max-width: 100%;
+    font-size: clamp(2.3rem, 12vw, 3.5rem);
+    line-height: 0.96;
+  }
+
+  .benko-tour__actions {
+    gap: 12px;
+  }
+
+  .benko-tour__actions .benko-tour__button,
+  .benko-tour__actions .benko-tour__ghost {
+    width: 100%;
   }
 
   .benko-tour__story-card,
