@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="Compra productos y sabores de Benko Tour desde una página dedicada con carrito y cierre por WhatsApp o pago."
+  >
+  <meta name="theme-color" content="#20392b">
+  <link rel="canonical" href="https://benkotour.wordpress.com/tienda">
+  <link rel="icon" type="image/jpeg" href="./assets/images/brand/favicon-benko.jpg">
+  <title>Tienda | Benko Tour</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./config.js"></script>
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <div class="benko-tour">
+    <div class="benko-tour__shell">
+      <header class="benko-tour__header">
+        <div class="benko-tour__topbar">
+          <a class="benko-tour__topbar-brand" href="./index.html" aria-label="Benko Tour, ir al inicio">
+            <img
+              src="./assets/images/brand/logo-sello.jpg"
+              alt=""
+              loading="eager"
+              decoding="async"
+            >
+            <span>Benko Tour</span>
+          </a>
+          <nav class="benko-tour__menu" aria-label="Secciones principales">
+            <a href="./experiencia.html" target="_blank" rel="noopener noreferrer">Experiencia</a>
+            <a href="./nosotros.html" target="_blank" rel="noopener noreferrer">Nosotros</a>
+            <a href="./index.html#paquetes" target="_blank" rel="noopener noreferrer">Paquetes</a>
+            <a href="./index.html#itinerario" target="_blank" rel="noopener noreferrer">Itinerario</a>
+            <a href="./index.html#sabores" target="_blank" rel="noopener noreferrer">Sabores y guías</a>
+            <a href="./index.html#opiniones" target="_blank" rel="noopener noreferrer">Opiniones</a>
+            <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
+            <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
+          </nav>
+          <a class="benko-tour__login" href="./index.html#acceso">Iniciar sesión</a>
+        </div>
+      </header>
+
+      <main>
+        <section class="benko-tour__hero" aria-label="Tienda de Benko Tour">
+          <div class="benko-tour__hero-content">
+            <span class="benko-tour__pill">Tienda y sabores</span>
+            <h1>Lleva contigo ritmo, cocina y memoria del territorio</h1>
+            <p>
+              Esta página deja la venta cruzada en un espacio propio: productos y experiencias gastronómicas con carrito,
+              mensaje directo y opciones de pago listas para cerrar pedidos.
+            </p>
+
+            <div class="benko-tour__actions">
+              <a class="benko-tour__button" href="#tienda">Ver productos</a>
+              <a class="benko-tour__ghost" href="./reservas.html" target="_blank" rel="noopener noreferrer">Ir a reservas</a>
+            </div>
+          </div>
+
+          <aside class="benko-tour__hero-panel" aria-label="Qué se vende aquí">
+            <span class="benko-tour__card-tag">Venta cruzada</span>
+            <h2 class="benko-tour__panel-title">Un espacio aparte para comprar con más calma</h2>
+            <p class="benko-tour__panel-copy">
+              Aquí la persona no compite con el resto del home. Puede mirar, elegir y cerrar el pedido desde una página pensada para tienda.
+            </p>
+
+            <ul class="benko-tour__panel-list">
+              <li>Carrito con total actualizado</li>
+              <li>Salida por WhatsApp o correo</li>
+              <li>Pago disponible por Wompi o Mercado Pago</li>
+              <li>Productos reales sin placeholders</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section class="benko-tour__section" id="tienda" aria-labelledby="tienda-title">
+          <div class="benko-tour__section-head">
+            <div>
+              <span class="benko-tour__eyebrow">Tienda</span>
+              <h2 class="benko-tour__section-title" id="tienda-title">Sabores, tambores y recuerdos listos para comprar</h2>
+            </div>
+            <p class="benko-tour__section-copy">
+              La tienda suma ticket promedio a la experiencia. Cada producto entra al carrito y el cierre se hace por mensaje o pago.
+            </p>
+          </div>
+
+          <div class="benko-tour__shop-layout">
+            <div class="benko-tour__shop-grid">
+              <article class="benko-tour__product-card">
+                <div class="benko-tour__product-media benko-tour__product-media--real">
+                  <img
+                    src="./assets/images/products/descarga.jpeg"
+                    alt="Tambor artesanal tradicional usado como recuerdo cultural y pieza musical"
+                    loading="lazy"
+                    decoding="async"
+                  >
+                </div>
+                <h3>Tambor alegre artesanal</h3>
+                <p>Producto icónico del territorio para músicos, coleccionistas o visitantes que quieren llevarse un símbolo real.</p>
+                <div class="benko-tour__product-price">$395.000 COP</div>
+                <button
+                  class="benko-tour__ghost benko-tour__ghost--dark js-add-to-cart"
+                  type="button"
+                  data-id="tambor-alegre"
+                  data-name="Tambor alegre artesanal"
+                  data-price="395000"
+                >
+                  Agregar al carrito
+                </button>
+              </article>
+
+              <article class="benko-tour__product-card">
+                <div class="benko-tour__product-media benko-tour__product-media--real">
+                  <img
+                    src="./assets/images/products/PHOTO-2024-03-07-07-52-35.jpg"
+                    alt="Plato típico palenquero servido con arroz, proteína, patacón y ensalada"
+                    loading="lazy"
+                    decoding="async"
+                  >
+                </div>
+                <h3>Plato típico palenquero</h3>
+                <p>Compra gastronómica ideal para grupos y viajeros que quieren sumar sabores locales a su paso por el territorio.</p>
+                <div class="benko-tour__product-price">$45.000 COP</div>
+                <button
+                  class="benko-tour__ghost benko-tour__ghost--dark js-add-to-cart"
+                  type="button"
+                  data-id="plato-palenquero"
+                  data-name="Plato típico palenquero"
+                  data-price="45000"
+                >
+                  Agregar al carrito
+                </button>
+              </article>
+
+              <article class="benko-tour__product-card">
+                <div class="benko-tour__product-media benko-tour__product-media--real">
+                  <img
+                    src="./assets/images/products/IMG_5481.JPG"
+                    alt="Preparación tradicional al fogón dentro de una cocina local"
+                    loading="lazy"
+                    decoding="async"
+                  >
+                </div>
+                <h3>Muestra gastronómica al fogón</h3>
+                <p>Complemento cultural pensado para quienes quieren llevarse también la cocina tradicional como parte del recuerdo.</p>
+                <div class="benko-tour__product-price">$32.000 COP</div>
+                <button
+                  class="benko-tour__ghost benko-tour__ghost--dark js-add-to-cart"
+                  type="button"
+                  data-id="muestra-gastronomica"
+                  data-name="Muestra gastronómica al fogón"
+                  data-price="32000"
+                >
+                  Agregar al carrito
+                </button>
+              </article>
+            </div>
+
+            <aside class="benko-tour__cart-card" id="carrito">
+              <div class="benko-tour__cart-head">
+                <div>
+                  <span class="benko-tour__card-tag">Carrito</span>
+                  <h3>Resumen de compra</h3>
+                </div>
+                <strong id="cart-count" aria-live="polite">0</strong>
+              </div>
+
+              <div class="benko-tour__cart-list" id="cart-items" aria-live="polite">
+                <p class="benko-tour__cart-empty">Todavía no has agregado productos.</p>
+              </div>
+
+              <label class="benko-tour__field">
+                <span>Ciudad para envío o entrega</span>
+                <input id="cart-city" type="text" placeholder="Ejemplo: Cartagena, Bogotá, Medellín">
+              </label>
+
+              <div class="benko-tour__cart-total">
+                <span>Total</span>
+                <strong id="cart-total">$0 COP</strong>
+              </div>
+
+              <div class="benko-tour__form-actions benko-tour__form-actions--stack">
+                <button class="benko-tour__button" id="cart-pay-wompi" type="button">Pagar pedido con Wompi</button>
+                <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-pay-mercadopago" type="button">
+                  Pagar pedido con Mercado Pago
+                </button>
+                <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-checkout" type="button">Comprar por WhatsApp</button>
+                <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-email" type="button">Pedir por correo</button>
+                <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-clear" type="button">Vaciar carrito</button>
+              </div>
+
+              <div class="benko-tour__status" id="cart-status" aria-live="polite">
+                Agrega productos y luego finaliza el pedido con pago real o por mensaje.
+              </div>
+            </aside>
+          </div>
+        </section>
+      </main>
+
+      <footer class="benko-tour__footer">
+        <div class="benko-tour__footer-brand">
+          <img
+            class="benko-tour__footer-logo"
+            src="./assets/images/brand/logo-horizontal.jpg"
+            alt="Logo horizontal de Benko Tour"
+            loading="lazy"
+            decoding="async"
+          >
+          <p>
+            Turismo cultural con reservas claras, itinerarios vendibles y productos artesanales para aumentar el valor de cada visita.
+          </p>
+        </div>
+        <div class="benko-tour__footer-links">
+          <a href="./index.html">Inicio</a>
+          <a href="./experiencia.html" target="_blank" rel="noopener noreferrer">Experiencia</a>
+          <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
+        </div>
+      </footer>
+    </div>
+
+    <a
+      class="benko-tour__whatsapp"
+      href="https://wa.me/573245065560"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Escribir a Benko Tour por WhatsApp"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20.52 3.48A11.88 11.88 0 0 0 12.06 0C5.47 0 .1 5.34.1 11.92c0 2.1.55 4.16 1.6 5.98L0 24l6.3-1.64a11.92 11.92 0 0 0 5.75 1.47h.01c6.58 0 11.94-5.35 11.94-11.93 0-3.18-1.24-6.17-3.48-8.42Zm-8.46 18.33h-.01a9.92 9.92 0 0 1-5.05-1.38l-.36-.21-3.74.98 1-3.65-.24-.38A9.9 9.9 0 0 1 2.15 11.92c0-5.47 4.45-9.92 9.92-9.92 2.65 0 5.14 1.03 7.01 2.9a9.85 9.85 0 0 1 2.9 7.01c0 5.47-4.45 9.92-9.92 9.92Zm5.44-7.43c-.3-.15-1.78-.88-2.05-.98-.27-.1-.47-.15-.66.15-.2.3-.76.98-.94 1.18-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.78-1.67-2.08-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.66-1.6-.91-2.2-.24-.57-.48-.49-.66-.5h-.56c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.89.12.58-.09 1.78-.73 2.03-1.43.25-.7.25-1.31.17-1.43-.07-.12-.27-.2-.56-.35Z"></path>
+      </svg>
+      WhatsApp
+    </a>
+  </div>
+</body>
+</html>

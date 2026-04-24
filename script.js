@@ -69,7 +69,7 @@ const cartPayMercadoPagoButton = document.querySelector("#cart-pay-mercadopago")
 const cartClearButton = document.querySelector("#cart-clear");
 const cartStatus = document.querySelector("#cart-status");
 const cartCityInput = document.querySelector("#cart-city");
-const dateInput = bookingForm.querySelector('input[name="date"]');
+const dateInput = bookingForm ? bookingForm.querySelector('input[name="date"]') : null;
 const topLoginLink = document.querySelector(".benko-tour__login");
 const accessTabsContainer = document.querySelector(".benko-tour__access-tabs");
 const accessTabButtons = document.querySelectorAll("[data-access-tab]");
@@ -90,6 +90,7 @@ const reviewSpotlight = document.querySelector("#review-spotlight");
 const reviewList = document.querySelector("#review-list");
 const reviewRatingInput = document.querySelector("#review-rating");
 const ratingButtons = document.querySelectorAll(".benko-tour__rating-star");
+const experienceRotatorElements = document.querySelectorAll("[data-experience-rotator]");
 
 const cart = new Map();
 const STORAGE_KEYS = {
@@ -126,10 +127,96 @@ const defaultReviews = [
     createdAt: "2026-02-14T10:00:00.000Z"
   }
 ];
+const experienceSlideDecks = {
+  community: [
+    {
+      src: "./assets/images/experience/san-basilio-de-palenque-tour-edited-1536x864.jpeg",
+      alt: "Grupo de visitantes compartiendo una muestra cultural con la comunidad en San Basilio de Palenque"
+    },
+    {
+      src: "./assets/images/experience/benkos tour.JPG",
+      alt: "Visitantes posando entre instrumentos tradicionales dentro de un espacio cultural de Palenque"
+    },
+    {
+      src: "./assets/images/experience/339850457_668394985054606_4815029087381544534_n.jpg",
+      alt: "Demostración musical dentro de una casa tradicional durante la experiencia en Palenque"
+    },
+    {
+      src: "./assets/images/experience/san-basilio-de-palenque-1536x864.jpeg",
+      alt: "Vista del territorio de San Basilio de Palenque durante una experiencia guiada"
+    }
+  ],
+  guide: [
+    {
+      src: "./assets/images/experience/san-basilio-de-palenque-tour-guide.jpeg",
+      alt: "Guía local conversando con viajeras durante un recorrido por San Basilio de Palenque"
+    },
+    {
+      src: "./assets/images/experience/2FF12B6C-0A0F-4E69-8735-1F1DDA7A0548.jpg",
+      alt: "Guía local explicando un mural poético durante el recorrido cultural"
+    },
+    {
+      src: "./assets/images/experience/ae32684a-2f73-45bf-bd5e-0c5326ed45d5.jpg",
+      alt: "Visitantes y guía junto a un símbolo de memoria afrodescendiente en Palenque"
+    },
+    {
+      src: "./assets/images/experience/EE202B76-68E7-49CD-859C-EFD331B85BC1.jpg",
+      alt: "Grupo de visitantes posando frente a un mural emblemático durante la ruta guiada"
+    }
+  ],
+  music: [
+    {
+      src: "./assets/images/experience/palenque-cartagena-music-1536x1152.jpeg",
+      alt: "Fachada colorida vinculada a la música y la expresión cultural de Palenque"
+    },
+    {
+      src: "./assets/images/experience/74fc96e1-e03d-4191-8f13-0b732e814f68.jpg",
+      alt: "Visitante en un espacio artístico lleno de firmas, instrumentos y memoria musical"
+    },
+    {
+      src: "./assets/images/experience/9645eddd-2a0c-487b-a7f2-eeb04d64471e.jpg",
+      alt: "Visitantes y guía posando entre instrumentos tradicionales dentro de un espacio cultural"
+    },
+    {
+      src: "./assets/images/experience/339850457_668394985054606_4815029087381544534_n.jpg",
+      alt: "Momento musical en una casa tradicional durante la experiencia en Palenque"
+    }
+  ],
+  history: [
+    {
+      src: "./assets/images/experience/the-main-square-palenque-2.jpg",
+      alt: "Monumento de Benkos Biohó en la plaza principal de San Basilio de Palenque"
+    },
+    {
+      src: "./assets/images/experience/img_4599-1-edited-1536x864 (1).jpg",
+      alt: "Monumento de Kid Pambelé como símbolo histórico y deportivo del territorio"
+    },
+    {
+      src: "./assets/images/experience/FDE597DF-2D8B-4DC5-A6AD-EAD685DBB1D2.jpg",
+      alt: "Visitantes junto a un mural que resalta memoria, identidad y orgullo afro"
+    },
+    {
+      src: "./assets/images/experience/7267BA29-F8F8-4BCE-91B8-61590464BF03.jpg",
+      alt: "Grupo de visitantes frente a un mural con mensaje de memoria y dignidad"
+    }
+  ]
+};
+const experienceRotators = Array.from(experienceRotatorElements).map((figure) => {
+  const key = figure.dataset.experienceRotator || "";
+  return {
+    key,
+    index: 0,
+    isBusy: false,
+    figure,
+    image: figure.querySelector("[data-experience-image]"),
+    slides: experienceSlideDecks[key] || []
+  };
+});
 
 let activeAccessTab = "login";
 let spotlightIndex = 0;
 let reviewRotationTimer = null;
+let experienceRotationTimer = null;
 
 function formatCOP(value) {
   return formatter.format(value);
@@ -254,58 +341,85 @@ function setActiveAccessTab(tabName) {
 }
 
 function renderAccessSession(user) {
+  if (!accessSession) {
+    return;
+  }
+
   accessSession.replaceChildren();
 
   if (!user) {
     accessSession.append(
-      createElement("strong", "", "Todavía no has iniciado sesión"),
-      createElement("span", "", "Tu cuenta te permitirá guardar acceso en este navegador y dejar valoraciones en la página.")
+      createElement("strong", "", "Todavía no has guardado tus datos"),
+      createElement("span", "", "Tu cuenta te permitirá guardar nombre, contacto y ciudad en este navegador para volver más rápido a reservar.")
     );
     return;
   }
 
+  const detailLine = [user.email, user.phone, user.city].filter(Boolean).join(" · ");
+
   accessSession.append(
     createElement("strong", "", `Sesión lista para ${user.name}`),
-    createElement("span", "", `${user.email}${user.city ? ` · ${user.city}` : ""}`)
+    createElement("span", "", detailLine || "Tus datos básicos ya quedaron guardados en este navegador.")
   );
 }
 
-function syncReviewFormState() {
-  const currentUser = getCurrentUser();
-  const reviewFields = reviewForm.querySelectorAll("input, select, textarea, button");
-
-  reviewFields.forEach((field) => {
-    if (field.type !== "hidden") {
-      field.disabled = !currentUser;
-    }
-  });
-
-  reviewForm.classList.toggle("benko-tour__feedback-form--locked", !currentUser);
-
-  if (!currentUser) {
-    reviewRatingInput.value = "";
-    updateRatingButtons(0);
-    setStatus(reviewStatus, "", "Inicia sesión para dejar tu opinión y tu calificación con estrellas.");
+function syncBookingIdentity(user) {
+  if (!bookingForm) {
     return;
   }
 
+  const nameField = bookingForm.elements.namedItem("name");
+  const phoneField = bookingForm.elements.namedItem("phone");
+
+  if (nameField && !nameField.value && user && user.name) {
+    nameField.value = user.name;
+  }
+
+  if (phoneField && !phoneField.value && user && user.phone) {
+    phoneField.value = user.phone;
+  }
+}
+
+function syncReviewFormState() {
+  if (!reviewForm) {
+    return;
+  }
+
+  const currentUser = getCurrentUser();
+  const nameField = reviewForm.elements.namedItem("name");
   const cityField = reviewForm.elements.namedItem("city");
 
-  if (cityField && !cityField.value && currentUser.city) {
+  reviewForm.classList.remove("benko-tour__feedback-form--locked");
+
+  if (nameField && !nameField.value && currentUser && currentUser.name) {
+    nameField.value = currentUser.name;
+  }
+
+  if (cityField && !cityField.value && currentUser && currentUser.city) {
     cityField.value = currentUser.city;
   }
 
-  setStatus(reviewStatus, "", "Tu sesión está activa. Ya puedes compartir tu experiencia del tour.");
+  if (!currentUser) {
+    setStatus(reviewStatus, "", "Puedes dejar tu opinión sin registrarte. Si vuelves a reservar, tu sesión puede guardar tus datos básicos.");
+    return;
+  }
+
+  setStatus(reviewStatus, "", "Puedes valorar sin registrarte, y como ya iniciaste sesión tus datos básicos se completan más rápido.");
 }
 
 function renderAccessState() {
   const currentUser = getCurrentUser();
 
   renderAccessSession(currentUser);
+  syncBookingIdentity(currentUser);
   syncReviewFormState();
 
   if (topLoginLink) {
     topLoginLink.textContent = currentUser ? "Mi cuenta" : "Iniciar sesión";
+  }
+
+  if (!accessTabsContainer || !accessLoggedPanel || !accessLoggedCopy) {
+    return;
   }
 
   if (!currentUser) {
@@ -318,7 +432,7 @@ function renderAccessState() {
   accessTabsContainer.classList.add("benko-tour__hidden");
   accessLoggedPanel.classList.remove("benko-tour__hidden");
   accessForms.forEach((form) => form.classList.add("benko-tour__access-form--hidden"));
-  accessLoggedCopy.textContent = `${currentUser.name}, tu cuenta está activa en este navegador. Ya puedes dejar opiniones, estrellas y volver más rápido cuando quieras.`;
+  accessLoggedCopy.textContent = `${currentUser.name}, tu cuenta está activa en este navegador. Tus datos básicos quedan listos para reservar más rápido cuando quieras volver.`;
 }
 
 function updateRatingButtons(value) {
@@ -344,6 +458,10 @@ function createReviewCard(review) {
 }
 
 function renderReviewSpotlight(review) {
+  if (!reviewSpotlight) {
+    return;
+  }
+
   reviewSpotlight.replaceChildren();
 
   if (!review) {
@@ -364,6 +482,10 @@ function renderReviewSpotlight(review) {
 }
 
 function renderReviews() {
+  if (!reviewAverage || !reviewAverageStars || !reviewCount || !reviewList) {
+    return;
+  }
+
   const reviews = getSortedReviews();
   const totalRatings = reviews.reduce((sum, review) => sum + review.rating, 0);
   const averageRating = reviews.length ? totalRatings / reviews.length : 0;
@@ -406,7 +528,71 @@ function startReviewRotation() {
   }, 5200);
 }
 
+function swapExperienceSlide(rotator, nextIndex) {
+  if (!rotator || !rotator.image || rotator.isBusy || rotator.slides.length < 2) {
+    return;
+  }
+
+  const safeIndex = (nextIndex + rotator.slides.length) % rotator.slides.length;
+  const nextSlide = rotator.slides[safeIndex];
+
+  if (!nextSlide || rotator.image.getAttribute("src") === nextSlide.src) {
+    rotator.index = safeIndex;
+    return;
+  }
+
+  rotator.isBusy = true;
+
+  const preloadImage = new Image();
+  preloadImage.decoding = "async";
+  preloadImage.src = nextSlide.src;
+  preloadImage.onload = () => {
+    rotator.image.classList.add("is-swapping");
+
+    window.setTimeout(() => {
+      rotator.image.src = nextSlide.src;
+      rotator.image.alt = nextSlide.alt;
+      rotator.index = safeIndex;
+
+      window.requestAnimationFrame(() => {
+        rotator.image.classList.remove("is-swapping");
+        rotator.isBusy = false;
+      });
+    }, 180);
+  };
+  preloadImage.onerror = () => {
+    rotator.isBusy = false;
+  };
+}
+
+function startExperienceRotation() {
+  if (!experienceRotators.length) {
+    return;
+  }
+
+  window.clearInterval(experienceRotationTimer);
+
+  if (experienceRotators.every((rotator) => rotator.slides.length < 2)) {
+    return;
+  }
+
+  experienceRotationTimer = window.setInterval(() => {
+    experienceRotators.forEach((rotator) => {
+      if (rotator.slides.length > 1) {
+        swapExperienceSlide(rotator, rotator.index + 1);
+      }
+    });
+  }, 4600);
+}
+
 function getSelectedPackageData() {
+  if (!packageSelect || packageSelect.selectedIndex < 0) {
+    return {
+      label: "Ruta principal",
+      price: 0
+    };
+  }
+
   const option = packageSelect.options[packageSelect.selectedIndex];
   return {
     label: option.textContent.split(" - ")[0],
@@ -415,6 +601,10 @@ function getSelectedPackageData() {
 }
 
 function updateEstimate() {
+  if (!travelersInput || !estimateTotal || !estimateCaption) {
+    return;
+  }
+
   const { label, price } = getSelectedPackageData();
   const travelers = Math.max(1, Number(travelersInput.value || 1));
   const total = price * travelers;
@@ -486,6 +676,10 @@ async function submitOrder(payload) {
 }
 
 function buildBookingPayload() {
+  if (!bookingForm) {
+    return null;
+  }
+
   if (!bookingForm.reportValidity()) {
     return null;
   }
@@ -662,7 +856,7 @@ function buildCartPayload() {
     reference: createReference("SHOP"),
     type: "shop",
     description: "Pedido tienda Benko Tour",
-    city: cartCityInput.value.trim() || "Sin ciudad especificada",
+    city: cartCityInput ? (cartCityInput.value.trim() || "Sin ciudad especificada") : "Sin ciudad especificada",
     currency: "COP",
     items,
     total
@@ -683,6 +877,10 @@ function buildCartMessage(payload) {
 }
 
 function renderCart() {
+  if (!cartItemsContainer || !cartTotalElement || !cartCountElement) {
+    return;
+  }
+
   const items = getCartItems();
   const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const count = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -720,7 +918,7 @@ packageButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const selected = button.dataset.package;
 
-    if (!selected) {
+    if (!selected || !packageSelect) {
       return;
     }
 
@@ -754,139 +952,172 @@ addToCartButtons.forEach((button) => {
   });
 });
 
-packageSelect.addEventListener("change", updateEstimate);
-travelersInput.addEventListener("input", updateEstimate);
+if (packageSelect) {
+  const packageFromUrl = new URLSearchParams(window.location.search).get("package");
+  const packageExists = Array.from(packageSelect.options).some((option) => option.value === packageFromUrl);
+
+  if (packageFromUrl && packageExists) {
+    packageSelect.value = packageFromUrl;
+  }
+
+  packageSelect.addEventListener("change", updateEstimate);
+}
+
+if (travelersInput) {
+  travelersInput.addEventListener("input", updateEstimate);
+}
+
 updateEstimate();
 
 if (dateInput) {
   dateInput.min = new Date().toISOString().split("T")[0];
 }
 
-bookingForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  await handleReservationSubmit("auto");
-});
+if (bookingForm) {
+  bookingForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await handleReservationSubmit("auto");
+  });
+}
 
-bookingWhatsappButton.addEventListener("click", async () => {
-  await handleReservationSubmit("whatsapp");
-});
+if (bookingWhatsappButton) {
+  bookingWhatsappButton.addEventListener("click", async () => {
+    await handleReservationSubmit("whatsapp");
+  });
+}
 
-bookingEmailButton.addEventListener("click", async () => {
-  await handleReservationSubmit("email");
-});
+if (bookingEmailButton) {
+  bookingEmailButton.addEventListener("click", async () => {
+    await handleReservationSubmit("email");
+  });
+}
 
-reservationPayWompiButton.addEventListener("click", async () => {
-  const payload = buildBookingPayload();
+if (reservationPayWompiButton) {
+  reservationPayWompiButton.addEventListener("click", async () => {
+    const payload = buildBookingPayload();
 
-  if (!payload) {
-    setStatus(bookingStatus, "error", "Completa primero la reserva antes de pagar.");
-    return;
-  }
+    if (!payload) {
+      setStatus(bookingStatus, "error", "Completa primero la reserva antes de pagar.");
+      return;
+    }
 
-  try {
-    await submitReservation(payload);
-    await launchWompiCheckout(payload, bookingStatus);
-  } catch (error) {
-    setStatus(bookingStatus, "error", error.message);
-  }
-});
+    try {
+      await submitReservation(payload);
+      await launchWompiCheckout(payload, bookingStatus);
+    } catch (error) {
+      setStatus(bookingStatus, "error", error.message);
+    }
+  });
+}
 
-reservationPayMercadoPagoButton.addEventListener("click", async () => {
-  const payload = buildBookingPayload();
+if (reservationPayMercadoPagoButton) {
+  reservationPayMercadoPagoButton.addEventListener("click", async () => {
+    const payload = buildBookingPayload();
 
-  if (!payload) {
-    setStatus(bookingStatus, "error", "Completa primero la reserva antes de pagar.");
-    return;
-  }
+    if (!payload) {
+      setStatus(bookingStatus, "error", "Completa primero la reserva antes de pagar.");
+      return;
+    }
 
-  try {
-    await submitReservation(payload);
-    await launchMercadoPagoCheckout(payload, bookingStatus);
-  } catch (error) {
-    setStatus(bookingStatus, "error", error.message);
-  }
-});
+    try {
+      await submitReservation(payload);
+      await launchMercadoPagoCheckout(payload, bookingStatus);
+    } catch (error) {
+      setStatus(bookingStatus, "error", error.message);
+    }
+  });
+}
 
-cartWhatsappButton.addEventListener("click", async () => {
-  const payload = buildCartPayload();
+if (cartWhatsappButton) {
+  cartWhatsappButton.addEventListener("click", async () => {
+    const payload = buildCartPayload();
 
-  if (!payload.items.length) {
-    setStatus(cartStatus, "error", "Agrega al menos un producto al carrito antes de continuar.");
-    return;
-  }
+    if (!payload.items.length) {
+      setStatus(cartStatus, "error", "Agrega al menos un producto al carrito antes de continuar.");
+      return;
+    }
 
-  try {
-    await submitOrder(payload);
-  } catch (error) {
-    setStatus(cartStatus, "error", error.message);
-    return;
-  }
+    try {
+      await submitOrder(payload);
+    } catch (error) {
+      setStatus(cartStatus, "error", error.message);
+      return;
+    }
 
-  openWhatsApp(buildCartMessage(payload));
-  setStatus(cartStatus, "success", "Se abrió WhatsApp con el pedido listo para enviar.");
-});
+    openWhatsApp(buildCartMessage(payload));
+    setStatus(cartStatus, "success", "Se abrió WhatsApp con el pedido listo para enviar.");
+  });
+}
 
-cartEmailButton.addEventListener("click", async () => {
-  const payload = buildCartPayload();
+if (cartEmailButton) {
+  cartEmailButton.addEventListener("click", async () => {
+    const payload = buildCartPayload();
 
-  if (!payload.items.length) {
-    setStatus(cartStatus, "error", "Agrega al menos un producto al carrito antes de continuar.");
-    return;
-  }
+    if (!payload.items.length) {
+      setStatus(cartStatus, "error", "Agrega al menos un producto al carrito antes de continuar.");
+      return;
+    }
 
-  try {
-    await submitOrder(payload);
-  } catch (error) {
-    setStatus(cartStatus, "error", error.message);
-    return;
-  }
+    try {
+      await submitOrder(payload);
+    } catch (error) {
+      setStatus(cartStatus, "error", error.message);
+      return;
+    }
 
-  const emailOpened = openMailto(`Pedido tienda ${payload.reference}`, buildCartMessage(payload));
+    const emailOpened = openMailto(`Pedido tienda ${payload.reference}`, buildCartMessage(payload));
 
-  if (emailOpened) {
-    setStatus(cartStatus, "success", "Se abrió tu cliente de correo con el pedido listo.");
-  } else {
-    setStatus(cartStatus, "error", "Configura `reservationEmail` en config.js para usar correo.");
-  }
-});
+    if (emailOpened) {
+      setStatus(cartStatus, "success", "Se abrió tu cliente de correo con el pedido listo.");
+    } else {
+      setStatus(cartStatus, "error", "Configura `reservationEmail` en config.js para usar correo.");
+    }
+  });
+}
 
-cartPayWompiButton.addEventListener("click", async () => {
-  const payload = buildCartPayload();
+if (cartPayWompiButton) {
+  cartPayWompiButton.addEventListener("click", async () => {
+    const payload = buildCartPayload();
 
-  if (!payload.items.length) {
-    setStatus(cartStatus, "error", "Agrega al menos un producto al carrito antes de pagar.");
-    return;
-  }
+    if (!payload.items.length) {
+      setStatus(cartStatus, "error", "Agrega al menos un producto al carrito antes de pagar.");
+      return;
+    }
 
-  try {
-    await submitOrder(payload);
-    await launchWompiCheckout(payload, cartStatus);
-  } catch (error) {
-    setStatus(cartStatus, "error", error.message);
-  }
-});
+    try {
+      await submitOrder(payload);
+      await launchWompiCheckout(payload, cartStatus);
+    } catch (error) {
+      setStatus(cartStatus, "error", error.message);
+    }
+  });
+}
 
-cartPayMercadoPagoButton.addEventListener("click", async () => {
-  const payload = buildCartPayload();
+if (cartPayMercadoPagoButton) {
+  cartPayMercadoPagoButton.addEventListener("click", async () => {
+    const payload = buildCartPayload();
 
-  if (!payload.items.length) {
-    setStatus(cartStatus, "error", "Agrega al menos un producto al carrito antes de pagar.");
-    return;
-  }
+    if (!payload.items.length) {
+      setStatus(cartStatus, "error", "Agrega al menos un producto al carrito antes de pagar.");
+      return;
+    }
 
-  try {
-    await submitOrder(payload);
-    await launchMercadoPagoCheckout(payload, cartStatus);
-  } catch (error) {
-    setStatus(cartStatus, "error", error.message);
-  }
-});
+    try {
+      await submitOrder(payload);
+      await launchMercadoPagoCheckout(payload, cartStatus);
+    } catch (error) {
+      setStatus(cartStatus, "error", error.message);
+    }
+  });
+}
 
-cartClearButton.addEventListener("click", () => {
-  cart.clear();
-  renderCart();
-  setStatus(cartStatus, "", "El carrito quedó vacío.");
-});
+if (cartClearButton) {
+  cartClearButton.addEventListener("click", () => {
+    cart.clear();
+    renderCart();
+    setStatus(cartStatus, "", "El carrito quedó vacío.");
+  });
+}
 
 accessTabButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -896,6 +1127,10 @@ accessTabButtons.forEach((button) => {
 
 ratingButtons.forEach((button) => {
   button.addEventListener("click", () => {
+    if (!reviewRatingInput) {
+      return;
+    }
+
     const ratingValue = Number(button.dataset.ratingValue || 0);
     reviewRatingInput.value = String(ratingValue);
     updateRatingButtons(ratingValue);
@@ -946,6 +1181,7 @@ if (registerForm) {
     const formData = new FormData(registerForm);
     const name = String(formData.get("name") || "").trim();
     const city = String(formData.get("city") || "").trim();
+    const phone = String(formData.get("phone") || "").trim();
     const email = normalizeEmail(formData.get("email"));
     const password = String(formData.get("password") || "");
     const users = getUsers();
@@ -959,6 +1195,7 @@ if (registerForm) {
       id: createReference("USR"),
       name,
       city,
+      phone,
       email,
       passwordHash: await hashPassword(password),
       createdAt: new Date().toISOString()
@@ -1002,11 +1239,6 @@ if (reviewForm) {
 
     const currentUser = getCurrentUser();
 
-    if (!currentUser) {
-      setStatus(reviewStatus, "error", "Inicia sesión para dejar tu valoración.");
-      return;
-    }
-
     if (!reviewForm.reportValidity()) {
       return;
     }
@@ -1017,11 +1249,12 @@ if (reviewForm) {
     }
 
     const formData = new FormData(reviewForm);
-    const city = String(formData.get("city") || "").trim() || currentUser.city || "Sin ciudad";
+    const reviewerName = String(formData.get("name") || "").trim() || (currentUser ? currentUser.name : "") || "Visitante";
+    const city = String(formData.get("city") || "").trim() || (currentUser ? currentUser.city : "") || "Sin ciudad";
     const newReview = {
       id: createReference("REV"),
-      userId: currentUser.id,
-      name: currentUser.name,
+      userId: currentUser ? currentUser.id : "",
+      name: reviewerName,
       city,
       packageName: String(formData.get("package") || "").trim(),
       rating: Number(reviewRatingInput.value),
@@ -1034,8 +1267,13 @@ if (reviewForm) {
     reviewForm.reset();
 
     const cityField = reviewForm.elements.namedItem("city");
+    const nameField = reviewForm.elements.namedItem("name");
 
-    if (cityField && currentUser.city) {
+    if (nameField && currentUser && currentUser.name) {
+      nameField.value = currentUser.name;
+    }
+
+    if (cityField && currentUser && currentUser.city) {
       cityField.value = currentUser.city;
     }
 
@@ -1050,5 +1288,6 @@ if (reviewForm) {
 renderAccessState();
 renderReviews();
 startReviewRotation();
+startExperienceRotation();
 setActiveAccessTab(activeAccessTab);
 renderCart();

@@ -20,8 +20,9 @@
   <meta property="og:url" content="https://benkotour.wordpress.com/">
   <meta property="og:image" content="https://benkotour.wordpress.com/wp-content/uploads/2026/04/647e3dd44c0bc.webp">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="#166078">
+  <meta name="theme-color" content="#20392b">
   <link rel="canonical" href="https://benkotour.wordpress.com/">
+  <link rel="icon" type="image/jpeg" href="./assets/images/brand/favicon-benko.jpg">
   <title>Benko Tour | Turismo cultural y reservas en San Basilio de Palenque</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,27 +66,58 @@
     <div class="benko-tour__shell">
       <header class="benko-tour__header">
         <div class="benko-tour__topbar">
-          <a class="benko-tour__topbar-brand" href="#inicio">Benko Tour</a>
+          <a class="benko-tour__topbar-brand" href="#inicio" aria-label="Benko Tour, ir al inicio">
+            <img
+              src="./assets/images/brand/logo-sello.jpg"
+              alt=""
+              loading="eager"
+              decoding="async"
+            >
+            <span>Benko Tour</span>
+          </a>
           <nav class="benko-tour__menu" aria-label="Secciones principales">
-            <a href="#experiencia">Experiencia</a>
-            <a href="#nosotros">Nosotros</a>
+            <a href="./experiencia.html" target="_blank" rel="noopener noreferrer">Experiencia</a>
+            <a href="./nosotros.html" target="_blank" rel="noopener noreferrer">Nosotros</a>
             <a href="#paquetes">Paquetes</a>
             <a href="#itinerario">Itinerario</a>
             <a href="#sabores">Sabores y guías</a>
             <a href="#opiniones">Opiniones</a>
-            <a href="#tienda">Tienda</a>
-            <a href="#reservas">Reservas</a>
+            <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
+            <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
           </nav>
           <a class="benko-tour__login" href="#acceso">Iniciar sesión</a>
         </div>
 
         <div class="benko-tour__masthead" id="inicio">
           <div class="benko-tour__brand">
+            <div class="benko-tour__brand-lockup">
+              <img
+                class="benko-tour__brand-wordmark"
+                src="./assets/images/brand/logo-horizontal.jpg"
+                alt="Logo horizontal de Benko Tour con paisaje, viviendas tradicionales y comunidad"
+                loading="eager"
+                decoding="async"
+              >
+            </div>
             <span class="benko-tour__eyebrow">Turismo cultural con propósito</span>
-            <p class="benko-tour__logo">Benko Tour</p>
+            <p class="benko-tour__logo">Una identidad propia para recibir viajeros con raíz, memoria y comunidad</p>
             <p class="benko-tour__subtitle">
               Reservas, itinerarios y experiencias auténticas en San Basilio de Palenque con salida desde Cartagena.
             </p>
+            <div class="benko-tour__brand-highlights" aria-label="Fortalezas de la marca">
+              <div class="benko-tour__brand-highlight">
+                <strong>Marca local</strong>
+                <span>Relato del territorio contado desde la comunidad.</span>
+              </div>
+              <div class="benko-tour__brand-highlight">
+                <strong>Reserva directa</strong>
+                <span>Menos pasos para convertir visitas en reservas reales.</span>
+              </div>
+              <div class="benko-tour__brand-highlight">
+                <strong>Memoria viva</strong>
+                <span>Lengua, sabores, música y recorrido cultural en una sola experiencia.</span>
+              </div>
+            </div>
           </div>
           <figure class="benko-tour__mural-card">
             <img
@@ -113,8 +145,8 @@
             </p>
 
             <div class="benko-tour__actions">
-              <a class="benko-tour__button" href="#reservas">Reservar itinerario</a>
-              <a class="benko-tour__ghost" href="#tienda">Comprar productos</a>
+              <a class="benko-tour__button" href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservar itinerario</a>
+              <a class="benko-tour__ghost" href="./tienda.html" target="_blank" rel="noopener noreferrer">Comprar productos</a>
             </div>
 
             <div class="benko-tour__trust">
@@ -154,14 +186,27 @@
               <li>Tiempo para compras de artesanías y fotografías</li>
             </ul>
 
-            <button
-              class="benko-tour__button benko-tour__button--full js-package-pick"
-              type="button"
-              data-package="principal"
-              data-package-label="Ruta principal Cartagena - Palenque"
+            <div class="benko-tour__hero-seal">
+              <img
+                src="./assets/images/brand/logo-sello.jpg"
+                alt=""
+                loading="lazy"
+                decoding="async"
+              >
+              <div>
+                <strong>Sello Benko Tour</strong>
+                <span>Una marca propia para recibir viajeros con una imagen más clara, cálida y confiable.</span>
+              </div>
+            </div>
+
+            <a
+              class="benko-tour__button benko-tour__button--full"
+              href="./reservas.html?package=principal"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               Quiero este plan
-            </button>
+            </a>
           </aside>
         </section>
 
@@ -169,10 +214,10 @@
           <div class="benko-tour__section-head">
             <div>
               <span class="benko-tour__eyebrow">Acceso de viajeros</span>
-              <h2 class="benko-tour__section-title" id="acceso-title">Crea tu cuenta y vuelve con un solo paso</h2>
+              <h2 class="benko-tour__section-title" id="acceso-title">Guarda tus datos y vuelve con un solo paso</h2>
             </div>
             <p class="benko-tour__section-copy">
-              Desde aquí cada visitante puede registrarse, iniciar sesión y luego dejar una valoración con estrellas sobre su experiencia.
+              El inicio de sesión queda solo para guardar datos básicos del viajero en este navegador y hacer más rápida la reserva cuando regrese.
             </p>
           </div>
 
@@ -181,11 +226,11 @@
               <span class="benko-tour__card-tag">Comunidad Benko</span>
               <h3>Tu perfil de viajero queda listo para próximas visitas</h3>
               <p>
-                Guarda tus datos, vuelve más rápido a la página y comparte cómo viviste el tour para que otros visitantes confíen más.
+                Guarda tus datos, vuelve más rápido a la página y deja lista tu información básica para futuras reservas sin tener que escribir todo otra vez.
               </p>
               <ul class="benko-tour__feature-list">
                 <li>Ingreso más rápido desde la misma página</li>
-                <li>Opiniones con estrellas y comentario visible</li>
+                <li>Nombre y contacto listos para futuras reservas</li>
                 <li>Estado de sesión persistente en este navegador</li>
               </ul>
               <div class="benko-tour__access-session" id="access-session"></div>
@@ -205,10 +250,10 @@
                 <span class="benko-tour__card-tag">Sesión activa</span>
                 <h3>Ya haces parte de la comunidad Benko</h3>
                 <p id="access-logged-copy">
-                  Tu acceso quedó listo. Ahora puedes dejar tu opinión, valorar tu tour y volver más fácil cuando quieras.
+                  Tu acceso quedó listo. Ahora tus datos básicos quedan guardados en este navegador para reservar más rápido cuando quieras.
                 </p>
                 <div class="benko-tour__form-actions">
-                  <a class="benko-tour__button" href="#opiniones">Valorar mi tour</a>
+                  <a class="benko-tour__button" href="#reservas">Ir a reservas</a>
                   <button class="benko-tour__ghost benko-tour__ghost--dark" id="logout-button" type="button">
                     Cerrar sesión
                   </button>
@@ -246,6 +291,11 @@
                   </label>
 
                   <label class="benko-tour__field benko-tour__field--full">
+                    <span>WhatsApp</span>
+                    <input type="tel" name="phone" placeholder="+57 300 000 0000">
+                  </label>
+
+                  <label class="benko-tour__field benko-tour__field--full">
                     <span>Correo electrónico</span>
                     <input type="email" name="email" placeholder="tucorreo@ejemplo.com" required>
                   </label>
@@ -262,185 +312,88 @@
               </form>
 
               <div class="benko-tour__status" id="access-status" aria-live="polite">
-                Crea tu cuenta o inicia sesión para dejar valoraciones y comentarios dentro de la página.
+                Crea tu cuenta o inicia sesión para guardar tus datos básicos y volver más rápido cuando quieras reservar.
               </div>
             </div>
           </div>
         </section>
 
-        <section class="benko-tour__section" id="experiencia" aria-labelledby="experiencia-title">
+        <section class="benko-tour__section" id="explora" aria-labelledby="explora-title">
           <div class="benko-tour__section-head">
             <div>
-              <span class="benko-tour__eyebrow">Experiencia</span>
-              <h2 class="benko-tour__section-title" id="experiencia-title">San Basilio de Palenque como experiencia de alto valor cultural</h2>
+              <span class="benko-tour__eyebrow">Explora más</span>
+              <h2 class="benko-tour__section-title" id="explora-title">La portada queda más ligera y cada tema vive en su propia página</h2>
             </div>
             <p class="benko-tour__section-copy">
-              Esta landing está pensada para vender mejor: explica el valor del destino, muestra precios claros y facilita tanto la
-              reserva del tour como la compra de productos artesanales.
+              Ahora la home se concentra en mostrar la propuesta, los paquetes y la prueba social. Experiencia, nosotros, reservas y tienda
+              se abren en espacios dedicados para que el visitante navegue con más calma y convierta con menos ruido.
             </p>
           </div>
 
-          <div class="benko-tour__story">
-            <article class="benko-tour__story-card">
-              <p>
-                San Basilio de Palenque, en Bolívar, es uno de los territorios culturales más importantes de Colombia. Su lengua,
-                sus prácticas musicales, su cocina y su historia de resistencia lo convierten en un destino con enorme valor para viajeros
-                que buscan algo más profundo que un recorrido convencional.
+          <div class="benko-tour__packages">
+            <article class="benko-tour__package-card benko-tour__package-card--featured">
+              <span class="benko-tour__card-tag">Experiencia viva</span>
+              <h3>Comunidad, música y recorrido</h3>
+              <p class="benko-tour__package-copy">
+                Una página completa para mostrar ambiente, memoria, guía local y escenas reales del territorio sin recargar la portada.
               </p>
-              <p>
-                Desde Cartagena, el trayecto toma aproximadamente una hora y media, lo que permite ofrecer una excursión de día completo
-                con logística clara, salida cómoda y tiempo suficiente para vivir el pueblo con guía, gastronomía, muestras artísticas y
-                compras de productos locales.
-              </p>
-              <p>
-                El resultado es una propuesta ideal para turismo cultural, grupos académicos, viajeros internacionales, empresas con enfoque
-                social y visitantes que quieren reservar con información transparente de precio, idioma, comida e itinerario.
-              </p>
-            </article>
-
-            <div class="benko-tour__highlights">
-              <div class="benko-tour__highlight">
-                <strong>Historia viva</strong>
-                <span>Recorre plazas, relatos y expresiones que conservan el legado de Benkos Biohó y la identidad palenquera.</span>
-              </div>
-              <div class="benko-tour__highlight">
-                <strong>Inmersión real</strong>
-                <span>Combina ruta guiada, cocina típica, tambores, lengua palenquera y contacto con sabedores o líderes culturales.</span>
-              </div>
-              <div class="benko-tour__highlight">
-                <strong>Conversión comercial</strong>
-                <span>La página ya incorpora llamada a la acción, formulario de reserva, productos y carrito para cerrar ventas.</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="benko-tour__experience-gallery" aria-label="Momentos reales de la experiencia en San Basilio de Palenque">
-            <figure class="benko-tour__experience-card benko-tour__experience-card--wide">
-              <img
-                src="./assets/images/experience/san-basilio-de-palenque-tour-edited-1536x864.jpeg"
-                alt="Grupo de visitantes compartiendo una muestra cultural con la comunidad en San Basilio de Palenque"
-                loading="lazy"
-                decoding="async"
-              >
-              <figcaption>
-                <span class="benko-tour__experience-tag">Experiencia viva</span>
-                <strong>Encuentro real con comunidad y muestra cultural</strong>
-                <p>La visita no se queda en un recorrido superficial: se vive desde el intercambio, la presencia y la memoria del territorio.</p>
-              </figcaption>
-            </figure>
-
-            <figure class="benko-tour__experience-card">
-              <img
-                src="./assets/images/experience/san-basilio-de-palenque-tour-guide.jpeg"
-                alt="Guia local conversando con viajeras durante un recorrido por San Basilio de Palenque"
-                loading="lazy"
-                decoding="async"
-              >
-              <figcaption>
-                <span class="benko-tour__experience-tag">Recorrido guiado</span>
-                <strong>Relato local durante la ruta</strong>
-                <p>El acompañamiento humano hace que cada parada tenga contexto, historia y cercanía.</p>
-              </figcaption>
-            </figure>
-
-            <figure class="benko-tour__experience-card">
-              <img
-                src="./assets/images/experience/palenque-cartagena-music-1536x1152.jpeg"
-                alt="Fachada colorida de una casa de musica y expresion cultural en Palenque"
-                loading="lazy"
-                decoding="async"
-              >
-              <figcaption>
-                <span class="benko-tour__experience-tag">Musica y territorio</span>
-                <strong>Ritmo, expresion e identidad</strong>
-                <p>La musica no aparece como decoracion: forma parte del relato vivo del lugar.</p>
-              </figcaption>
-            </figure>
-
-            <figure class="benko-tour__experience-card">
-              <img
-                src="./assets/images/experience/the-main-square-palenque-2.jpg"
-                alt="Monumento de Benkos Bioho en la plaza principal de San Basilio de Palenque"
-                loading="lazy"
-                decoding="async"
-              >
-              <figcaption>
-                <span class="benko-tour__experience-tag">Memoria historica</span>
-                <strong>Plaza, simbolos y resistencia</strong>
-                <p>La experiencia conecta el viaje con lugares emblematicos que sostienen la identidad palenquera.</p>
-              </figcaption>
-            </figure>
-          </div>
-        </section>
-
-        <section class="benko-tour__section" id="nosotros" aria-labelledby="nosotros-title">
-          <div class="benko-tour__section-head">
-            <div>
-              <span class="benko-tour__eyebrow">Sobre nosotros</span>
-              <h2 class="benko-tour__section-title" id="nosotros-title">Somos cultura viva y enseñamos lengua palenquera</h2>
-            </div>
-            <p class="benko-tour__section-copy">
-              Esta sección fortalece la confianza de quien reserva y deja claro que Benko Tour no solo mueve viajeros: también comparte
-              conocimiento, identidad y memoria desde la lengua principal del territorio.
-            </p>
-          </div>
-
-          <div class="benko-tour__about">
-            <article class="benko-tour__about-card">
-              <span class="benko-tour__card-tag">Identidad</span>
-              <h3>Nuestra voz nace en Palenque</h3>
-              <p>
-                En Benko Tour trabajamos desde la cultura propia de San Basilio de Palenque. Nuestro idioma principal es la lengua palenquera,
-                y por eso cada recorrido busca que el visitante no solo observe el territorio, sino que también escuche, comprenda y valore
-                una forma viva de hablar que hace parte esencial de nuestra identidad.
-              </p>
-              <p>
-                Para nosotros, enseñar lengua palenquera no es un adorno turístico. Es una manera de compartir memoria, resistencia,
-                pertenencia y orgullo comunitario con cada persona que nos visita.
-              </p>
-            </article>
-
-            <article class="benko-tour__about-card">
-              <span class="benko-tour__card-tag">Aprendizaje</span>
-              <h3>Qué enseñamos dentro de la experiencia</h3>
               <ul class="benko-tour__feature-list">
-                <li>Palabras y expresiones básicas para saludar y presentarse</li>
-                <li>Contexto histórico de la lengua palenquera dentro del recorrido</li>
-                <li>Relación entre idioma, música, cocina y tradición oral</li>
-                <li>Espacios para que grupos y viajeros aprendan frases reales del territorio</li>
+                <li>Galería con imágenes reales de la experiencia</li>
+                <li>Relato del tour desde la comunidad</li>
+                <li>Acceso directo a opiniones y reservas</li>
               </ul>
+              <a class="benko-tour__button" href="./experiencia.html" target="_blank" rel="noopener noreferrer">
+                Abrir experiencia
+              </a>
             </article>
 
-            <article class="benko-tour__about-card">
-              <span class="benko-tour__card-tag">Valor diferencial</span>
-              <h3>Por qué esto nos hace distintos</h3>
-              <p>
-                Muchas experiencias hablan de Palenque desde afuera. Nosotros queremos contarlo desde adentro. Por eso la enseñanza de la
-                lengua palenquera se convierte en un valor diferencial fuerte para colegios, universidades, turistas internacionales,
-                investigadores y marcas que buscan una experiencia cultural seria.
+            <article class="benko-tour__package-card">
+              <span class="benko-tour__card-tag">Quiénes somos</span>
+              <h3>Identidad, lengua y valor cultural</h3>
+              <p class="benko-tour__package-copy">
+                Una vista aparte para contar la voz de Benko Tour, la lengua palenquera y el valor educativo del proyecto.
               </p>
-              <div class="benko-tour__language-chips">
-                <span>Palenquero</span>
-                <span>Historia oral</span>
-                <span>Música tradicional</span>
-                <span>Memoria comunitaria</span>
-              </div>
+              <ul class="benko-tour__feature-list">
+                <li>Historia contada desde adentro</li>
+                <li>Lengua palenquera como diferencial</li>
+                <li>Más confianza para quien reserva</li>
+              </ul>
+              <a class="benko-tour__ghost benko-tour__ghost--dark" href="./nosotros.html" target="_blank" rel="noopener noreferrer">
+                Conocer Benko Tour
+              </a>
             </article>
-          </div>
 
-          <div class="benko-tour__phrases">
-            <div class="benko-tour__phrase-card">
-              <strong>Lengua palenquera</strong>
-              <span>Una de las expresiones culturales más poderosas del territorio.</span>
-            </div>
-            <div class="benko-tour__phrase-card">
-              <strong>Taller introductorio</strong>
-              <span>Ideal para grupos que quieren llevarse una experiencia más profunda y educativa.</span>
-            </div>
-            <div class="benko-tour__phrase-card">
-              <strong>Experiencia auténtica</strong>
-              <span>La reserva no compra solo transporte: compra acceso a una cultura viva.</span>
-            </div>
+            <article class="benko-tour__package-card">
+              <span class="benko-tour__card-tag">Reserva directa</span>
+              <h3>Formulario y pago en una página limpia</h3>
+              <p class="benko-tour__package-copy">
+                El formulario de reserva ya no compite con todo el home. Se abre en una página pensada solo para convertir.
+              </p>
+              <ul class="benko-tour__feature-list">
+                <li>Resumen en vivo del precio</li>
+                <li>Paquetes, idiomas y recogida</li>
+                <li>Salida a WhatsApp, correo o pago</li>
+              </ul>
+              <a class="benko-tour__ghost benko-tour__ghost--dark" href="./reservas.html" target="_blank" rel="noopener noreferrer">
+                Abrir reservas
+              </a>
+            </article>
+
+            <article class="benko-tour__package-card">
+              <span class="benko-tour__card-tag">Tienda dedicada</span>
+              <h3>Productos reales con fotos tuyas</h3>
+              <p class="benko-tour__package-copy">
+                La tienda ahora puede crecer aparte con carrito, fotos reales y más foco comercial sin llenar de bloques la portada.
+              </p>
+              <ul class="benko-tour__feature-list">
+                <li>Tambor, plato y cocina con imagen real</li>
+                <li>Carrito propio para pedidos</li>
+                <li>Más espacio para seguir sumando productos</li>
+              </ul>
+              <a class="benko-tour__ghost benko-tour__ghost--dark" href="./tienda.html" target="_blank" rel="noopener noreferrer">
+                Ir a la tienda
+              </a>
+            </article>
           </div>
         </section>
 
@@ -469,14 +422,14 @@
                 <li>Almuerzo típico</li>
                 <li>Asistente bilingüe</li>
               </ul>
-              <button
-                class="benko-tour__ghost benko-tour__ghost--dark js-package-pick"
-                type="button"
-                data-package="comunitaria"
-                data-package-label="Ruta Comunitaria"
+              <a
+                class="benko-tour__ghost benko-tour__ghost--dark"
+                href="./reservas.html?package=comunitaria"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Seleccionar paquete
-              </button>
+              </a>
             </article>
 
             <article class="benko-tour__package-card benko-tour__package-card--featured">
@@ -492,14 +445,14 @@
                 <li>Almuerzo palenquero incluido</li>
                 <li>Taller introductorio de lengua palenquera o muestra cultural según disponibilidad</li>
               </ul>
-              <button
-                class="benko-tour__button js-package-pick"
-                type="button"
-                data-package="principal"
-                data-package-label="Ruta principal Cartagena - Palenque"
+              <a
+                class="benko-tour__button"
+                href="./reservas.html?package=principal"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Reservar este paquete
-              </button>
+              </a>
             </article>
 
             <article class="benko-tour__package-card">
@@ -515,14 +468,14 @@
                 <li>Dulces típicos y bebida artesanal</li>
                 <li>Gestión de idiomas adicionales bajo disponibilidad</li>
               </ul>
-              <button
-                class="benko-tour__ghost benko-tour__ghost--dark js-package-pick"
-                type="button"
-                data-package="premium"
-                data-package-label="Inmersión Premium"
+              <a
+                class="benko-tour__ghost benko-tour__ghost--dark"
+                href="./reservas.html?package=premium"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Cotizar experiencia premium
-              </button>
+              </a>
             </article>
           </div>
         </section>
@@ -664,7 +617,7 @@
               <h2 class="benko-tour__section-title" id="testimonios-title">Valoraciones reales que se van rotando en la página</h2>
             </div>
             <p class="benko-tour__section-copy">
-              Después del tour, cada usuario registrado puede dejar estrellas y un comentario. Las opiniones se muestran rotando de forma automática.
+              Después del tour, cualquier visitante puede dejar estrellas y un comentario. Si además guarda su sesión, sus datos básicos quedarán listos para futuras reservas.
             </p>
           </div>
 
@@ -684,7 +637,7 @@
               <span class="benko-tour__card-tag">Tu opinión</span>
               <h3>Cuéntanos cómo te fue en el tour</h3>
               <p class="benko-tour__note">
-                Inicia sesión primero. Tu valoración se sumará al promedio y aparecerá en la rotación de comentarios del sitio.
+                No necesitas iniciar sesión para valorar. Si ya guardaste tu sesión, completamos tus datos básicos automáticamente.
               </p>
 
               <form class="benko-tour__feedback-form" id="review-form">
@@ -698,6 +651,11 @@
                 <input id="review-rating" name="rating" type="hidden" value="">
 
                 <div class="benko-tour__field-grid">
+                  <label class="benko-tour__field">
+                    <span>Tu nombre</span>
+                    <input type="text" name="name" placeholder="Cómo quieres aparecer" required>
+                  </label>
+
                   <label class="benko-tour__field">
                     <span>Paquete o experiencia</span>
                     <select name="package">
@@ -724,7 +682,7 @@
               </form>
 
               <div class="benko-tour__status" id="review-status" aria-live="polite">
-                Inicia sesión para dejar tu opinión y tu calificación con estrellas.
+                Puedes dejar tu opinión sin registrarte. Solo elige estrellas, escribe tu experiencia y publícala.
               </div>
             </div>
           </div>
@@ -732,283 +690,65 @@
           <div class="benko-tour__reviews" id="review-list" aria-live="polite"></div>
         </section>
 
-        <section class="benko-tour__section" id="reservas" aria-labelledby="reservas-title">
+        <section class="benko-tour__section" id="conversion" aria-labelledby="conversion-title">
           <div class="benko-tour__section-head">
             <div>
-              <span class="benko-tour__eyebrow">Reservas</span>
-              <h2 class="benko-tour__section-title" id="reservas-title">Reserva tu itinerario en menos pasos</h2>
+              <span class="benko-tour__eyebrow">Siguiente paso</span>
+              <h2 class="benko-tour__section-title" id="conversion-title">Cuando quieran avanzar, la página los lleva directo a la acción</h2>
             </div>
             <p class="benko-tour__section-copy">
-              Este formulario está pensado para convertir y mandar el lead directo a WhatsApp con la información clave.
+              Reservas y tienda ya no cargan dentro de la portada. Se abren en páginas separadas para que el usuario encuentre más rápido lo que quiere hacer.
             </p>
           </div>
 
-          <div class="benko-tour__booking-layout">
-            <form class="benko-tour__booking-form" id="booking-form">
-              <div class="benko-tour__field-grid">
-                <label class="benko-tour__field">
-                  <span>Nombre completo</span>
-                  <input type="text" name="name" placeholder="Tu nombre" required>
-                </label>
-
-                <label class="benko-tour__field">
-                  <span>WhatsApp</span>
-                  <input type="tel" name="phone" placeholder="+57 300 000 0000" required>
-                </label>
-
-                <label class="benko-tour__field">
-                  <span>Fecha del tour</span>
-                  <input type="date" name="date" required>
-                </label>
-
-                <label class="benko-tour__field">
-                  <span>Número de viajeros</span>
-                  <input id="travelers" type="number" name="travelers" min="1" value="2" required>
-                </label>
-
-                <label class="benko-tour__field">
-                  <span>Paquete</span>
-                  <select id="package-select" name="package" required>
-                    <option value="comunitaria" data-price="300000">Ruta Comunitaria - $300.000</option>
-                    <option value="principal" data-price="320000" selected>Ruta Principal - $320.000</option>
-                    <option value="premium" data-price="395000">Inmersión Premium - $395.000</option>
-                  </select>
-                </label>
-
-                <label class="benko-tour__field">
-                  <span>Idioma</span>
-                  <select name="language" required>
-                    <option value="Español">Español</option>
-                    <option value="Inglés">Inglés</option>
-                    <option value="Francés">Francés</option>
-                    <option value="Portugués">Portugués</option>
-                    <option value="Italiano">Italiano</option>
-                    <option value="Alemán">Alemán</option>
-                  </select>
-                </label>
-
-                <label class="benko-tour__field benko-tour__field--full">
-                  <span>Punto de recogida en Cartagena</span>
-                  <input type="text" name="pickup" placeholder="Hotel, barrio o punto de encuentro" required>
-                </label>
-
-                <label class="benko-tour__field benko-tour__field--full">
-                  <span>Notas adicionales</span>
-                  <textarea name="notes" rows="4" placeholder="Ejemplo: viaja un niño, dieta vegetariana, grupo empresarial, etc."></textarea>
-                </label>
-              </div>
-
-              <div class="benko-tour__form-actions">
-                <button class="benko-tour__button" type="submit">Enviar reserva</button>
-                <button class="benko-tour__ghost benko-tour__ghost--dark" id="booking-whatsapp" type="button">
-                  Reservar por WhatsApp
-                </button>
-                <button class="benko-tour__ghost benko-tour__ghost--dark" id="booking-email" type="button">
-                  Reservar por correo
-                </button>
-              </div>
-
-              <div class="benko-tour__status" id="booking-status" aria-live="polite">
-                Completa tus datos para enviar la reserva por el canal configurado.
-              </div>
-            </form>
-
-            <aside class="benko-tour__booking-summary">
-              <span class="benko-tour__card-tag">Resumen en vivo</span>
-              <h3>Estimado de la reserva</h3>
-              <div class="benko-tour__estimate" aria-live="polite">
-                <strong id="estimate-total">$640.000 COP</strong>
-                <span id="estimate-caption">2 viajeros en Ruta Principal</span>
-              </div>
-
-              <div class="benko-tour__service-list">
-                <div class="benko-tour__service-row">
-                  <strong>Incluye</strong>
-                  <span>transporte + guía + almuerzo</span>
-                </div>
-                <div class="benko-tour__service-row">
-                  <strong>Confirmación</strong>
-                  <span>sujeto a disponibilidad</span>
-                </div>
-                <div class="benko-tour__service-row">
-                  <strong>Reserva sugerida</strong>
-                  <span>48 horas antes</span>
-                </div>
-              </div>
-
-              <div class="benko-tour__payment-panel">
-                <span class="benko-tour__card-tag">Pago real</span>
-                <h4>Checkout de reserva</h4>
-                <p>
-                  Elige el proveedor de pago que prefieras para la reserva. Ambos quedan listos para conectarse a backend real.
-                </p>
-                <div class="benko-tour__form-actions benko-tour__form-actions--stack">
-                  <button class="benko-tour__button" id="reservation-pay-wompi" type="button">Pagar reserva con Wompi</button>
-                  <button class="benko-tour__ghost benko-tour__ghost--dark" id="reservation-pay-mercadopago" type="button">
-                    Pagar reserva con Mercado Pago
-                  </button>
-                </div>
-              </div>
-
-              <p class="benko-tour__note">
-                Consejo comercial: si vas a usar esta página ya en producción, cambia estos valores por tus tarifas definitivas, tus reseñas
-                reales y tus links de pago en el archivo de configuración.
+          <div class="benko-tour__packages">
+            <article class="benko-tour__package-card benko-tour__package-card--featured">
+              <span class="benko-tour__card-tag">Reservas</span>
+              <h3>Formulario dedicado para cerrar el tour</h3>
+              <p class="benko-tour__package-copy">
+                Una vista limpia con resumen en vivo, selección de paquete, idioma, recogida y salida por pago o mensaje.
               </p>
-            </aside>
-          </div>
-        </section>
+              <ul class="benko-tour__feature-list">
+                <li>Abre directo en una nueva pestaña</li>
+                <li>Recibe el paquete elegido desde la home</li>
+                <li>Convierte sin competir con otros bloques</li>
+              </ul>
+              <a class="benko-tour__button" href="./reservas.html" target="_blank" rel="noopener noreferrer">
+                Ir a reservas
+              </a>
+            </article>
 
-        <section class="benko-tour__section" id="tienda" aria-labelledby="tienda-title">
-          <div class="benko-tour__section-head">
-            <div>
-              <span class="benko-tour__eyebrow">Tienda</span>
-              <h2 class="benko-tour__section-title" id="tienda-title">Carrito para vender camisas, tambores y recuerdos</h2>
-            </div>
-            <p class="benko-tour__section-copy">
-              La tienda agrega venta cruzada a la experiencia. Cada producto se suma al carrito y el cierre se hace por WhatsApp con total.
-            </p>
-          </div>
-
-          <div class="benko-tour__shop-layout">
-            <div class="benko-tour__shop-grid">
-              <article class="benko-tour__product-card">
-                <!-- Replace with .benko-tour__product-media--real and ./assets/images/products/camiseta-benko.webp when the real photo is ready. -->
-                <div class="benko-tour__product-media benko-tour__product-media--placeholder benko-tour__product-media--shirt" aria-hidden="true">
-                  <div class="benko-tour__product-media-content">
-                    <span class="benko-tour__product-kicker">Souvenir textil</span>
-                    <strong>Camiseta con sello Benko</strong>
-                    <small>Algodon suave, estampado frontal y presencia de marca.</small>
-                  </div>
-                </div>
-                <h3>Camiseta Benko Tour</h3>
-                <p>Algodón, estampado frontal, ideal como souvenir de identidad cultural.</p>
-                <div class="benko-tour__product-price">$89.000 COP</div>
-                <button
-                  class="benko-tour__ghost benko-tour__ghost--dark js-add-to-cart"
-                  type="button"
-                  data-id="camiseta-benko"
-                  data-name="Camiseta Benko Tour"
-                  data-price="89000"
-                >
-                  Agregar al carrito
-                </button>
-              </article>
-
-              <article class="benko-tour__product-card">
-                <!-- Replace with .benko-tour__product-media--real and ./assets/images/products/tambor-alegre.webp when the real photo is ready. -->
-                <div class="benko-tour__product-media benko-tour__product-media--placeholder benko-tour__product-media--drum" aria-hidden="true">
-                  <div class="benko-tour__product-media-content">
-                    <span class="benko-tour__product-kicker">Instrumento artesanal</span>
-                    <strong>Tambor alegre tradicional</strong>
-                    <small>Pieza de coleccion pensada para musica, escuela y memoria cultural.</small>
-                  </div>
-                </div>
-                <h3>Tambor alegre artesanal</h3>
-                <p>Producto icónico del Caribe colombiano para músicos, coleccionistas o escuelas.</p>
-                <div class="benko-tour__product-price">$395.000 COP</div>
-                <button
-                  class="benko-tour__ghost benko-tour__ghost--dark js-add-to-cart"
-                  type="button"
-                  data-id="tambor-alegre"
-                  data-name="Tambor alegre artesanal"
-                  data-price="395000"
-                >
-                  Agregar al carrito
-                </button>
-              </article>
-
-              <article class="benko-tour__product-card">
-                <!-- Replace with .benko-tour__product-media--real and ./assets/images/products/mochila-artesanal.webp when the real photo is ready. -->
-                <div class="benko-tour__product-media benko-tour__product-media--placeholder benko-tour__product-media--bag" aria-hidden="true">
-                  <div class="benko-tour__product-media-content">
-                    <span class="benko-tour__product-kicker">Artesania funcional</span>
-                    <strong>Mochila de uso diario</strong>
-                    <small>Acabado manual para viajeros que quieren llevar identidad y utilidad.</small>
-                  </div>
-                </div>
-                <h3>Mochila artesanal</h3>
-                <p>Souvenir funcional de fabricación manual para complementar la compra del viajero.</p>
-                <div class="benko-tour__product-price">$90.000 COP</div>
-                <button
-                  class="benko-tour__ghost benko-tour__ghost--dark js-add-to-cart"
-                  type="button"
-                  data-id="mochila-artesanal"
-                  data-name="Mochila artesanal"
-                  data-price="90000"
-                >
-                  Agregar al carrito
-                </button>
-              </article>
-
-              <article class="benko-tour__product-card">
-                <!-- Replace with .benko-tour__product-media--real and ./assets/images/products/dulces-tipicos.webp when the real photo is ready. -->
-                <div class="benko-tour__product-media benko-tour__product-media--placeholder benko-tour__product-media--sweets" aria-hidden="true">
-                  <div class="benko-tour__product-media-content">
-                    <span class="benko-tour__product-kicker">Sabores del territorio</span>
-                    <strong>Caja de dulces tipicos</strong>
-                    <small>Detalle rapido para turistas que quieren llevarse un recuerdo comestible.</small>
-                  </div>
-                </div>
-                <h3>Caja de dulces típicos</h3>
-                <p>Compra rápida para turistas que quieren llevarse un sabor local a casa.</p>
-                <div class="benko-tour__product-price">$18.000 COP</div>
-                <button
-                  class="benko-tour__ghost benko-tour__ghost--dark js-add-to-cart"
-                  type="button"
-                  data-id="dulces-tipicos"
-                  data-name="Caja de dulces típicos"
-                  data-price="18000"
-                >
-                  Agregar al carrito
-                </button>
-              </article>
-            </div>
-
-            <aside class="benko-tour__cart-card" id="carrito">
-              <div class="benko-tour__cart-head">
-                <div>
-                  <span class="benko-tour__card-tag">Carrito</span>
-                  <h3>Resumen de compra</h3>
-                </div>
-                <strong id="cart-count" aria-live="polite">0</strong>
-              </div>
-
-              <div class="benko-tour__cart-list" id="cart-items" aria-live="polite">
-                <p class="benko-tour__cart-empty">Todavía no has agregado productos.</p>
-              </div>
-
-              <label class="benko-tour__field">
-                <span>Ciudad para envío o entrega</span>
-                <input id="cart-city" type="text" placeholder="Ejemplo: Cartagena, Bogotá, Medellín">
-              </label>
-
-              <div class="benko-tour__cart-total">
-                <span>Total</span>
-                <strong id="cart-total">$0 COP</strong>
-              </div>
-
-              <div class="benko-tour__form-actions benko-tour__form-actions--stack">
-                <button class="benko-tour__button" id="cart-pay-wompi" type="button">Pagar pedido con Wompi</button>
-                <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-pay-mercadopago" type="button">
-                  Pagar pedido con Mercado Pago
-                </button>
-                <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-checkout" type="button">Comprar por WhatsApp</button>
-                <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-email" type="button">Pedir por correo</button>
-                <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-clear" type="button">Vaciar carrito</button>
-              </div>
-
-              <div class="benko-tour__status" id="cart-status" aria-live="polite">
-                Agrega productos y luego finaliza el pedido con pago real o por mensaje.
-              </div>
-            </aside>
+            <article class="benko-tour__package-card">
+              <span class="benko-tour__card-tag">Tienda</span>
+              <h3>Carrito propio con fotos reales</h3>
+              <p class="benko-tour__package-copy">
+                Un espacio aparte para vender productos y sabores con más calma, más claridad y mejor sensación visual.
+              </p>
+              <ul class="benko-tour__feature-list">
+                <li>Tambor, plato y fogón con imágenes reales</li>
+                <li>Carrito listo para pedido o pago</li>
+                <li>Espacio preparado para sumar más productos</li>
+              </ul>
+              <a class="benko-tour__ghost benko-tour__ghost--dark" href="./tienda.html" target="_blank" rel="noopener noreferrer">
+                Abrir tienda
+              </a>
+            </article>
           </div>
         </section>
       </main>
 
       <footer class="benko-tour__footer">
-        <div>
-          <strong>Benko Tour</strong><br>
-          Turismo cultural con reservas claras, itinerarios vendibles y productos artesanales para aumentar el ticket promedio.
+        <div class="benko-tour__footer-brand">
+          <img
+            class="benko-tour__footer-logo"
+            src="./assets/images/brand/logo-horizontal.jpg"
+            alt="Logo horizontal de Benko Tour"
+            loading="lazy"
+            decoding="async"
+          >
+          <p>
+            Turismo cultural con reservas claras, itinerarios vendibles y productos artesanales para aumentar el valor de cada visita.
+          </p>
         </div>
         <div class="benko-tour__footer-links">
           <a href="https://benkotour.wordpress.com/quienes-somos/">Quiénes somos</a>
