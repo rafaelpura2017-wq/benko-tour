@@ -1435,6 +1435,126 @@ body {
   font-size: 0.94rem;
 }
 
+.benko-tour__info-card--itinerary {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+.benko-tour__info-media {
+  display: grid;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+.benko-tour__info-media-card {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(80, 60, 34, 0.1);
+  background: linear-gradient(180deg, rgba(255, 249, 241, 0.98) 0%, rgba(247, 239, 226, 0.96) 100%);
+  box-shadow: 0 18px 30px rgba(38, 26, 18, 0.08);
+}
+
+.benko-tour__info-media-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(12, 16, 18, 0.02) 24%, rgba(12, 16, 18, 0.62) 100%);
+  pointer-events: none;
+}
+
+.benko-tour__info-media-card img,
+.benko-tour__info-media-rotator img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.benko-tour__info-media-card--rotating {
+  min-height: 330px;
+}
+
+.benko-tour__info-media-card--fixed {
+  min-height: 190px;
+}
+
+.benko-tour__info-media-card--fixed > img {
+  position: absolute;
+  inset: 0;
+}
+
+.benko-tour__info-media-rotator {
+  position: absolute;
+  inset: 0;
+  background: #d8c0ab;
+}
+
+.benko-tour__info-media-rotator img {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1.02);
+  animation: benko-tour-info-rotate 16s ease-in-out infinite;
+}
+
+.benko-tour__info-media-rotator img:nth-child(1) {
+  opacity: 1;
+  animation-delay: 0s;
+}
+
+.benko-tour__info-media-rotator img:nth-child(2) {
+  animation-delay: 8s;
+}
+
+.benko-tour__info-media-label,
+.benko-tour__info-media-card figcaption {
+  position: relative;
+  z-index: 1;
+}
+
+.benko-tour__info-media-label {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.benko-tour__info-media-card figcaption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 16px 18px 18px;
+  color: rgba(255, 247, 239, 0.96);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+@keyframes benko-tour-info-rotate {
+  0%,
+  42% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+
 .benko-tour__service-grid,
 .benko-tour__reviews,
 .benko-tour__about,
@@ -2098,6 +2218,14 @@ body {
 }
 
 @media (max-width: 560px) {
+  .benko-tour__info-media-card--rotating {
+    min-height: 280px;
+  }
+
+  .benko-tour__info-media-card--fixed {
+    min-height: 168px;
+  }
+
   .benko-tour__quick-nav-links,
   .benko-tour__quick-nav-actions {
     grid-template-columns: 1fr;
@@ -2174,5 +2302,16 @@ body {
     left: 12px;
     justify-content: center;
     bottom: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .benko-tour__info-media-rotator img {
+    animation: none;
+    transform: none;
+  }
+
+  .benko-tour__info-media-rotator img:nth-child(2) {
+    display: none;
   }
 }
