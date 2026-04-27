@@ -87,25 +87,30 @@
           </nav>
           <a class="benko-tour__login" href="./acceso.html#acceso">Iniciar sesión</a>
 
-          <details class="benko-tour__mobile-menu">
-            <summary class="benko-tour__mobile-menu-toggle">
-              <span class="benko-tour__mobile-menu-label">Menu</span>
-              <span class="benko-tour__mobile-menu-bars" aria-hidden="true">
-                <span></span>
-                <span></span>
-                <span></span>
-              </span>
-            </summary>
+          <input class="benko-tour__mobile-menu-checkbox" id="benko-tour-mobile-menu-toggle" type="checkbox" aria-hidden="true">
+          <label class="benko-tour__mobile-menu-trigger" for="benko-tour-mobile-menu-toggle">
+            <span class="benko-tour__mobile-menu-label">Menu</span>
+            <span class="benko-tour__mobile-menu-bars" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </label>
+          <label class="benko-tour__mobile-menu-overlay" for="benko-tour-mobile-menu-toggle" aria-hidden="true"></label>
 
-            <div class="benko-tour__mobile-menu-panel">
-              <nav class="benko-tour__mobile-menu-links" aria-label="Navegación móvil">
-                <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservar ahora</a>
-                <a href="#paquetes">Ver paquetes</a>
-                <a href="#opiniones">Leer opiniones</a>
-                <a href="https://wa.me/573245065560" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-              </nav>
+          <aside class="benko-tour__mobile-menu-panel" aria-label="Menú móvil de conversión">
+            <div class="benko-tour__mobile-menu-head">
+              <strong>Acceso rápido</strong>
+              <label class="benko-tour__mobile-menu-close" for="benko-tour-mobile-menu-toggle">Cerrar</label>
             </div>
-          </details>
+
+            <nav class="benko-tour__mobile-menu-links" aria-label="Navegación móvil">
+              <a href="./reservas.html" target="_blank" rel="noopener noreferrer" onclick="document.getElementById('benko-tour-mobile-menu-toggle').checked = false;">Reservar ahora</a>
+              <a href="#paquetes" onclick="document.getElementById('benko-tour-mobile-menu-toggle').checked = false;">Ver paquetes</a>
+              <a href="#opiniones" onclick="document.getElementById('benko-tour-mobile-menu-toggle').checked = false;">Leer opiniones</a>
+              <a href="https://wa.me/573245065560" target="_blank" rel="noopener noreferrer" onclick="document.getElementById('benko-tour-mobile-menu-toggle').checked = false;">WhatsApp</a>
+            </nav>
+          </aside>
         </div>
 
         <div class="benko-tour__masthead" id="inicio">

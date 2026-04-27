@@ -322,15 +322,17 @@ body {
   outline: none;
 }
 
-.benko-tour__mobile-menu {
-  display: none;
+.benko-tour__mobile-menu-checkbox {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.benko-tour__mobile-menu-toggle {
-  list-style: none;
-}
-
-.benko-tour__mobile-menu-toggle::-webkit-details-marker {
+.benko-tour__mobile-menu-trigger,
+.benko-tour__mobile-menu-overlay,
+.benko-tour__mobile-menu-panel {
   display: none;
 }
 
@@ -2212,9 +2214,7 @@ body {
     min-height: 72px;
     padding: 14px 18px;
     border-radius: 24px;
-    position: sticky;
-    top: 12px;
-    z-index: 40;
+    position: static;
   }
 
   .benko-tour__topbar > .benko-tour__menu,
@@ -2222,26 +2222,17 @@ body {
     display: none;
   }
 
-  .benko-tour__mobile-menu {
+  .benko-tour__mobile-menu-trigger,
+  .benko-tour__mobile-menu-overlay,
+  .benko-tour__mobile-menu-panel {
     display: block;
+  }
+
+  .benko-tour__mobile-menu-trigger {
     position: fixed;
-    top: 14px;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
     right: 12px;
-    z-index: 70;
-    width: fit-content;
-  }
-
-  .benko-tour__mobile-menu[open]::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: rgba(20, 13, 10, 0.42);
-    backdrop-filter: blur(6px);
-  }
-
-  .benko-tour__mobile-menu-toggle {
-    position: relative;
-    z-index: 1;
+    z-index: 90;
     display: inline-flex;
     align-items: center;
     gap: 12px;
@@ -2254,6 +2245,7 @@ body {
     box-shadow: 0 18px 34px rgba(0, 0, 0, 0.18);
     cursor: pointer;
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .benko-tour__mobile-menu-label {
@@ -2276,16 +2268,32 @@ body {
     transition: transform 0.25s ease, opacity 0.25s ease;
   }
 
-  .benko-tour__mobile-menu[open] .benko-tour__mobile-menu-bars span:nth-child(1) {
+  .benko-tour__mobile-menu-checkbox:checked + .benko-tour__mobile-menu-trigger .benko-tour__mobile-menu-bars span:nth-child(1) {
     transform: translateY(6px) rotate(45deg);
   }
 
-  .benko-tour__mobile-menu[open] .benko-tour__mobile-menu-bars span:nth-child(2) {
+  .benko-tour__mobile-menu-checkbox:checked + .benko-tour__mobile-menu-trigger .benko-tour__mobile-menu-bars span:nth-child(2) {
     opacity: 0;
   }
 
-  .benko-tour__mobile-menu[open] .benko-tour__mobile-menu-bars span:nth-child(3) {
+  .benko-tour__mobile-menu-checkbox:checked + .benko-tour__mobile-menu-trigger .benko-tour__mobile-menu-bars span:nth-child(3) {
     transform: translateY(-6px) rotate(-45deg);
+  }
+
+  .benko-tour__mobile-menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 84;
+    background: rgba(20, 13, 10, 0.42);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .benko-tour__mobile-menu-checkbox:checked ~ .benko-tour__mobile-menu-overlay {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .benko-tour__mobile-menu-panel {
@@ -2293,19 +2301,54 @@ body {
     top: 0;
     right: 0;
     bottom: 0;
-    left: auto;
-    z-index: 65;
+    z-index: 85;
     display: grid;
     gap: 16px;
     align-content: start;
     width: min(340px, 86vw);
-    padding: 84px 18px 28px;
+    padding: calc(env(safe-area-inset-top, 0px) + 76px) 18px 28px;
     border-radius: 28px 0 0 28px;
     border: 1px solid rgba(80, 60, 34, 0.12);
     background: linear-gradient(180deg, rgba(255, 252, 246, 0.98) 0%, rgba(246, 239, 226, 0.97) 100%);
     box-shadow: 0 24px 48px rgba(38, 26, 18, 0.18);
     max-height: 100vh;
     overflow: auto;
+    transform: translateX(108%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.28s ease, opacity 0.28s ease;
+  }
+
+  .benko-tour__mobile-menu-checkbox:checked ~ .benko-tour__mobile-menu-panel {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .benko-tour__mobile-menu-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .benko-tour__mobile-menu-head strong {
+    font-size: 1rem;
+    color: var(--brand-dark);
+  }
+
+  .benko-tour__mobile-menu-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: rgba(19, 99, 108, 0.08);
+    border: 1px solid rgba(19, 99, 108, 0.12);
+    color: var(--emerald);
+    font-weight: 800;
+    cursor: pointer;
   }
 
   .benko-tour__mobile-menu-links {
@@ -2338,20 +2381,6 @@ body {
     border-color: transparent;
     color: #fff;
     box-shadow: 0 14px 26px rgba(37, 211, 102, 0.18);
-  }
-
-  .benko-tour__mobile-menu-actions {
-    display: grid;
-    gap: 10px;
-  }
-
-  .benko-tour__mobile-menu-actions .benko-tour__ghost,
-  .benko-tour__mobile-menu-actions .benko-tour__login {
-    width: 100%;
-  }
-
-  .benko-tour__mobile-menu-login {
-    min-height: 48px;
   }
 
   .benko-tour__section-head,
@@ -2451,7 +2480,9 @@ body {
     font-size: 1.12rem;
   }
 
-  .benko-tour__mobile-menu-toggle {
+  .benko-tour__mobile-menu-trigger {
+    top: calc(env(safe-area-inset-top, 0px) + 10px);
+    right: 10px;
     min-height: 48px;
     padding: 0 14px;
   }
@@ -2462,7 +2493,7 @@ body {
 
   .benko-tour__mobile-menu-panel {
     width: min(320px, 88vw);
-    padding: 76px 16px 24px;
+    padding: calc(env(safe-area-inset-top, 0px) + 68px) 16px 24px;
     border-radius: 24px 0 0 24px;
   }
 
