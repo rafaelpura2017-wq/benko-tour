@@ -86,6 +86,39 @@
             <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
           </nav>
           <a class="benko-tour__login" href="./acceso.html#acceso">Iniciar sesión</a>
+
+          <details class="benko-tour__mobile-menu">
+            <summary class="benko-tour__mobile-menu-toggle">
+              <span class="benko-tour__mobile-menu-label">Menu</span>
+              <span class="benko-tour__mobile-menu-bars" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </summary>
+
+            <div class="benko-tour__mobile-menu-panel">
+              <nav class="benko-tour__mobile-menu-links" aria-label="Navegación móvil">
+                <a href="#inicio">Inicio</a>
+                <a href="#conversion">Reservar o comprar</a>
+                <a href="#paquetes">Paquetes</a>
+                <a href="#opiniones">Opiniones</a>
+                <a href="./experiencia.html" target="_blank" rel="noopener noreferrer">Experiencia</a>
+                <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
+                <a href="./nosotros.html" target="_blank" rel="noopener noreferrer">Nosotros</a>
+              </nav>
+
+              <div class="benko-tour__mobile-menu-actions">
+                <a class="benko-tour__button benko-tour__button--full" href="./reservas.html" target="_blank" rel="noopener noreferrer">
+                  Reservar ahora
+                </a>
+                <a class="benko-tour__ghost benko-tour__ghost--dark" href="./tienda.html" target="_blank" rel="noopener noreferrer">
+                  Abrir tienda
+                </a>
+                <a class="benko-tour__login benko-tour__mobile-menu-login" href="./acceso.html#acceso">Iniciar sesión</a>
+              </div>
+            </div>
+          </details>
         </div>
 
         <div class="benko-tour__masthead" id="inicio">
@@ -205,7 +238,7 @@
           </div>
         </aside>
 
-        <main>
+        <main class="benko-tour__main">
         <section class="benko-tour__hero" aria-label="Presentación principal">
           <div class="benko-tour__hero-content">
             <span class="benko-tour__pill">Patrimonio, identidad, música y gastronomía viva</span>
@@ -612,72 +645,101 @@
           </div>
 
           <div class="benko-tour__feedback-layout">
-            <div class="benko-tour__feedback-showcase">
-              <div class="benko-tour__feedback-score">
-                <span class="benko-tour__card-tag">Valoración media</span>
-                <strong id="review-average">5.0</strong>
-                <div class="benko-tour__stars benko-tour__stars--display" id="review-average-stars" aria-live="polite">★★★★★</div>
-                <span id="review-count">3 opiniones compartidas</span>
+            <div class="benko-tour__feedback-column benko-tour__feedback-column--primary">
+              <div class="benko-tour__feedback-showcase">
+                <div class="benko-tour__feedback-score">
+                  <span class="benko-tour__card-tag">Valoración media</span>
+                  <strong id="review-average">5.0</strong>
+                  <div class="benko-tour__stars benko-tour__stars--display" id="review-average-stars" aria-live="polite">★★★★★</div>
+                  <span id="review-count">3 opiniones compartidas</span>
+                </div>
+
+                <article class="benko-tour__review-spotlight" id="review-spotlight" aria-live="polite"></article>
               </div>
 
-              <article class="benko-tour__review-spotlight" id="review-spotlight" aria-live="polite"></article>
+              <div class="benko-tour__reviews benko-tour__reviews--compact" id="review-list" aria-live="polite"></div>
             </div>
 
-            <div class="benko-tour__feedback-form-card">
-              <span class="benko-tour__card-tag">Tu opinión</span>
-              <h3>Cuéntanos cómo te fue en el tour</h3>
-              <p class="benko-tour__note">
-                No necesitas iniciar sesión para valorar. Si ya la guardaste, completamos tus datos básicos automáticamente.
-              </p>
+            <div class="benko-tour__feedback-column benko-tour__feedback-column--secondary">
+              <div class="benko-tour__feedback-form-card">
+                <span class="benko-tour__card-tag">Tu opinión</span>
+                <h3>Cuéntanos cómo te fue en el tour</h3>
+                <p class="benko-tour__note">
+                  No necesitas iniciar sesión para valorar. Si ya la guardaste, completamos tus datos básicos automáticamente.
+                </p>
 
-              <form class="benko-tour__feedback-form" id="review-form">
-                <div class="benko-tour__rating-picker" role="group" aria-label="Selecciona una calificación entre una y cinco estrellas">
-                  <button class="benko-tour__rating-star" type="button" data-rating-value="1" aria-label="1 estrella">★</button>
-                  <button class="benko-tour__rating-star" type="button" data-rating-value="2" aria-label="2 estrellas">★</button>
-                  <button class="benko-tour__rating-star" type="button" data-rating-value="3" aria-label="3 estrellas">★</button>
-                  <button class="benko-tour__rating-star" type="button" data-rating-value="4" aria-label="4 estrellas">★</button>
-                  <button class="benko-tour__rating-star" type="button" data-rating-value="5" aria-label="5 estrellas">★</button>
+                <form class="benko-tour__feedback-form" id="review-form">
+                  <div class="benko-tour__rating-picker" role="group" aria-label="Selecciona una calificación entre una y cinco estrellas">
+                    <button class="benko-tour__rating-star" type="button" data-rating-value="1" aria-label="1 estrella">★</button>
+                    <button class="benko-tour__rating-star" type="button" data-rating-value="2" aria-label="2 estrellas">★</button>
+                    <button class="benko-tour__rating-star" type="button" data-rating-value="3" aria-label="3 estrellas">★</button>
+                    <button class="benko-tour__rating-star" type="button" data-rating-value="4" aria-label="4 estrellas">★</button>
+                    <button class="benko-tour__rating-star" type="button" data-rating-value="5" aria-label="5 estrellas">★</button>
+                  </div>
+                  <input id="review-rating" name="rating" type="hidden" value="">
+
+                  <div class="benko-tour__field-grid">
+                    <label class="benko-tour__field">
+                      <span>Tu nombre</span>
+                      <input type="text" name="name" placeholder="Cómo quieres aparecer" required>
+                    </label>
+
+                    <label class="benko-tour__field">
+                      <span>Paquete o experiencia</span>
+                      <select name="package">
+                        <option value="Ruta principal Cartagena - Palenque">Ruta principal Cartagena - Palenque</option>
+                        <option value="Ruta Comunitaria">Ruta Comunitaria</option>
+                        <option value="Inmersión Premium">Inmersión Premium</option>
+                      </select>
+                    </label>
+
+                    <label class="benko-tour__field">
+                      <span>Ciudad</span>
+                      <input type="text" name="city" placeholder="Ejemplo: Cali">
+                    </label>
+
+                    <label class="benko-tour__field benko-tour__field--full">
+                      <span>Tu comentario</span>
+                      <textarea name="comment" rows="4" placeholder="Cuéntanos qué fue lo que más te marcó del tour." required></textarea>
+                    </label>
+                  </div>
+
+                  <div class="benko-tour__form-actions">
+                    <button class="benko-tour__button" type="submit">Publicar valoración</button>
+                  </div>
+                </form>
+
+                <div class="benko-tour__status" id="review-status" aria-live="polite">
+                  Puedes dejar tu opinión sin registrarte. Solo elige estrellas, escribe tu experiencia y publícala.
                 </div>
-                <input id="review-rating" name="rating" type="hidden" value="">
-
-                <div class="benko-tour__field-grid">
-                  <label class="benko-tour__field">
-                    <span>Tu nombre</span>
-                    <input type="text" name="name" placeholder="Cómo quieres aparecer" required>
-                  </label>
-
-                  <label class="benko-tour__field">
-                    <span>Paquete o experiencia</span>
-                    <select name="package">
-                      <option value="Ruta principal Cartagena - Palenque">Ruta principal Cartagena - Palenque</option>
-                      <option value="Ruta Comunitaria">Ruta Comunitaria</option>
-                      <option value="Inmersión Premium">Inmersión Premium</option>
-                    </select>
-                  </label>
-
-                  <label class="benko-tour__field">
-                    <span>Ciudad</span>
-                    <input type="text" name="city" placeholder="Ejemplo: Cali">
-                  </label>
-
-                  <label class="benko-tour__field benko-tour__field--full">
-                    <span>Tu comentario</span>
-                    <textarea name="comment" rows="4" placeholder="Cuéntanos qué fue lo que más te marcó del tour." required></textarea>
-                  </label>
-                </div>
-
-                <div class="benko-tour__form-actions">
-                  <button class="benko-tour__button" type="submit">Publicar valoración</button>
-                </div>
-              </form>
-
-              <div class="benko-tour__status" id="review-status" aria-live="polite">
-                Puedes dejar tu opinión sin registrarte. Solo elige estrellas, escribe tu experiencia y publícala.
               </div>
+
+              <aside class="benko-tour__feedback-highlights" aria-label="Mensajes destacados de la experiencia">
+                <div class="benko-tour__feedback-highlights-head">
+                  <span class="benko-tour__card-tag">Mensajes destacados</span>
+                  <p>Frases cortas para reforzar claridad, confianza y valor cultural dentro del recorrido.</p>
+                </div>
+
+                <article class="benko-tour__review-card benko-tour__feedback-highlight-card">
+                  <div class="benko-tour__stars benko-tour__stars--display" aria-hidden="true">★★★★★</div>
+                  <strong>Reserva clara desde la primera visita</strong>
+                  <p>El visitante entiende mejor qué incluye el tour, cuánto cuesta y cómo avanzar sin perderse.</p>
+                </article>
+
+                <article class="benko-tour__review-card benko-tour__feedback-highlight-card">
+                  <div class="benko-tour__stars benko-tour__stars--display" aria-hidden="true">★★★★★</div>
+                  <strong>Escenas reales que ayudan a decidir</strong>
+                  <p>Murales, grupos y guía local hacen que la experiencia se sienta viva antes de reservar.</p>
+                </article>
+
+                <article class="benko-tour__review-card benko-tour__feedback-highlight-card">
+                  <div class="benko-tour__stars benko-tour__stars--display" aria-hidden="true">★★★★★</div>
+                  <strong>Más confianza en el valor cultural</strong>
+                  <p>La mezcla entre historia, comunidad y logística clara transmite una propuesta más humana y auténtica.</p>
+                </article>
+              </aside>
             </div>
           </div>
-
-          <div class="benko-tour__reviews" id="review-list" aria-live="polite"></div>
         </section>
 
         <section class="benko-tour__section" id="conversion" aria-labelledby="conversion-title">
@@ -687,7 +749,7 @@
               <h2 class="benko-tour__section-title" id="conversion-title">Reserva o compra sin perderte en la portada</h2>
             </div>
             <p class="benko-tour__section-copy">
-              Las acciones principales quedan separadas para que el visitante llegue más rápido a reservar o comprar.
+              Las acciones principales quedan separadas para que el visitante llegue más rápido a explorar, reservar o comprar.
             </p>
           </div>
 
@@ -721,6 +783,22 @@
               </ul>
               <a class="benko-tour__ghost benko-tour__ghost--dark" href="./tienda.html" target="_blank" rel="noopener noreferrer">
                 Abrir tienda
+              </a>
+            </article>
+
+            <article class="benko-tour__package-card">
+              <span class="benko-tour__card-tag">Experiencia</span>
+              <h3>Galería y ambiente real antes de decidir</h3>
+              <p class="benko-tour__package-copy">
+                Una vista aparte para mostrar murales, grupos reales y escenas del recorrido antes de pasar a la reserva o a la tienda.
+              </p>
+              <ul class="benko-tour__feature-list">
+                <li>Entrada directa a la galería del tour</li>
+                <li>Más contexto visual antes de comprar</li>
+                <li>Refuerza confianza con escenas reales</li>
+              </ul>
+              <a class="benko-tour__ghost benko-tour__ghost--dark" href="./experiencia.html" target="_blank" rel="noopener noreferrer">
+                Ver experiencia
               </a>
             </article>
           </div>
