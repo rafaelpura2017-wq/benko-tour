@@ -326,6 +326,104 @@ body {
   display: none;
 }
 
+.benko-tour__hamburger {
+  display: none;
+  position: relative;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.benko-tour__hamburger span {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  height: 3px;
+  border-radius: 3px;
+  background: #fff;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.benko-tour__hamburger span:nth-child(1) {
+  top: 14px;
+}
+
+.benko-tour__hamburger span:nth-child(2) {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.benko-tour__hamburger span:nth-child(3) {
+  bottom: 14px;
+}
+
+.benko-tour__hamburger[aria-expanded="true"] span:nth-child(1) {
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.benko-tour__hamburger[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+
+.benko-tour__hamburger[aria-expanded="true"] span:nth-child(3) {
+  bottom: 50%;
+  transform: translateY(50%) rotate(-45deg);
+}
+
+.benko-tour__mobile-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
+  z-index: 30;
+  border-radius: 24px;
+  border: 1px solid rgba(80, 60, 34, 0.12);
+  background: linear-gradient(180deg, rgba(255, 252, 246, 0.98) 0%, rgba(246, 239, 226, 0.97) 100%);
+  box-shadow: 0 24px 48px rgba(38, 26, 18, 0.18);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+.benko-tour__mobile-menu:not([hidden]) {
+  display: block;
+}
+
+.benko-tour__mobile-menu-inner {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+}
+
+.benko-tour__mobile-menu a {
+  display: block;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--brand-dark);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  text-align: center;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+}
+
+.benko-tour__mobile-menu a:hover,
+.benko-tour__mobile-menu a:focus-visible {
+  background: rgba(239, 176, 58, 0.16);
+  border-color: rgba(239, 176, 58, 0.24);
+  transform: translateY(-1px);
+  outline: none;
+}
+
 .benko-tour__masthead {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
@@ -2210,6 +2308,10 @@ body {
   .benko-tour__topbar > .benko-tour__menu,
   .benko-tour__topbar > .benko-tour__login {
     display: none;
+  }
+
+  .benko-tour__hamburger {
+    display: block;
   }
 
   .benko-tour__mobile-bar {

@@ -86,7 +86,26 @@
             <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
           </nav>
           <a class="benko-tour__login" href="./acceso.html#acceso">Iniciar sesión</a>
+          <button class="benko-tour__hamburger" aria-label="Abrir menú" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
         </div>
+
+        <nav class="benko-tour__mobile-menu" aria-label="Menú móvil desplegable" hidden>
+          <div class="benko-tour__mobile-menu-inner">
+            <a href="./experiencia.html" target="_blank" rel="noopener noreferrer">Experiencia</a>
+            <a href="./nosotros.html" target="_blank" rel="noopener noreferrer">Nosotros</a>
+            <a href="#paquetes">Paquetes</a>
+            <a href="#itinerario">Itinerario</a>
+            <a href="#sabores">Sabores y guías</a>
+            <a href="#opiniones">Opiniones</a>
+            <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
+            <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
+            <a href="./acceso.html#acceso">Iniciar sesión</a>
+          </div>
+        </nav>
 
         <div class="benko-tour__masthead" id="inicio">
           <div class="benko-tour__brand">
@@ -821,6 +840,38 @@
       </svg>
       WhatsApp
     </a>
-  </div>
-</body>
+    </nav>
+
+    <script>
+      (function() {
+        const hamburger = document.querySelector('.benko-tour__hamburger');
+        const mobileMenu = document.querySelector('.benko-tour__mobile-menu');
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+
+        if (hamburger && mobileMenu) {
+          hamburger.addEventListener('click', function() {
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !isExpanded);
+            mobileMenu.hidden = isExpanded;
+          });
+
+          // Cerrar menú al hacer clic en un enlace
+          mobileMenuLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+              hamburger.setAttribute('aria-expanded', 'false');
+              mobileMenu.hidden = true;
+            });
+          });
+
+          // Cerrar menú al hacer clic fuera
+          document.addEventListener('click', function(event) {
+            if (!hamburger.contains(event.target) && !mobileMenu.contains(event.target)) {
+              hamburger.setAttribute('aria-expanded', 'false');
+              mobileMenu.hidden = true;
+            }
+          });
+        }
+      })();
+    </script>
+  </body>
 </html>
