@@ -40,7 +40,7 @@ body {
   color: var(--text);
   font-family: "DM Sans", "Segoe UI", sans-serif;
   min-height: 100vh;
-  padding: 20px 16px 90px;
+  padding: 16px 12px 70px;
 }
 
 .benko-tour::before {
@@ -81,9 +81,9 @@ body {
 .benko-tour__page-frame {
   display: grid;
   grid-template-columns: minmax(220px, 248px) minmax(0, 1fr);
-  gap: 24px;
+  gap: 20px;
   align-items: start;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .benko-tour__page-frame main {
@@ -95,9 +95,9 @@ body {
   top: 104px;
   z-index: 15;
   display: grid;
-  gap: 14px;
-  padding: 16px;
-  border-radius: 30px;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 28px;
   border: 1px solid rgba(80, 60, 34, 0.12);
   background: linear-gradient(180deg, rgba(255, 252, 246, 0.98) 0%, rgba(246, 239, 226, 0.96) 100%);
   box-shadow: var(--shadow);
@@ -299,7 +299,7 @@ body {
 .benko-tour__menu {
   display: flex;
   justify-content: center;
-  gap: 14px 26px;
+  gap: 12px 22px;
   flex-wrap: wrap;
 }
 
@@ -427,9 +427,9 @@ body {
 .benko-tour__masthead {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
-  gap: 24px;
+  gap: 20px;
   align-items: stretch;
-  padding: 24px 4px 10px;
+  padding: 20px 4px 8px;
   scroll-margin-top: 104px;
 }
 
@@ -437,8 +437,8 @@ body {
   position: relative;
   display: grid;
   align-content: start;
-  gap: 14px;
-  padding: 28px 28px 24px;
+  gap: 12px;
+  padding: 22px 22px 20px;
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid rgba(80, 60, 34, 0.1);
@@ -503,10 +503,10 @@ body {
 
 .benko-tour__brand-highlight {
   display: grid;
-  gap: 6px;
+  gap: 5px;
   min-height: 100%;
-  padding: 14px 16px;
-  border-radius: 20px;
+  padding: 12px 14px;
+  border-radius: 18px;
   border: 1px solid rgba(80, 60, 34, 0.08);
   background: rgba(255, 255, 255, 0.74);
 }
@@ -640,9 +640,9 @@ body {
 .benko-tour__hero {
   position: relative;
   overflow: hidden;
-  margin-top: 10px;
-  min-height: 620px;
-  padding: clamp(28px, 5vw, 56px);
+  margin-top: 6px;
+  min-height: 580px;
+  padding: clamp(24px, 5vw, 48px);
   border-radius: var(--radius-xl);
   background:
     radial-gradient(circle at 18% 18%, rgba(239, 176, 58, 0.18), transparent 24%),
@@ -650,7 +650,7 @@ body {
     linear-gradient(120deg, rgba(20, 37, 25, 0.98) 0%, rgba(35, 63, 46, 0.94) 46%, rgba(103, 72, 33, 0.92) 100%);
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
-  gap: 28px;
+  gap: 24px;
   align-items: end;
   color: #fff;
   box-shadow: var(--shadow);
@@ -789,8 +789,8 @@ body {
 
 .benko-tour__hero-panel {
   display: grid;
-  gap: 18px;
-  padding: 26px;
+  gap: 16px;
+  padding: 22px;
   align-self: stretch;
   border: 1px solid rgba(93, 65, 26, 0.12);
   background: linear-gradient(180deg, rgba(255, 251, 245, 0.96) 0%, rgba(246, 239, 226, 0.94) 100%);
@@ -813,8 +813,8 @@ body {
 .benko-tour__price-box {
   display: grid;
   gap: 4px;
-  padding: 18px;
-  border-radius: 24px;
+  padding: 16px;
+  border-radius: 22px;
   background: linear-gradient(180deg, #fff6e8 0%, #fffdf9 100%);
   border: 1px solid rgba(143, 67, 24, 0.1);
 }
@@ -836,7 +836,7 @@ body {
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 11px;
+  gap: 10px;
 }
 
 .benko-tour__panel-list li,
@@ -893,7 +893,7 @@ body {
 
 .benko-tour__section {
   position: relative;
-  margin-top: 38px;
+  margin-top: 28px;
   scroll-margin-top: 104px;
 }
 
@@ -990,13 +990,13 @@ body {
 .benko-tour__booking-layout,
 .benko-tour__shop-layout {
   display: grid;
-  gap: 24px;
+  gap: 20px;
 }
 
 .benko-tour__access-layout,
 .benko-tour__feedback-layout {
   display: grid;
-  gap: 24px;
+  gap: 20px;
 }
 
 .benko-tour__access-banner {
@@ -1073,7 +1073,7 @@ body {
 .benko-tour__booking-summary,
 .benko-tour__cart-card,
 .benko-tour__payment-panel {
-  padding: 26px;
+  padding: 22px;
 }
 
 .benko-tour__story-card p {
@@ -1104,11 +1104,11 @@ body {
 .benko-tour__page-frame .benko-tour__feedback-showcase,
 .benko-tour__page-frame .benko-tour__feedback-form-card,
 .benko-tour__page-frame .benko-tour__review-spotlight {
-  padding: 22px;
+  padding: 20px;
 }
 
 .benko-tour__page-frame .benko-tour__access-card {
-  gap: 14px;
+  gap: 12px;
 }
 
 .benko-tour__access-card--intro {
@@ -1125,8 +1125,8 @@ body {
 }
 
 .benko-tour__access-session {
-  padding: 18px;
-  border-radius: 22px;
+  padding: 16px;
+  border-radius: 20px;
   background: rgba(19, 99, 108, 0.06);
   border: 1px solid rgba(19, 99, 108, 0.1);
   color: var(--muted);
@@ -1134,8 +1134,8 @@ body {
 }
 
 .benko-tour__page-frame .benko-tour__access-session {
-  padding: 16px;
-  border-radius: 18px;
+  padding: 14px;
+  border-radius: 16px;
 }
 
 .benko-tour__access-session strong {
@@ -1446,7 +1446,7 @@ body {
 .benko-tour__review-card,
 .benko-tour__product-card,
 .benko-tour__package-card {
-  padding: 22px;
+  padding: 18px;
 }
 
 .benko-tour__highlight {
@@ -1479,13 +1479,13 @@ body {
 .benko-tour__page-frame .benko-tour__packages,
 .benko-tour__page-frame .benko-tour__service-grid,
 .benko-tour__page-frame .benko-tour__reviews {
-  gap: 18px;
+  gap: 16px;
 }
 
 .benko-tour__page-frame .benko-tour__package-card,
 .benko-tour__page-frame .benko-tour__service-card,
 .benko-tour__page-frame .benko-tour__review-card {
-  padding: 20px;
+  padding: 18px;
 }
 
 .benko-tour__page-frame .benko-tour__packages--hub .benko-tour__package-card {
