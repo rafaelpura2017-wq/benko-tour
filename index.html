@@ -90,9 +90,12 @@
             <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
             <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
           </nav>
-          <a class="benko-tour__login" href="./acceso.html#acceso">Iniciar sesión</a>
-          <span class="benko-tour__user-name" style="display: none; color: var(--brand-dark); font-weight: 600; font-size: 0.9rem;"></span>
-          <button class="benko-tour__logout" style="display: none; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: 0.85rem;">Cerrar sesión</button>
+          <div class="benko-tour__user-menu" id="user-menu" style="display: none; align-items: center; gap: 10px;">
+            <span class="benko-tour__user-name" id="user-name-display" style="color: var(--brand-dark); font-weight: 600; font-size: 0.9rem;"></span>
+            <a href="./perfil.html" class="benko-tour__login" style="background: linear-gradient(135deg, var(--brand) 0%, #e0a030 100%); color: white; font-size: 0.8rem; padding: 8px 12px;">👤 Perfil</a>
+            <button id="logout-btn" class="benko-tour__ghost" style="padding: 6px 12px; font-size: 0.8rem; border-color: rgba(255,255,255,0.3); color: #fff;">🚪</button>
+          </div>
+          <a class="benko-tour__login" href="./acceso.html#acceso" id="login-link">Iniciar sesión</a>
           <button class="benko-tour__hamburger" aria-label="Abrir menú" aria-expanded="false">
             <span></span>
             <span></span>

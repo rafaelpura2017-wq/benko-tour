@@ -19,6 +19,11 @@
   >
   <link rel="stylesheet" href="./styles.css">
   <script src="./config.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="./firebase-config.js"></script>
   <script src="./script.js" defer></script>
 </head>
 <body>
@@ -45,7 +50,12 @@
             <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
             <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
           </nav>
-          <a class="benko-tour__login" href="./acceso.html#acceso">Iniciar sesión</a>
+          <div class="benko-tour__user-menu" id="user-menu" style="display: none; align-items: center; gap: 10px;">
+            <span class="benko-tour__user-name" id="user-name-display" style="color: var(--brand-dark); font-weight: 600; font-size: 0.9rem;"></span>
+            <a href="./perfil.html" class="benko-tour__login" style="background: linear-gradient(135deg, var(--brand) 0%, #e0a030 100%); color: white; font-size: 0.8rem; padding: 8px 12px;">👤 Perfil</a>
+            <button id="logout-btn" class="benko-tour__ghost" style="padding: 6px 12px; font-size: 0.8rem;">🚪</button>
+          </div>
+          <a class="benko-tour__login" href="./acceso.html#acceso" id="login-link">Iniciar sesión</a>
         </div>
       </header>
 
@@ -239,5 +249,118 @@
       WhatsApp
     </a>
   </div>
+
+  <script>
+    // Firebase integration for tienda.html
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check authentication status
+      setTimeout(async function() {
+        if (typeof window.authFirebase === 'undefined') return;
+
+        const user = window.authFirebase.obtenerUsuarioActual();
+        
+        if (user) {
+          // User logged in - show profile menu
+          document.getElementById('login-link').style.display = 'none';
+          document.getElementById('user-menu').style.display = 'flex';
+          document.getElementById('user-name-display').textContent = user.email?.split('@')[0] || 'Usuario';
+          
+          // Load saved cart from Firebase
+          await cargarCarritoUsuario();
+        }
+
+        // Logout handler
+        document.getElementById('logout-btn').addEventListener('click', async function() {
+          const resultado = await window.authFirebase.logout();
+          if (resultado.success) {
+            window.location.reload();
+          }
+        });
+      }, 1000);
+
+      // Function to save cart to Firebase when user is logged in
+      async function guardarCarrito(carrito) {
+        if (typeof window.authFirebase === 'undefined') return;
+        const user = window.authFirebase.obtenerUsuarioActual();
+        if (!user) return; // Only save if logged in
+
+        try {
+          await window.authFirebase.actualizarDatos({
+            carrito: carrito,
+            carritoActualizado: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          console.log('Carrito guardado en Firebase');
+        } catch (error) {
+          console.error('Error al guardar carrito:', error);
+        }
+      }
+
+      // Function to load cart from Firebase
+      async function cargarCarritoUsuario() {
+        if (typeof window.authFirebase === 'undefined') return;
+        
+        const datos = await window.authFirebase.obtenerDatos();
+        if (datos && datos.carrito && datos.carrito.length > 0) {
+          // Merge with existing cart in localStorage
+          const carritoLocal = JSON.parse(localStorage.getItem('benkoCart') || '[]');
+          const carritoFirebase = datos.carrito;
+          
+          // Combine both carts (avoid duplicates)
+          const combined = [...carritoLocal];
+          carritoFirebase.forEach(itemF => {
+            const exists = combined.some(itemL => itemL.id === itemF.id);
+            if (!exists) combined.push(itemF);
+          });
+          
+          localStorage.setItem('benkoCart', JSON.stringify(combined));
+          
+          // Update cart UI if function exists
+          if (typeof updateCartUI === 'function') {
+            updateCartUI();
+          }
+          
+          // Show notification
+          const cartStatus = document.getElementById('cart-status');
+          if (cartStatus) {
+            cartStatus.innerHTML = `
+              <span style="color: #4CAF50;">✓</span> Se restauraron ${carritoFirebase.length} productos de tu cuenta
+            `;
+          }
+        }
+      }
+
+      // Monkey-patch original addToCart function to also save to Firebase
+      const originalAddToCart = window.addToCart;
+      if (originalAddToCart) {
+        window.addToCart = function(product) {
+          originalAddToCart(product);
+          
+          // Save to Firebase after localStorage update
+          const carrito = JSON.parse(localStorage.getItem('benkoCart') || '[]');
+          guardarCarrito(carrito);
+        };
+      }
+
+      // Monkey-patch remove from cart
+      const originalRemoveFromCart = window.removeFromCart;
+      if (originalRemoveFromCart) {
+        window.removeFromCart = function(index) {
+          originalRemoveFromCart(index);
+          
+          const carrito = JSON.parse(localStorage.getItem('benkoCart') || '[]');
+          guardarCarrito(carrito);
+        };
+      }
+
+      // Monkey-patch clear cart
+      const originalClearCart = window.clearCart;
+      if (originalClearCart) {
+        window.clearCart = function() {
+          originalClearCart();
+          guardarCarrito([]);
+        };
+      }
+    });
+  </script>
 </body>
 </html>

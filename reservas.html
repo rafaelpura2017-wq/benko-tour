@@ -19,6 +19,11 @@
   >
   <link rel="stylesheet" href="./styles.css">
   <script src="./config.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="./firebase-config.js"></script>
   <script src="./script.js" defer></script>
 </head>
 <body>
@@ -45,7 +50,12 @@
             <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
             <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
           </nav>
-          <a class="benko-tour__login" href="./acceso.html#acceso">Iniciar sesión</a>
+          <div class="benko-tour__user-menu" id="user-menu" style="display: none; align-items: center; gap: 10px;">
+            <span class="benko-tour__user-name" id="user-name-display" style="color: var(--brand-dark); font-weight: 600; font-size: 0.9rem;"></span>
+            <a href="./perfil.html" class="benko-tour__login" style="background: linear-gradient(135deg, var(--brand) 0%, #e0a030 100%); color: white; font-size: 0.8rem; padding: 8px 12px;">👤 Perfil</a>
+            <button id="logout-btn" class="benko-tour__ghost" style="padding: 6px 12px; font-size: 0.8rem;">🚪</button>
+          </div>
+          <a class="benko-tour__login" href="./acceso.html#acceso" id="login-link">Iniciar sesión</a>
         </div>
       </header>
 
@@ -241,5 +251,105 @@
       WhatsApp
     </a>
   </div>
+
+  <script>
+    // Firebase integration for reservas.html
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check authentication and pre-fill form
+      setTimeout(async function() {
+        if (typeof window.authFirebase === 'undefined') return;
+
+        const user = window.authFirebase.obtenerUsuarioActual();
+        
+        if (user) {
+          // User logged in - show profile menu
+          document.getElementById('login-link').style.display = 'none';
+          document.getElementById('user-menu').style.display = 'flex';
+          document.getElementById('user-name-display').textContent = user.email?.split('@')[0] || 'Usuario';
+          
+          // Pre-fill reservation form with user data
+          const datos = await window.authFirebase.obtenerDatos();
+          if (datos) {
+            prellenarFormulario(datos);
+          }
+        }
+
+        // Logout handler
+        document.getElementById('logout-btn').addEventListener('click', async function() {
+          const resultado = await window.authFirebase.logout();
+          if (resultado.success) {
+            window.location.reload();
+          }
+        });
+      }, 1000);
+
+      // Pre-fill form with user data
+      function prellenarFormulario(datos) {
+        const nameField = document.querySelector('input[name="name"]');
+        const emailField = document.querySelector('input[name="email"]');
+        const phoneField = document.querySelector('input[name="phone"]');
+        const cityField = document.querySelector('input[name="city"]');
+        const pickupField = document.querySelector('select[name="pickup"]');
+
+        if (nameField && datos.nombre) nameField.value = datos.nombre;
+        if (emailField && datos.email) emailField.value = datos.email;
+        if (phoneField && datos.telefono) phoneField.value = datos.telefono;
+        if (cityField && datos.ciudad) cityField.value = datos.ciudad;
+        if (pickupField && datos.recogida) pickupField.value = datos.recogida;
+
+        // Show notification that data was loaded
+        const bookingSummary = document.getElementById('booking-summary');
+        if (bookingSummary) {
+          const notif = document.createElement('div');
+          notif.style.cssText = 'background: #e8f5e9; border-left: 3px solid #4caf50; padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 0.9rem;';
+          notif.innerHTML = '<strong style="color: #2e7d32;">✓ Datos cargados</strong><br><span style="color: #666;">Tus datos se completaron automáticamente desde tu cuenta.</span>';
+          bookingSummary.insertBefore(notif, bookingSummary.firstChild);
+          
+          // Remove after 5 seconds
+          setTimeout(() => notif.remove(), 5000);
+        }
+      }
+
+      // Save reservation to Firebase when form is submitted
+      const reservationForm = document.getElementById('booking-form');
+      if (reservationForm) {
+        reservationForm.addEventListener('submit', async function(e) {
+          if (typeof window.authFirebase === 'undefined') return;
+          
+          const user = window.authFirebase.obtenerUsuarioActual();
+          if (!user) return; // Only save to Firebase if logged in
+
+          const reserva = {
+            nombre: this.querySelector('[name="name"]')?.value,
+            email: this.querySelector('[name="email"]')?.value,
+            telefono: this.querySelector('[name="phone"]')?.value,
+            ciudad: this.querySelector('[name="city"]')?.value,
+            fecha: this.querySelector('[name="date"]')?.value,
+            paquete: this.querySelector('[name="package"]')?.value,
+            personas: this.querySelector('[name="travelers"]')?.value,
+            recogida: this.querySelector('[name="pickup"]')?.value,
+            comentarios: this.querySelector('[name="notes"]')?.value,
+            estado: 'pendiente',
+            fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
+          };
+
+          try {
+            // Get current reservations array
+            const datos = await window.authFirebase.obtenerDatos();
+            const reservas = datos?.reservas || [];
+            
+            // Add new reservation
+            reservas.push(reserva);
+            
+            // Save back to Firebase
+            await window.authFirebase.actualizarDatos({ reservas: reservas });
+            console.log('Reserva guardada en Firebase');
+          } catch (error) {
+            console.error('Error al guardar reserva:', error);
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>

@@ -246,35 +246,63 @@ function obtenerUsuarioActual() {
  * Esta función puede ser personalizada en cada página
  */
 function actualizarUIUsuario(user) {
-  // Buscar elementos con clase de autenticación
-  const loginLink = document.querySelector('.benko-tour__login');
-  const logoutBtn = document.querySelector('.benko-tour__logout');
-  const userName = document.querySelector('.benko-tour__user-name');
+  // Buscar elementos con IDs (nuevo sistema)
+  const loginLink = document.getElementById('login-link');
+  const userMenu = document.getElementById('user-menu');
+  const logoutBtn = document.getElementById('logout-btn');
+  const userName = document.getElementById('user-name-display');
+  
+  // Buscar elementos con clases (sistema antiguo, para compatibilidad)
+  const loginLinkOld = document.querySelector('.benko-tour__login:not([id])');
+  const logoutBtnOld = document.querySelector('.benko-tour__logout');
+  const userNameOld = document.querySelector('.benko-tour__user-name:not([id])');
   
   if (user) {
     // Usuario logueado
+    // Sistema nuevo con IDs
     if (loginLink) loginLink.style.display = 'none';
+    if (userMenu) userMenu.style.display = 'flex';
     if (logoutBtn) {
-      logoutBtn.style.display = 'flex';
-      logoutBtn.addEventListener('click', async () => {
+      logoutBtn.onclick = async () => {
         await cerrarSesion();
         window.location.reload();
-      });
+      };
+    }
+    
+    // Sistema antiguo con clases
+    if (loginLinkOld) loginLinkOld.style.display = 'none';
+    if (logoutBtnOld) {
+      logoutBtnOld.style.display = 'flex';
+      logoutBtnOld.onclick = async () => {
+        await cerrarSesion();
+        window.location.reload();
+      };
     }
     
     // Obtener y mostrar nombre del usuario
     obtenerDatosUsuario().then(datos => {
-      if (datos && userName) {
-        userName.textContent = `Hola, ${datos.nombre || user.email}`;
-        userName.style.display = 'inline';
+      const displayName = datos?.nombre || user.email?.split('@')[0] || 'Usuario';
+      
+      if (userName) {
+        userName.textContent = displayName;
+      }
+      if (userNameOld) {
+        userNameOld.textContent = `Hola, ${displayName}`;
+        userNameOld.style.display = 'inline';
       }
     });
     
   } else {
     // Usuario no logueado
+    // Sistema nuevo
     if (loginLink) loginLink.style.display = 'flex';
-    if (logoutBtn) logoutBtn.style.display = 'none';
-    if (userName) userName.style.display = 'none';
+    if (userMenu) userMenu.style.display = 'none';
+    if (userName) userName.textContent = '';
+    
+    // Sistema antiguo
+    if (loginLinkOld) loginLinkOld.style.display = 'flex';
+    if (logoutBtnOld) logoutBtnOld.style.display = 'none';
+    if (userNameOld) userNameOld.style.display = 'none';
   }
 }
 
