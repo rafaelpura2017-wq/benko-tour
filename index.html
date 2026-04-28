@@ -59,6 +59,11 @@
       }
     }
   </script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="./firebase-config.js"></script>
   <script src="./script.js" defer></script>
 </head>
 <body>
@@ -86,6 +91,8 @@
             <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
           </nav>
           <a class="benko-tour__login" href="./acceso.html#acceso">Iniciar sesión</a>
+          <span class="benko-tour__user-name" style="display: none; color: var(--brand-dark); font-weight: 600; font-size: 0.9rem;"></span>
+          <button class="benko-tour__logout" style="display: none; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: 0.85rem;">Cerrar sesión</button>
           <button class="benko-tour__hamburger" aria-label="Abrir menú" aria-expanded="false">
             <span></span>
             <span></span>

@@ -19,6 +19,11 @@
   >
   <link rel="stylesheet" href="./styles.css">
   <script src="./config.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="./firebase-config.js"></script>
   <script src="./script.js" defer></script>
 </head>
 <body>
@@ -230,5 +235,165 @@
       WhatsApp
     </a>
   </div>
+
+  <script>
+    // Script específico para manejar autenticación en acceso.html
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginForm = document.getElementById('login-form');
+      const registerForm = document.getElementById('register-form');
+      const accessStatus = document.getElementById('access-status');
+      const loggedPanel = document.getElementById('access-logged-panel');
+      const accessSession = document.getElementById('access-session');
+      const logoutBtn = document.getElementById('logout-button');
+      const accessTabs = document.querySelectorAll('[data-access-tab]');
+      const accessPanels = document.querySelectorAll('[data-access-panel]');
+
+      // Cambiar entre tabs de inicio de sesión y registro
+      accessTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const targetPanel = this.dataset.accessTab;
+          
+          // Actualizar tabs activos
+          accessTabs.forEach(t => t.classList.remove('benko-tour__access-tab--active'));
+          this.classList.add('benko-tour__access-tab--active');
+          
+          // Mostrar/ocultar paneles
+          accessPanels.forEach(panel => {
+            if (panel.dataset.accessPanel === targetPanel) {
+              panel.classList.remove('benko-tour__access-form--hidden');
+            } else {
+              panel.classList.add('benko-tour__access-form--hidden');
+            }
+          });
+        });
+      });
+
+      // Manejar inicio de sesión
+      if (loginForm) {
+        loginForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          const email = this.querySelector('[name="email"]').value;
+          const password = this.querySelector('[name="password"]').value;
+          
+          accessStatus.textContent = 'Iniciando sesión...';
+          
+          // Verificar si Firebase está cargado
+          if (typeof window.authFirebase === 'undefined') {
+            accessStatus.textContent = 'Error: Firebase no está configurado. Revisa firebase-config.js';
+            return;
+          }
+          
+          const resultado = await window.authFirebase.login(email, password);
+          
+          if (resultado.success) {
+            mostrarUsuarioLogueado(resultado.datos);
+            accessStatus.textContent = '¡Bienvenido de vuelta! Tu sesión está activa.';
+            
+            // Migrar reservas temporales si existen
+            await window.authFirebase.migrarReservas();
+          } else {
+            accessStatus.textContent = resultado.error;
+          }
+        });
+      }
+
+      // Manejar registro
+      if (registerForm) {
+        registerForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          const datos = {
+            nombre: this.querySelector('[name="name"]').value,
+            ciudad: this.querySelector('[name="city"]').value,
+            telefono: this.querySelector('[name="phone"]').value
+          };
+          const email = this.querySelector('[name="email"]').value;
+          const password = this.querySelector('[name="password"]').value;
+          
+          accessStatus.textContent = 'Creando tu cuenta...';
+          
+          // Verificar si Firebase está cargado
+          if (typeof window.authFirebase === 'undefined') {
+            accessStatus.textContent = 'Error: Firebase no está configurado. Revisa firebase-config.js';
+            return;
+          }
+          
+          const resultado = await window.authFirebase.registrar(email, password, datos);
+          
+          if (resultado.success) {
+            mostrarUsuarioLogueado(datos);
+            accessStatus.textContent = '¡Cuenta creada exitosamente! Tu sesión está activa.';
+          } else {
+            accessStatus.textContent = resultado.error;
+          }
+        });
+      }
+
+      // Cerrar sesión
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async function() {
+          const resultado = await window.authFirebase.logout();
+          if (resultado.success) {
+            mostrarFormularioAcceso();
+            accessStatus.textContent = 'Sesión cerrada. Vuelve pronto.';
+          }
+        });
+      }
+
+      // Mostrar panel de usuario logueado
+      function mostrarUsuarioLogueado(datos) {
+        loginForm.classList.add('benko-tour__access-form--hidden');
+        registerForm.classList.add('benko-tour__access-form--hidden');
+        document.querySelector('.benko-tour__access-tabs').style.display = 'none';
+        loggedPanel.classList.remove('benko-tour__hidden');
+        
+        if (datos) {
+          accessSession.innerHTML = `
+            <strong>Tus datos guardados</strong>
+            <p><strong>Nombre:</strong> ${datos.nombre || 'No especificado'}</p>
+            <p><strong>Ciudad:</strong> ${datos.ciudad || 'No especificada'}</p>
+            <p><strong>Teléfono:</strong> ${datos.telefono || 'No especificado'}</p>
+            <p><strong>Email:</strong> ${datos.email || 'No especificado'}</p>
+          `;
+          
+          const loggedCopy = document.getElementById('access-logged-copy');
+          if (loggedCopy) {
+            loggedCopy.textContent = `Hola ${datos.nombre || ''}, tu sesión está activa y tus datos están listos para futuras reservas.`;
+          }
+        }
+      }
+
+      // Mostrar formulario de acceso
+      function mostrarFormularioAcceso() {
+        loginForm.classList.remove('benko-tour__access-form--hidden');
+        document.querySelector('.benko-tour__access-tabs').style.display = 'flex';
+        loggedPanel.classList.add('benko-tour__hidden');
+        accessSession.innerHTML = '';
+        
+        // Resetear a tab de login
+        accessTabs.forEach(t => t.classList.remove('benko-tour__access-tab--active'));
+        accessTabs[0].classList.add('benko-tour__access-tab--active');
+        accessPanels.forEach(panel => {
+          if (panel.dataset.accessPanel === 'login') {
+            panel.classList.remove('benko-tour__access-form--hidden');
+          } else {
+            panel.classList.add('benko-tour__access-form--hidden');
+          }
+        });
+      }
+
+      // Verificar si hay sesión activa al cargar
+      setTimeout(async function() {
+        if (typeof window.authFirebase !== 'undefined' && window.authFirebase.estaLogueado()) {
+          const datos = await window.authFirebase.obtenerDatos();
+          if (datos) {
+            mostrarUsuarioLogueado(datos);
+            accessStatus.textContent = 'Tu sesión está activa.';
+          }
+        }
+      }, 1000);
+    });
+  </script>
 </body>
 </html>
