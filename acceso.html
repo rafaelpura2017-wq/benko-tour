@@ -563,16 +563,96 @@
         });
       }
 
-      // Verificar si hay sesión activa al cargar
-      setTimeout(async function() {
-        if (typeof window.authFirebase !== 'undefined' && window.authFirebase.estaLogueado()) {
-          const datos = await window.authFirebase.obtenerDatos();
-          if (datos) {
-            mostrarUsuarioLogueado(datos);
-            accessStatus.textContent = 'Tu sesión está activa.';
-          }
+      // Verificar sesión usando Firebase Auth state (más confiable que setTimeout)
+      let sessionChecked = false;
+      
+      const checkAuthState = setInterval(async function() {
+        if (typeof window.authFirebase === 'undefined') return;
+        if (sessionChecked) {
+          clearInterval(checkAuthState);
+          return;
         }
-      }, 1000);
+        
+        // Verificar si Firebase Auth ya determinó el estado
+        const auth = firebase.auth();
+        if (auth.currentUser !== undefined) { // undefined = aún cargando, null = no hay sesión, object = hay sesión
+          sessionChecked = true;
+          clearInterval(checkAuthState);
+          
+          if (auth.currentUser) {
+            // Hay usuario logueado - verificar si es sesión de otro usuario
+            const datos = await window.authFirebase.obtenerDatos();
+            if (datos) {
+              const userName = datos.nombre || datos.email?.split('@')[0] || 'otro usuario';
+              
+              // Mostrar mensaje de sesión existente
+              const sesionExistente = document.createElement('div');
+              sesionExistente.id = 'sesion-existente-msg';
+              sesionExistente.style.cssText = 'background: #fff8e1; border: 2px solid #ffb300; padding: 20px; border-radius: 12px; margin-bottom: 20px; animation: fadeIn 0.5s ease;';
+              sesionExistente.innerHTML = `
+                <div style="display: flex; align-items: start; gap: 12px;">
+                  <span style="font-size: 24px;">⚠️</span>
+                  <div style="flex: 1;">
+                    <strong style="color: #e65100; font-size: 1.1rem;">Sesión activa detectada</strong>
+                    <p style="color: #666; margin: 8px 0;">
+                      Hay una sesión activa de: <strong>${userName}</strong><br>
+                      ¿Deseas continuar con esta sesión o cerrarla para registrar una nueva cuenta?
+                    </p>
+                    <div style="display: flex; gap: 10px; margin-top: 12px;">
+                      <button id="continuar-sesion" class="benko-tour__button" style="font-size: 0.9rem; padding: 10px 16px;">
+                        ✅ Continuar con esta sesión
+                      </button>
+                      <button id="cerrar-sesion-btn" class="benko-tour__ghost" style="font-size: 0.9rem; padding: 10px 16px; border-color: #e53935; color: #e53935;">
+                        🚪 Cerrar esta sesión
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `;
+              
+              // Insertar antes de los tabs
+              const container = document.querySelector('.benko-tour__access-card');
+              container.insertBefore(sesionExistente, container.firstChild);
+              
+              // Ocultar formularios hasta que elija
+              document.querySelector('.benko-tour__access-tabs').style.display = 'none';
+              loginForm.classList.add('benko-tour__access-form--hidden');
+              registerForm.classList.add('benko-tour__access-form--hidden');
+              
+              // Botón: Continuar sesión
+              document.getElementById('continuar-sesion').addEventListener('click', function() {
+                sesionExistente.remove();
+                mostrarUsuarioLogueado(datos);
+                accessStatus.textContent = 'Tu sesión está activa.';
+              });
+              
+              // Botón: Cerrar sesión
+              document.getElementById('cerrar-sesion-btn').addEventListener('click', async function() {
+                const resultado = await window.authFirebase.logout();
+                if (resultado.success) {
+                  sesionExistente.remove();
+                  mostrarFormularioAcceso();
+                  accessStatus.innerHTML = `
+                    <div style="background: #e8f5e9; border-left: 3px solid #4caf50; padding: 12px; border-radius: 8px;">
+                      <strong style="color: #2e7d32;">✓ Sesión cerrada</strong><br>
+                      <span style="color: #666;">Ahora puedes crear una nueva cuenta o iniciar sesión.</span>
+                    </div>
+                  `;
+                }
+              });
+            }
+          }
+          // Si no hay usuario, los formularios ya están visibles por defecto
+        }
+      }, 500);
+      
+      // Timeout de seguridad: después de 5 segundos, detener la verificación
+      setTimeout(function() {
+        if (!sessionChecked) {
+          clearInterval(checkAuthState);
+          console.log('Firebase Auth: timeout de verificación');
+        }
+      }, 5000);
     });
   </script>
 </body>
