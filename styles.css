@@ -73,6 +73,14 @@ body {
   margin: 0 auto;
 }
 
+/* Shell en páginas con sidebar - llenar espacio disponible */
+.benko-tour__main-with-sidebar .benko-tour__shell {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0 24px;
+}
+
 .benko-tour__header {
   position: relative;
   z-index: 20;
@@ -2543,37 +2551,55 @@ body {
    ============================================ */
 .benko-tour__sidebar-menu {
   position: fixed;
-  left: 14px;
-  top: 88px;
-  width: 220px;
-  height: calc(100vh - 105px);
-  max-height: 700px;
-  background: linear-gradient(180deg, rgba(255, 251, 246, 0.98) 0%, rgba(247, 241, 232, 0.98) 100%);
+  left: 0;
+  top: 72px;
+  width: 200px;
+  height: calc(100vh - 72px);
+  background: linear-gradient(175deg, #fffbf6 0%, #f5efe6 50%, #ebe4d9 100%);
   z-index: 50;
   display: flex;
   flex-direction: column;
-  padding: 18px 14px;
-  border-radius: 20px;
-  border: 1px solid rgba(239, 176, 58, 0.25);
-  box-shadow: 0 8px 32px rgba(38, 26, 18, 0.12), 0 2px 8px rgba(38, 26, 18, 0.06);
-  backdrop-filter: blur(12px);
+  padding: 20px 14px;
+  border-right: 1px solid rgba(209, 94, 56, 0.15);
+  box-shadow: 6px 0 30px rgba(38, 26, 18, 0.1), inset -1px 0 0 rgba(255, 255, 255, 0.5);
   overflow: hidden;
 }
 
 /* Header del sidebar */
 .benko-tour__sidebar-header {
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(209, 94, 56, 0.2);
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgba(209, 94, 56, 0.15);
+  position: relative;
+}
+
+.benko-tour__sidebar-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #d15e38 0%, #e8a84a 100%);
+  border-radius: 1px;
 }
 
 .benko-tour__sidebar-title {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: #d15e38;
+  letter-spacing: 0.15em;
+  color: #8b4513;
   font-family: 'DM Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.benko-tour__sidebar-title::before {
+  content: '◆';
+  font-size: 0.5rem;
+  color: #d15e38;
 }
 
 /* Lista de navegación */
@@ -2591,158 +2617,172 @@ body {
   margin: 0;
 }
 
-/* Links del menú - estilo tarjeta */
+/* Links del menú - estilo premium */
 .benko-tour__sidebar-link {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.6);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 251, 246, 0.8) 100%);
   color: #5a4a42;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'DM Sans', sans-serif;
-  border: 1px solid rgba(239, 176, 58, 0.15);
-  box-shadow: 0 2px 8px rgba(38, 26, 18, 0.04);
+  border: 1px solid rgba(239, 176, 58, 0.2);
+  box-shadow: 0 2px 8px rgba(38, 26, 18, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  position: relative;
+  overflow: hidden;
+}
+
+.benko-tour__sidebar-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background: linear-gradient(180deg, #d15e38 0%, #e8a84a 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .benko-tour__sidebar-link:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 248, 240, 0.95) 100%);
   color: #d15e38;
-  transform: translateX(6px);
-  box-shadow: 0 4px 16px rgba(209, 94, 56, 0.15);
-  border-color: rgba(209, 94, 56, 0.3);
+  transform: translateX(8px);
+  box-shadow: 0 6px 20px rgba(209, 94, 56, 0.12), 0 2px 8px rgba(38, 26, 18, 0.06);
+  border-color: rgba(209, 94, 56, 0.35);
 }
 
-/* Link activo - estilo resaltado */
+.benko-tour__sidebar-link:hover::before {
+  opacity: 1;
+}
+
+/* Link activo - estilo destacado */
 .benko-tour__sidebar-link--active {
-  background: linear-gradient(135deg, rgba(239, 176, 58, 0.2) 0%, rgba(209, 94, 56, 0.15) 100%);
-  color: #7a3417;
+  background: linear-gradient(135deg, rgba(209, 94, 56, 0.12) 0%, rgba(239, 176, 58, 0.1) 100%);
+  color: #8b4513;
   font-weight: 700;
   border: 1px solid rgba(209, 94, 56, 0.4);
-  box-shadow: 0 4px 16px rgba(209, 94, 56, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 16px rgba(209, 94, 56, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.benko-tour__sidebar-link--active::before {
+  opacity: 1;
 }
 
 .benko-tour__sidebar-link--active:hover {
-  background: linear-gradient(135deg, rgba(239, 176, 58, 0.3) 0%, rgba(209, 94, 56, 0.25) 100%);
-  transform: translateX(6px);
+  background: linear-gradient(135deg, rgba(209, 94, 56, 0.18) 0%, rgba(239, 176, 58, 0.15) 100%);
+  transform: translateX(8px);
 }
 
-/* Iconos */
+/* Iconos con diseño mejorado */
 .benko-tour__sidebar-icon {
-  font-size: 1.2rem;
-  width: 32px;
-  height: 32px;
+  font-size: 1.15rem;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(247, 241, 232, 0.9) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(247, 241, 232, 0.9) 100%);
   border-radius: 10px;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(38, 26, 18, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 6px rgba(38, 26, 18, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(239, 176, 58, 0.15);
 }
 
 .benko-tour__sidebar-link:hover .benko-tour__sidebar-icon {
-  background: linear-gradient(135deg, rgba(209, 94, 56, 0.15) 0%, rgba(239, 176, 58, 0.15) 100%);
-  transform: scale(1.1) rotate(-5deg);
+  background: linear-gradient(135deg, rgba(209, 94, 56, 0.15) 0%, rgba(239, 176, 58, 0.2) 100%);
+  transform: scale(1.15) rotate(-8deg);
+  border-color: rgba(209, 94, 56, 0.3);
+  box-shadow: 0 4px 12px rgba(209, 94, 56, 0.2);
 }
 
 .benko-tour__sidebar-link--active .benko-tour__sidebar-icon {
-  background: linear-gradient(135deg, rgba(209, 94, 56, 0.2) 0%, rgba(239, 176, 58, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(209, 94, 56, 0.25) 0%, rgba(239, 176, 58, 0.2) 100%);
+  border-color: rgba(209, 94, 56, 0.4);
 }
 
 /* Footer del sidebar */
 .benko-tour__sidebar-footer {
-  padding-top: 16px;
-  border-top: 1px solid rgba(209, 94, 56, 0.15);
+  padding-top: 20px;
   margin-top: auto;
+  position: relative;
+}
+
+.benko-tour__sidebar-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(209, 94, 56, 0.3) 50%, transparent 100%);
 }
 
 .benko-tour__sidebar-footer .benko-tour__sidebar-link {
-  background: linear-gradient(135deg, rgba(209, 94, 56, 0.1) 0%, rgba(239, 176, 58, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(209, 94, 56, 0.12) 0%, rgba(239, 176, 58, 0.1) 100%);
   color: #d15e38;
   font-weight: 700;
   justify-content: center;
   gap: 10px;
-  border: 1px solid rgba(209, 94, 56, 0.25);
+  border: 1px solid rgba(209, 94, 56, 0.3);
+  box-shadow: 0 4px 12px rgba(209, 94, 56, 0.1);
 }
 
 .benko-tour__sidebar-footer .benko-tour__sidebar-link:hover {
-  background: linear-gradient(135deg, rgba(209, 94, 56, 0.2) 0%, rgba(239, 176, 58, 0.2) 100%);
-  transform: translateX(0) scale(1.02);
-  color: #7a3417;
+  background: linear-gradient(135deg, rgba(209, 94, 56, 0.2) 0%, rgba(239, 176, 58, 0.18) 100%);
+  transform: translateX(0) scale(1.03);
+  color: #8b4513;
+  box-shadow: 0 6px 16px rgba(209, 94, 56, 0.15);
 }
 
 .benko-tour__sidebar-footer .benko-tour__sidebar-icon {
   background: transparent;
   box-shadow: none;
-  font-size: 1.1rem;
+  border: none;
+  font-size: 1.15rem;
 }
 
-/* Ajuste del main con sidebar - pantallas grandes */
-@media (min-width: 1280px) {
-  .benko-tour__sidebar-menu {
-    width: 230px;
-    left: 16px;
-  }
-  
+/* Ajuste del main con sidebar - solo en escritorio */
+@media (min-width: 1025px) {
   .benko-tour__main-with-sidebar {
-    margin-left: 265px;
+    margin-left: 200px;
+    width: calc(100% - 200px);
   }
   
   .benko-tour__footer {
-    margin-left: 265px;
+    margin-left: 200px;
+    width: calc(100% - 200px);
   }
 }
 
-/* Pantallas muy grandes - mantener proporción */
-@media (min-width: 1440px) {
-  .benko-tour__sidebar-menu {
-    width: 240px;
-    left: calc((100vw - 1440px) / 2 + 20px);
-  }
-  
-  .benko-tour__main-with-sidebar {
-    margin-left: calc((100vw - 1440px) / 2 + 280px);
-  }
-  
-  .benko-tour__footer {
-    margin-left: calc((100vw - 1440px) / 2 + 280px);
-  }
-}
-
-/* Ajuste para pantallas medianas */
+/* Pantallas medianas */
 @media (min-width: 1025px) and (max-width: 1279px) {
   .benko-tour__sidebar-menu {
-    width: 200px;
-    left: 10px;
-    top: 85px;
-    height: calc(100vh - 100px);
-    padding: 14px 12px;
-    border-radius: 16px;
+    width: 180px;
+    padding: 16px 12px;
   }
   
-  .benko-tour__main-with-sidebar {
-    margin-left: 225px;
-  }
-  
+  .benko-tour__main-with-sidebar,
   .benko-tour__footer {
-    margin-left: 225px;
+    margin-left: 180px;
+    width: calc(100% - 180px);
   }
   
   .benko-tour__sidebar-link {
-    padding: 10px 12px;
-    font-size: 0.82rem;
+    padding: 12px 14px;
+    font-size: 0.85rem;
     border-radius: 12px;
   }
   
   .benko-tour__sidebar-icon {
-    width: 28px;
-    height: 28px;
-    font-size: 1rem;
+    width: 26px;
+    height: 26px;
+    font-size: 1.05rem;
   }
 }
 
@@ -2752,15 +2792,16 @@ body {
 @media (max-width: 1024px) {
   /* Ocultar menú lateral en móvil por defecto */
   .benko-tour__sidebar-menu {
-    transform: translateX(-110%);
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 280px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    width: 260px;
     left: 0;
     top: 0;
     height: 100vh;
-    border-radius: 0 24px 24px 0;
-    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.3);
-    padding: 24px 20px;
+    border-radius: 0;
+    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.2);
+    padding: 20px 16px;
+    z-index: 100;
   }
   
   .benko-tour__sidebar-menu--open {
@@ -2771,19 +2812,17 @@ body {
   .benko-tour__main-with-sidebar,
   .benko-tour__footer {
     margin-left: 0 !important;
-    width: 100%;
   }
 
-  /* Overlay oscuro cuando el menú está abierto */
+  /* Overlay oscuro */
   .benko-tour__sidebar-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
-    z-index: 40;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 99;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
@@ -2794,63 +2833,29 @@ body {
     visibility: visible;
   }
 
-  /* Botón flotante visible SOLO en móvil */
+  /* Botón flotante */
   .benko-tour__sidebar-toggle {
     position: fixed;
-    left: 16px;
-    bottom: 100px;
-    z-index: 60;
-    width: 52px;
-    height: 52px;
+    left: 12px;
+    bottom: 80px;
+    z-index: 90;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(255, 251, 246, 0.95) 0%, rgba(247, 241, 232, 0.95) 100%);
-    border: 1px solid rgba(239, 176, 58, 0.4);
-    color: #d15e38;
-    font-size: 1.3rem;
+    background: linear-gradient(135deg, #d15e38 0%, #e8a84a 100%);
+    border: none;
+    color: white;
+    font-size: 1.2rem;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(38, 26, 18, 0.15), 0 2px 8px rgba(38, 26, 18, 0.1);
+    box-shadow: 0 4px 15px rgba(209, 94, 56, 0.4);
     display: flex !important;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
-  }
-
-  .benko-tour__sidebar-toggle:hover {
-    transform: scale(1.1);
-    background: linear-gradient(135deg, rgba(209, 94, 56, 0.1) 0%, rgba(239, 176, 58, 0.1) 100%);
-    box-shadow: 0 8px 25px rgba(209, 94, 56, 0.2);
-  }
-
-  .benko-tour__sidebar-toggle:active {
-    transform: scale(0.95);
   }
   
   /* Mejorar toques en móvil */
   .benko-tour__sidebar-link {
-    padding: 16px 18px;
-    font-size: 1rem;
-  }
-  
-  .benko-tour__sidebar-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 1.3rem;
-  }
-}
-
-/* Móvil pequeño */
-@media (max-width: 480px) {
-  .benko-tour__sidebar-menu {
-    width: 260px;
-    padding: 20px 16px;
-  }
-  
-  .benko-tour__sidebar-toggle {
-    width: 48px;
-    height: 48px;
-    font-size: 1.2rem;
-    left: 12px;
-    bottom: 90px;
+    padding: 14px 16px;
   }
 }
 
@@ -2858,5 +2863,56 @@ body {
   .benko-tour__sidebar-toggle,
   .benko-tour__sidebar-overlay {
     display: none;
+  }
+}
+
+/* Pantallas ultra-wide - mantener menú integrado */
+@media (min-width: 1600px) {
+  .benko-tour__sidebar-menu {
+    width: 220px;
+    padding: 24px 18px;
+  }
+  
+  .benko-tour__main-with-sidebar {
+    margin-left: 220px;
+    width: calc(100% - 220px);
+  }
+  
+  .benko-tour__footer {
+    margin-left: 220px;
+    width: calc(100% - 220px);
+  }
+  
+  .benko-tour__sidebar-link {
+    padding: 16px 18px;
+  }
+}
+
+/* Pantallas muy grandes (1920px+) */
+@media (min-width: 1920px) {
+  .benko-tour__sidebar-menu {
+    width: 240px;
+    padding: 28px 22px;
+  }
+  
+  .benko-tour__main-with-sidebar {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+  }
+  
+  .benko-tour__footer {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+  }
+  
+  .benko-tour__sidebar-link {
+    padding: 18px 20px;
+    font-size: 0.92rem;
+  }
+  
+  .benko-tour__sidebar-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 1.25rem;
   }
 }
