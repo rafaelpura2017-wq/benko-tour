@@ -59,7 +59,58 @@
         </div>
       </header>
 
-      <main>
+      <!-- Botón móvil para abrir menú -->
+      <button class="benko-tour__sidebar-toggle" id="sidebar-toggle" aria-label="Abrir menú de categorías">☰</button>
+
+      <!-- Overlay oscuro para móvil -->
+      <div class="benko-tour__sidebar-overlay" id="sidebar-overlay"></div>
+
+      <!-- Menú lateral de categorías -->
+      <nav class="benko-tour__sidebar-menu" aria-label="Categorías de reservas">
+        <div class="benko-tour__sidebar-header">
+          <span class="benko-tour__sidebar-title">Categorías</span>
+        </div>
+        <ul class="benko-tour__sidebar-list">
+          <li class="benko-tour__sidebar-item">
+            <a href="./reservas.html" class="benko-tour__sidebar-link benko-tour__sidebar-link--active">
+              <span class="benko-tour__sidebar-icon">🏠</span>
+              <span>Principal</span>
+            </a>
+          </li>
+          <li class="benko-tour__sidebar-item">
+            <a href="./gastronomia.html" class="benko-tour__sidebar-link">
+              <span class="benko-tour__sidebar-icon">🍽️</span>
+              <span>Gastronomía</span>
+            </a>
+          </li>
+          <li class="benko-tour__sidebar-item">
+            <a href="./musica.html" class="benko-tour__sidebar-link">
+              <span class="benko-tour__sidebar-icon">🎵</span>
+              <span>Música</span>
+            </a>
+          </li>
+          <li class="benko-tour__sidebar-item">
+            <a href="./moda.html" class="benko-tour__sidebar-link">
+              <span class="benko-tour__sidebar-icon">👗</span>
+              <span>Moda</span>
+            </a>
+          </li>
+          <li class="benko-tour__sidebar-item">
+            <a href="./otros.html" class="benko-tour__sidebar-link">
+              <span class="benko-tour__sidebar-icon">✨</span>
+              <span>Otros</span>
+            </a>
+          </li>
+        </ul>
+        <div class="benko-tour__sidebar-footer">
+          <a href="./tienda.html" class="benko-tour__sidebar-link">
+            <span class="benko-tour__sidebar-icon">🛒</span>
+            <span>Ir a Tienda</span>
+          </a>
+        </div>
+      </nav>
+
+      <main class="benko-tour__main-with-sidebar">
         <section class="benko-tour__hero" aria-label="Reserva principal">
           <div class="benko-tour__hero-content">
             <span class="benko-tour__pill">Reservas directas</span>
@@ -120,10 +171,45 @@
                   <input type="date" name="date" required>
                 </label>
 
-                <label class="benko-tour__field">
-                  <span>Número de viajeros</span>
-                  <input id="travelers" type="number" name="travelers" min="1" value="2" required>
-                </label>
+                <div class="benko-tour__field benko-tour__field--full">
+                  <span>Viajeros y habitaciones</span>
+                  <div class="benko-tour__traveler-selector" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px;">
+                    
+                    <!-- Adultos -->
+                    <div class="benko-tour__counter" style="background: #fff; border: 1px solid rgba(239, 176, 58, 0.3); border-radius: 12px; padding: 12px; text-align: center;">
+                      <div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 4px;">Adultos</div>
+                      <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+                        <button type="button" class="benko-tour__counter-btn" data-target="adults" data-action="minus" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;">−</button>
+                        <input type="number" id="adults" name="adults" value="2" min="1" max="20" readonly style="width: 40px; text-align: center; border: none; font-size: 1.1rem; font-weight: 600; background: transparent;">
+                        <button type="button" class="benko-tour__counter-btn" data-target="adults" data-action="plus" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;">+</button>
+                      </div>
+                    </div>
+
+                    <!-- Niños -->
+                    <div class="benko-tour__counter" style="background: #fff; border: 1px solid rgba(239, 176, 58, 0.3); border-radius: 12px; padding: 12px; text-align: center;">
+                      <div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 4px;">Niños</div>
+                      <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+                        <button type="button" class="benko-tour__counter-btn" data-target="children" data-action="minus" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;">−</button>
+                        <input type="number" id="children" name="children" value="0" min="0" max="10" readonly style="width: 40px; text-align: center; border: none; font-size: 1.1rem; font-weight: 600; background: transparent;">
+                        <button type="button" class="benko-tour__counter-btn" data-target="children" data-action="plus" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;">+</button>
+                      </div>
+                    </div>
+
+                    <!-- Niños menores de 2 años (gratis) -->
+                    <div class="benko-tour__counter" style="background: #fff; border: 1px solid rgba(76, 175, 80, 0.4); border-radius: 12px; padding: 12px; text-align: center;">
+                      <div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 4px;">
+                        Bebés <span style="color: #4caf50; font-weight: 600;">(2-0 años)</span>
+                      </div>
+                      <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+                        <button type="button" class="benko-tour__counter-btn" data-target="toddlers" data-action="minus" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;">−</button>
+                        <input type="number" id="toddlers" name="toddlers" value="0" min="0" max="5" readonly style="width: 40px; text-align: center; border: none; font-size: 1.1rem; font-weight: 600; background: transparent;">
+                        <button type="button" class="benko-tour__counter-btn" data-target="toddlers" data-action="plus" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;">+</button>
+                      </div>
+                      <div style="font-size: 0.75rem; color: #4caf50; margin-top: 4px; font-weight: 500;">✓ Gratis</div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="travelers" name="travelers" value="2">
+                </div>
 
                 <label class="benko-tour__field">
                   <span>Paquete</span>
@@ -253,7 +339,84 @@
   </div>
 
   <script>
-    // Firebase integration for reservas.html
+    // ===== CONTADORES DE VIAJEROS Y CÁLCULO DE PRECIOS =====
+    document.addEventListener('DOMContentLoaded', function() {
+      const adultsInput = document.getElementById('adults');
+      const childrenInput = document.getElementById('children');
+      const toddlersInput = document.getElementById('toddlers');
+      const travelersInput = document.getElementById('travelers');
+      const packageSelect = document.getElementById('package-select');
+      const estimateTotal = document.getElementById('estimate-total');
+      const estimateCaption = document.getElementById('estimate-caption');
+
+      // Tarifa para niños (50% del precio de adulto)
+      // Bebés (0-2 años) son gratis
+      const CHILD_DISCOUNT = 0.5;
+
+      // Función para actualizar el campo hidden de travelers (todos incluidos)
+      function updateTravelers() {
+        const adults = parseInt(adultsInput.value) || 0;
+        const children = parseInt(childrenInput.value) || 0;
+        const toddlers = parseInt(toddlersInput.value) || 0;
+        travelersInput.value = adults + children + toddlers;
+      }
+
+      // Función para calcular y mostrar el precio (solo adultos + niños pagan)
+      function updateEstimate() {
+        const adults = parseInt(adultsInput.value) || 0;
+        const children = parseInt(childrenInput.value) || 0;
+        const toddlers = parseInt(toddlersInput.value) || 0;
+        const selectedOption = packageSelect.options[packageSelect.selectedIndex];
+        const adultPrice = parseInt(selectedOption.dataset.price) || 0;
+        const packageName = selectedOption.text.split(' - ')[0];
+
+        // Calcular totales (bebés son gratis)
+        const adultTotal = adults * adultPrice;
+        const childTotal = children * (adultPrice * CHILD_DISCOUNT);
+        const total = adultTotal + childTotal; // toddlers no suman
+
+        // Actualizar la visualización
+        estimateTotal.textContent = `$${total.toLocaleString('es-CO')} COP`;
+        
+        // Actualizar caption con detalles
+        let captionParts = [];
+        if (adults > 0) captionParts.push(`${adults} adulto${adults > 1 ? 's' : ''}`);
+        if (children > 0) captionParts.push(`${children} niño${children > 1 ? 's' : ''}`);
+        if (toddlers > 0) captionParts.push(`${toddlers} bebé${toddlers > 1 ? 's' : ''} gratis`);
+        estimateCaption.textContent = `${captionParts.join(' + ')} en ${packageName}`;
+      }
+
+      // Manejar clicks en botones de contador
+      document.querySelectorAll('.benko-tour__counter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const target = this.dataset.target;
+          const action = this.dataset.action;
+          const input = document.getElementById(target);
+          let value = parseInt(input.value) || 0;
+
+          if (action === 'plus') {
+            if (value < parseInt(input.max)) {
+              input.value = value + 1;
+            }
+          } else if (action === 'minus') {
+            if (value > parseInt(input.min)) {
+              input.value = value - 1;
+            }
+          }
+
+          updateTravelers();
+          updateEstimate();
+        });
+      });
+
+      // Actualizar cuando cambie el paquete
+      packageSelect.addEventListener('change', updateEstimate);
+
+      // Calcular inicial
+      updateEstimate();
+    });
+
+    // ===== FIREBASE INTEGRATION =====
     document.addEventListener('DOMContentLoaded', function() {
       // Check authentication and pre-fill form
       setTimeout(async function() {
@@ -320,6 +483,19 @@
           e.preventDefault();
           
           // Recoger datos del formulario
+          // Obtener valores de viajeros
+          const adults = document.getElementById('adults')?.value || 0;
+          const children = document.getElementById('children')?.value || 0;
+          const toddlers = document.getElementById('toddlers')?.value || 0;
+          const totalTravelers = parseInt(adults) + parseInt(children) + parseInt(toddlers);
+
+          // Calcular precio total
+          const selectedOption = this.querySelector('[name="package"]')?.selectedOptions[0];
+          const adultPrice = parseInt(selectedOption?.dataset?.price) || 0;
+          const childTotal = children * (adultPrice * 0.5); // 50% para niños
+          const adultTotal = adults * adultPrice;
+          const precioTotal = adultTotal + childTotal;
+
           const reserva = {
             nombre: this.querySelector('[name="name"]')?.value,
             email: this.querySelector('[name="email"]')?.value,
@@ -327,7 +503,14 @@
             ciudad: this.querySelector('[name="city"]')?.value,
             fecha: this.querySelector('[name="date"]')?.value,
             paquete: this.querySelector('[name="package"]')?.value,
-            personas: this.querySelector('[name="travelers"]')?.value,
+            paqueteNombre: selectedOption?.text?.split(' - ')[0] || '',
+            adultos: parseInt(adults),
+            ninos: parseInt(children),
+            bebes: parseInt(toddlers), // 0-2 años gratis
+            personas: totalTravelers,
+            precioAdulto: adultPrice,
+            precioNino: adultPrice * 0.5,
+            precioTotal: precioTotal,
             recogida: this.querySelector('[name="pickup"]')?.value,
             comentarios: this.querySelector('[name="notes"]')?.value,
             estado: 'pendiente',
@@ -387,16 +570,21 @@
           reservationForm.appendChild(statusMsg);
 
           // ====== PASO 2: ABRIR WHATSAPP ======
-          // Construir mensaje de WhatsApp
+          // Construir mensaje de WhatsApp con detalles de viajeros
+          const precioFormateado = precioTotal.toLocaleString('es-CO');
           const mensaje = `Hola Benko Tour! Quiero hacer una reserva:%0A%0A` +
             `*Nombre:* ${reserva.nombre}%0A` +
             `*Email:* ${reserva.email}%0A` +
             `*Teléfono:* ${reserva.telefono}%0A` +
             `*Ciudad:* ${reserva.ciudad}%0A` +
             `*Fecha:* ${reserva.fecha}%0A` +
-            `*Paquete:* ${reserva.paquete}%0A` +
-            `*Personas:* ${reserva.personas}%0A` +
-            `*Recogida:* ${reserva.recogida}%0A` +
+            `*Paquete:* ${reserva.paqueteNombre}%0A%0A` +
+            `*👥 Viajeros:*%0A` +
+            `• ${reserva.adultos} Adulto${reserva.adultos > 1 ? 's' : ''} ($${adultPrice.toLocaleString('es-CO')} c/u)%0A` +
+            (reserva.ninos > 0 ? `• ${reserva.ninos} Niño${reserva.ninos > 1 ? 's' : ''} (50% descuento)%0A` : '') +
+            (reserva.bebes > 0 ? `• ${reserva.bebes} Bebé${reserva.bebes > 1 ? 's' : ''} 0-2 años *(GRATIS)*%0A` : '') +
+            `%0A*💰 Total a pagar: $${precioFormateado} COP*%0A%0A` +
+            `*Punto de recogida:* ${reserva.recogida}%0A` +
             (reserva.comentarios ? `*Comentarios:* ${reserva.comentarios}%0A` : '');
           
           // Abrir WhatsApp después de 1.5 segundos
@@ -411,6 +599,38 @@
           }, 1500);
         });
       }
+
+      // ===== MENÚ MÓVIL SIDEBAR =====
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      const sidebarMenu = document.querySelector('.benko-tour__sidebar-menu');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+      
+      function openSidebar() {
+        sidebarMenu?.classList.add('benko-tour__sidebar-menu--open');
+        sidebarOverlay?.classList.add('benko-tour__sidebar-overlay--visible');
+      }
+      
+      function closeSidebar() {
+        sidebarMenu?.classList.remove('benko-tour__sidebar-menu--open');
+        sidebarOverlay?.classList.remove('benko-tour__sidebar-overlay--visible');
+      }
+      
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', openSidebar);
+      }
+      
+      if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', closeSidebar);
+      }
+      
+      // Cerrar al hacer click en un link (en móvil)
+      document.querySelectorAll('.benko-tour__sidebar-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 1024) {
+            closeSidebar();
+          }
+        });
+      });
     });
   </script>
 </body>

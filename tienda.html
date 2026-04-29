@@ -59,7 +59,58 @@
         </div>
       </header>
 
-      <main>
+      <!-- Botón móvil para abrir menú -->
+      <button class="benko-tour__sidebar-toggle" id="sidebar-toggle" aria-label="Abrir menú de categorías">☰</button>
+
+      <!-- Overlay oscuro para móvil -->
+      <div class="benko-tour__sidebar-overlay" id="sidebar-overlay"></div>
+
+      <!-- Menú lateral de categorías -->
+      <nav class="benko-tour__sidebar-menu" aria-label="Categorías de tienda">
+        <div class="benko-tour__sidebar-header">
+          <span class="benko-tour__sidebar-title">Categorías</span>
+        </div>
+        <ul class="benko-tour__sidebar-list">
+          <li class="benko-tour__sidebar-item">
+            <a href="./tienda.html" class="benko-tour__sidebar-link benko-tour__sidebar-link--active">
+              <span class="benko-tour__sidebar-icon">🏠</span>
+              <span>Principal</span>
+            </a>
+          </li>
+          <li class="benko-tour__sidebar-item">
+            <a href="./gastronomia.html" class="benko-tour__sidebar-link">
+              <span class="benko-tour__sidebar-icon">🍽️</span>
+              <span>Gastronomía</span>
+            </a>
+          </li>
+          <li class="benko-tour__sidebar-item">
+            <a href="./musica.html" class="benko-tour__sidebar-link">
+              <span class="benko-tour__sidebar-icon">🎵</span>
+              <span>Música</span>
+            </a>
+          </li>
+          <li class="benko-tour__sidebar-item">
+            <a href="./moda.html" class="benko-tour__sidebar-link">
+              <span class="benko-tour__sidebar-icon">👗</span>
+              <span>Moda</span>
+            </a>
+          </li>
+          <li class="benko-tour__sidebar-item">
+            <a href="./otros.html" class="benko-tour__sidebar-link">
+              <span class="benko-tour__sidebar-icon">✨</span>
+              <span>Otros</span>
+            </a>
+          </li>
+        </ul>
+        <div class="benko-tour__sidebar-footer">
+          <a href="./reservas.html" class="benko-tour__sidebar-link">
+            <span class="benko-tour__sidebar-icon">📅</span>
+            <span>Ir a Reservas</span>
+          </a>
+        </div>
+      </nav>
+
+      <main class="benko-tour__main-with-sidebar">
         <section class="benko-tour__hero" aria-label="Tienda de Benko Tour">
           <div class="benko-tour__hero-content">
             <span class="benko-tour__pill">Tienda y sabores</span>
@@ -360,6 +411,38 @@
           guardarCarrito([]);
         };
       }
+
+      // ===== MENÚ MÓVIL SIDEBAR =====
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      const sidebarMenu = document.querySelector('.benko-tour__sidebar-menu');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+      
+      function openSidebar() {
+        sidebarMenu?.classList.add('benko-tour__sidebar-menu--open');
+        sidebarOverlay?.classList.add('benko-tour__sidebar-overlay--visible');
+      }
+      
+      function closeSidebar() {
+        sidebarMenu?.classList.remove('benko-tour__sidebar-menu--open');
+        sidebarOverlay?.classList.remove('benko-tour__sidebar-overlay--visible');
+      }
+      
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', openSidebar);
+      }
+      
+      if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', closeSidebar);
+      }
+      
+      // Cerrar al hacer click en un link (en móvil)
+      document.querySelectorAll('.benko-tour__sidebar-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 1024) {
+            closeSidebar();
+          }
+        });
+      });
     });
   </script>
 </body>

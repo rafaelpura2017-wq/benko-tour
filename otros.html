@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Otras experiencias de San Basilio de Palenque - Idioma, historia, naturaleza y más">
+  <meta name="theme-color" content="#20392b">
+  <title>Otras Experiencias | Benko Tour</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./config.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="./firebase-config.js"></script>
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <div class="benko-tour">
+    <div class="benko-tour__shell">
+      <header class="benko-tour__header">
+        <div class="benko-tour__topbar">
+          <a class="benko-tour__topbar-brand" href="./index.html" aria-label="Benko Tour, ir al inicio">
+            <img src="./assets/images/brand/logo-sello.jpg" alt="" loading="eager" decoding="async">
+            <span>Benko Tour</span>
+          </a>
+          <nav class="benko-tour__menu" aria-label="Secciones principales">
+            <a href="./experiencia.html" target="_blank" rel="noopener noreferrer">Experiencia</a>
+            <a href="./nosotros.html" target="_blank" rel="noopener noreferrer">Nosotros</a>
+            <a href="./index.html#paquetes" target="_blank" rel="noopener noreferrer">Paquetes</a>
+            <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
+            <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
+          </nav>
+          <div class="benko-tour__user-menu" id="user-menu" style="display: none; align-items: center; gap: 10px;">
+            <span class="benko-tour__user-name" id="user-name-display" style="color: var(--brand-dark); font-weight: 600; font-size: 0.9rem;"></span>
+            <a href="./perfil.html" class="benko-tour__login" style="background: linear-gradient(135deg, var(--brand) 0%, #e0a030 100%); color: white; font-size: 0.8rem; padding: 8px 12px;">👤 Perfil</a>
+            <button id="logout-btn" class="benko-tour__ghost" style="padding: 6px 12px; font-size: 0.8rem;">🚪</button>
+          </div>
+          <a class="benko-tour__login" href="./acceso.html#acceso" id="login-link">Iniciar sesión</a>
+        </div>
+      </header>
+
+      <!-- Botón móvil para abrir menú -->
+      <button class="benko-tour__sidebar-toggle" id="sidebar-toggle" aria-label="Abrir menú de categorías">☰</button>
+
+      <!-- Overlay oscuro para móvil -->
+      <div class="benko-tour__sidebar-overlay" id="sidebar-overlay"></div>
+
+      <!-- Menú lateral de categorías -->
+      <nav class="benko-tour__sidebar-menu" aria-label="Categorías">
+        <div class="benko-tour__sidebar-header">
+          <span class="benko-tour__sidebar-title">Categorías</span>
+        </div>
+        <ul class="benko-tour__sidebar-list">
+          <li class="benko-tour__sidebar-item">
+            <a href="./reservas.html" class="benko-tour__sidebar-link">
+              <span class="benko-tour__sidebar-icon">🏠</span>
+              <span>Principal</span>
+            </a>
+          </li>
+          <li class="benko-tour__sidebar-item">
+            <a href="./gastronomia.html" class="benko-tour__sidebar-link">
+              <span class="benko-tour__sidebar-icon">🍽️</span>
+              <span>Gastronomía</span>
+            </a>
+          </li>
+          <li class="benko-tour__sidebar-item">
+            <a href="./musica.html" class="benko-tour__sidebar-link">
+              <span class="benko-tour__sidebar-icon">🎵</span>
+              <span>Música</span>
+            </a>
+          </li>
+          <li class="benko-tour__sidebar-item">
+            <a href="./moda.html" class="benko-tour__sidebar-link">
+              <span class="benko-tour__sidebar-icon">👗</span>
+              <span>Moda</span>
+            </a>
+          </li>
+          <li class="benko-tour__sidebar-item">
+            <a href="./otros.html" class="benko-tour__sidebar-link benko-tour__sidebar-link--active">
+              <span class="benko-tour__sidebar-icon">✨</span>
+              <span>Otros</span>
+            </a>
+          </li>
+        </ul>
+        <div class="benko-tour__sidebar-footer">
+          <a href="./tienda.html" class="benko-tour__sidebar-link">
+            <span class="benko-tour__sidebar-icon">🛒</span>
+            <span>Ir a Tienda</span>
+          </a>
+        </div>
+      </nav>
+
+      <main class="benko-tour__main-with-sidebar">
+        <section class="benko-tour__hero" aria-label="Otras Experiencias">
+          <div class="benko-tour__hero-content">
+            <span class="benko-tour__pill">Descubre Más</span>
+            <h1>Otras Experiencias</h1>
+            <p>
+              Desde el idioma palenquero hasta caminatas ecológicas. 
+              Descubre todas las formas de conectar con la cultura de 
+              San Basilio de Palenque más allá de lo tradicional.
+            </p>
+          </div>
+          <aside class="benko-tour__hero-panel" aria-label="Experiencias adicionales">
+            <span class="benko-tour__card-tag">Diversidad</span>
+            <h2 class="benko-tour__panel-title">Más que Descubrir</h2>
+            <ul class="benko-tour__panel-list">
+              <li>Clases de lengua palenquera</li>
+              <li>Tour de historia y resistencia</li>
+              <li>Caminatas ecológicas</li>
+              <li>Terapias tradicionales</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section class="benko-tour__section" id="experiencias-otros">
+          <div class="benko-tour__section-head">
+            <div>
+              <span class="benko-tour__eyebrow">Experiencias</span>
+              <h2 class="benko-tour__section-title">Explora más cultura</h2>
+            </div>
+          </div>
+
+          <div class="benko-tour__package-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+            <article class="benko-tour__package-card">
+              <div class="benko-tour__package-header">
+                <h3>Introducción al Palenquero</h3>
+                <p>Aprende frases básicas del único idioma criollo de Colombia</p>
+              </div>
+              <div class="benko-tour__package-price">$100.000 COP</div>
+              <ul class="benko-tour__feature-list">
+                <li>1.5 horas de clase</li>
+                <li>Vocabulario básico</li>
+                <li>Frases cotidianas</li>
+                <li>Material de apoyo</li>
+              </ul>
+              <a href="./reservas.html?experiencia=idioma" class="benko-tour__button">Reservar experiencia</a>
+            </article>
+
+            <article class="benko-tour__package-card">
+              <div class="benko-tour__package-header">
+                <h3>Tour Histórico de Resistencia</h3>
+                <p>Recorrido por sitios históricos de la lucha palenquera</p>
+              </div>
+              <div class="benko-tour__package-price">$140.000 COP</div>
+              <ul class="benko-tour__feature-list">
+                <li>3 horas de recorrido</li>
+                <li>Guía historiador local</li>
+                <li>Visitas a monumentos</li>
+                <li>Historias de libertad</li>
+              </ul>
+              <a href="./reservas.html?experiencia=historia" class="benko-tour__button">Reservar experiencia</a>
+            </article>
+
+            <article class="benko-tour__package-card">
+              <div class="benko-tour__package-header">
+                <h3>Caminata Ecológica</h3>
+                <p>Explora la naturaleza y biodiversidad del territorio palenquero</p>
+              </div>
+              <div class="benko-tour__package-price">$110.000 COP</div>
+              <ul class="benko-tour__feature-list">
+                <li>2.5 horas de caminata</li>
+                <li>Guía ambiental</li>
+                <li>Avistamiento de aves</li>
+                <li>Refrigerio incluido</li>
+              </ul>
+              <a href="./reservas.html?experiencia=ecologia" class="benko-tour__button">Reservar experiencia</a>
+            </article>
+
+            <article class="benko-tour__package-card">
+              <div class="benko-tour__package-header">
+                <h3>Masaje Tradicional Palenquero</h3>
+                <p>Relájate con técnicas de masaje ancestrales del Caribe</p>
+              </div>
+              <div class="benko-tour__package-price">$180.000 COP</div>
+              <ul class="benko-tour__feature-list">
+                <li>1 hora de sesión</li>
+                <li>Aceites naturales</li>
+                <li>Masaje terapéutico</li>
+                <li>Ambiente tradicional</li>
+              </ul>
+              <a href="./reservas.html?experiencia=masaje" class="benko-tour__button">Reservar experiencia</a>
+            </article>
+
+            <article class="benko-tour__package-card">
+              <div class="benko-tour__package-header">
+                <h3>Noche de Cine Palenquero</h3>
+                <p>Proyección de documentales sobre la cultura palenquera</p>
+              </div>
+              <div class="benko-tour__package-price">$85.000 COP</div>
+              <ul class="benko-tour__feature-list">
+                <li>2 horas de actividad</li>
+                <li>2 documentales</li>
+                <li>Debate posterior</li>
+                <li>Snacks tradicionales</li>
+              </ul>
+              <a href="./reservas.html?experiencia=cine" class="benko-tour__button">Reservar experiencia</a>
+            </article>
+
+            <article class="benko-tour__package-card">
+              <div class="benko-tour__package-header">
+                <h3>Taller de Juegos Tradicionales</h3>
+                <p>Aprende y juega los juegos ancestrales de la comunidad</p>
+              </div>
+              <div class="benko-tour__package-price">$95.000 COP</div>
+              <ul class="benko-tour__feature-list">
+                <li>2 horas de diversión</li>
+                <li>Juegos ancestrales</li>
+                <li>Para toda la familia</li>
+                <li>Premios sorpresa</li>
+              </ul>
+              <a href="./reservas.html?experiencia=juegos" class="benko-tour__button">Reservar experiencia</a>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="benko-tour__footer">
+        <div class="benko-tour__footer-brand">
+          <img class="benko-tour__footer-logo" src="./assets/images/brand/logo-horizontal.jpg" alt="Logo Benko Tour" loading="lazy">
+          <p>Turismo cultural con reservas claras y experiencias auténticas.</p>
+        </div>
+        <div class="benko-tour__footer-links">
+          <a href="./index.html">Inicio</a>
+          <a href="./reservas.html">Reservas</a>
+          <a href="./tienda.html">Tienda</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(async function() {
+        if (typeof window.authFirebase === 'undefined') return;
+        const user = window.authFirebase.obtenerUsuarioActual();
+        if (user) {
+          document.getElementById('login-link').style.display = 'none';
+          document.getElementById('user-menu').style.display = 'flex';
+          document.getElementById('user-name-display').textContent = user.email?.split('@')[0] || 'Usuario';
+        }
+        document.getElementById('logout-btn').addEventListener('click', async function() {
+          const resultado = await window.authFirebase.logout();
+          if (resultado.success) window.location.reload();
+        });
+      }, 1000);
+
+      // ===== MENÚ MÓVIL SIDEBAR =====
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      const sidebarMenu = document.querySelector('.benko-tour__sidebar-menu');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+      
+      function openSidebar() {
+        sidebarMenu?.classList.add('benko-tour__sidebar-menu--open');
+        sidebarOverlay?.classList.add('benko-tour__sidebar-overlay--visible');
+      }
+      
+      function closeSidebar() {
+        sidebarMenu?.classList.remove('benko-tour__sidebar-menu--open');
+        sidebarOverlay?.classList.remove('benko-tour__sidebar-overlay--visible');
+      }
+      
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', openSidebar);
+      }
+      
+      if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', closeSidebar);
+      }
+      
+      // Cerrar al hacer click en un link (en móvil)
+      document.querySelectorAll('.benko-tour__sidebar-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 1024) {
+            closeSidebar();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
