@@ -50,8 +50,9 @@
       <!-- Overlay oscuro para móvil -->
       <div class="benko-tour__sidebar-overlay" id="sidebar-overlay"></div>
 
-      <!-- Menú lateral de categorías -->
-      <nav class="benko-tour__sidebar-menu" aria-label="Categorías">
+      <div class="benko-tour__content-wrapper">
+        <!-- Menú lateral de categorías -->
+        <nav class="benko-tour__sidebar-menu" aria-label="Categorías">
         <div class="benko-tour__sidebar-header">
           <span class="benko-tour__sidebar-title">Categorías</span>
         </div>
@@ -118,62 +119,502 @@
           </aside>
         </section>
 
-        <section class="benko-tour__section" id="experiencias-gastronomia">
+        <section class="benko-tour__section" id="catalogo-gastronomico">
           <div class="benko-tour__section-head">
             <div>
-              <span class="benko-tour__eyebrow">Experiencias</span>
-              <h2 class="benko-tour__section-title">Vive la gastronomía palenquera</h2>
+              <span class="benko-tour__eyebrow">Catálogo Gastronómico</span>
+              <h2 class="benko-tour__section-title">Descubre nuestras experiencias culinarias</h2>
             </div>
+            <p class="benko-tour__section-copy">Desde degustaciones económicas hasta experiencias premium de cocina ancestral</p>
           </div>
 
-          <div class="benko-tour__package-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
-            <article class="benko-tour__package-card">
-              <div class="benko-tour__package-header">
-                <h3>Taller de Cocina Tradicional</h3>
-                <p>Aprende a preparar arroz de palo, catfish y otros platos ancestrales</p>
+          <!-- Filtros -->
+          <div class="benko-tour__catalog-filters">
+            <button class="benko-tour__filter-btn benko-tour__filter-btn--active" data-filter="todos">Todos</button>
+            <button class="benko-tour__filter-btn" data-filter="economico">Económico</button>
+            <button class="benko-tour__filter-btn" data-filter="medio">Medio</button>
+            <button class="benko-tour__filter-btn" data-filter="premium">Premium</button>
+            <button class="benko-tour__filter-btn" data-filter="taller">Talleres</button>
+            <button class="benko-tour__filter-btn" data-filter="degustacion">Degustación</button>
+          </div>
+
+          <!-- Grid de Productos -->
+          <div class="benko-tour__catalog-grid">
+            <!-- PRODUCTO 1 - ECONÓMICO -->
+            <article class="benko-tour__catalog-card" data-category="economico degustacion">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Arepa e' huevo tradicional" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Económico</span>
               </div>
-              <div class="benko-tour__package-price">$180.000 COP</div>
-              <ul class="benko-tour__feature-list">
-                <li>3 horas de clase práctica</li>
-                <li>Ingredientes locales frescos</li>
-                <li>Recetario tradicional</li>
-                <li>Degustación incluida</li>
-              </ul>
-              <a href="./reservas.html?experiencia=cocina" class="benko-tour__button">Reservar experiencia</a>
+              <div class="benko-tour__catalog-content">
+                <h3>Arepa e' Huevo Tradicional</h3>
+                <p class="benko-tour__catalog-desc">La arepa frita rellena de huevo, icono de la gastronomía caribeña</p>
+                <div class="benko-tour__catalog-price">$8.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Arepa artesanal fresca</li>
+                  <li>Huevo de gallina criolla</li>
+                  <li>Salsa de ají casera</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
             </article>
 
-            <article class="benko-tour__package-card">
-              <div class="benko-tour__package-header">
-                <h3>Ruta de los Dulces</h3>
-                <p>Recorrido por las casas tradicionales de dulces palenqueros</p>
+            <!-- PRODUCTO 2 - ECONÓMICO -->
+            <article class="benko-tour__catalog-card" data-category="economico degustacion">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Cocada tradicional" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Económico</span>
               </div>
-              <div class="benko-tour__package-price">$95.000 COP</div>
-              <ul class="benko-tour__feature-list">
-                <li>2 horas de recorrido</li>
-                <li>Degustación de 5 dulces</li>
-                <li>Historia de cada dulce</li>
-                <li>Recetas para llevar</li>
-              </ul>
-              <a href="./reservas.html?experiencia=dulces" class="benko-tour__button">Reservar experiencia</a>
+              <div class="benko-tour__catalog-content">
+                <h3>Cocada Dulce Tradicional</h3>
+                <p class="benko-tour__catalog-desc">Dulce de coco con panela, receta ancestral de San Basilio</p>
+                <div class="benko-tour__catalog-price">$5.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Coco fresco rallado</li>
+                  <li>Panela de caña</li>
+                  <li>Clavo de olor</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
             </article>
 
-            <article class="benko-tour__package-card">
-              <div class="benko-tour__package-header">
-                <h3>Mercado y Cocina</h3>
-                <p>Visita al mercado y preparación de almuerzo tradicional</p>
+            <!-- PRODUCTO 3 - ECONÓMICO -->
+            <article class="benko-tour__catalog-card" data-category="economico">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Empanada palenquera" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Económico</span>
               </div>
-              <div class="benko-tour__package-price">$220.000 COP</div>
-              <ul class="benko-tour__feature-list">
-                <li>4 horas de experiencia</li>
-                <li>Guía en el mercado</li>
-                <li>Almuerzo completo</li>
-                <li>Bebida refrescante</li>
-              </ul>
-              <a href="./reservas.html?experiencia=mercado" class="benko-tour__button">Reservar experiencia</a>
+              <div class="benko-tour__catalog-content">
+                <h3>Empanada Palenquera</h3>
+                <p class="benko-tour__catalog-desc">Empanada de maíz rellena de carne y especias locales</p>
+                <div class="benko-tour__catalog-price">$6.500 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Masa de maíz pilado</li>
+                  <li>Carne de res sazonada</li>
+                  <li>Papa criolla</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 4 - ECONÓMICO -->
+            <article class="benko-tour__catalog-card" data-category="economico degustacion">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Agua de coco" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Económico</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Agua de Coco Natural</h3>
+                <p class="benko-tour__catalog-desc">Refrescante agua de coco fresca, recién cortada</p>
+                <div class="benko-tour__catalog-price">$4.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Coco verde seleccionado</li>
+                  <li>Servida al momento</li>
+                  <li>Ideal para el calor</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 5 - MEDIO -->
+            <article class="benko-tour__catalog-card" data-category="medio">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Arroz de palo" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Medio</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Arroz de Palo Completo</h3>
+                <p class="benko-tour__catalog-desc">Plato fuerte con arroz, pescado seco, coco y plátano</p>
+                <div class="benko-tour__catalog-price">$45.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Porción generosa</li>
+                  <li>Pescado seco tradicional</li>
+                  <li>Arroz con coco</li>
+                  <li>Patacón y ensalada</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 6 - MEDIO -->
+            <article class="benko-tour__catalog-card" data-category="medio taller">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Taller de patacones" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Medio</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Taller: Secretos del Patacón</h3>
+                <p class="benko-tour__catalog-desc">Aprende a preparar el patacón perfecto con 3 salsas</p>
+                <div class="benko-tour__catalog-price">$75.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>2 horas de clase</li>
+                  <li>Plátano verde seleccionado</li>
+                  <li>3 salsas diferentes</li>
+                  <li>Recetario incluido</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 7 - MEDIO -->
+            <article class="benko-tour__catalog-card" data-category="medio degustacion">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Pique maduro" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Medio</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Pique Maduro Especial</h3>
+                <p class="benko-tour__catalog-desc">Plátano maduro asado con queso costeño y bocadillo</p>
+                <div class="benko-tour__catalog-price">$28.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Plátano orgánico maduro</li>
+                  <li>Queso costeño</li>
+                  <li>Bocadillo de guayaba</li>
+                  <li>Mantequilla de sal</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 8 - MEDIO -->
+            <article class="benko-tour__catalog-card" data-category="medio">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Sopa de mondongo" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Medio</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Sopa de Mondongo Tradicional</h3>
+                <p class="benko-tour__catalog-desc">Sopa ancestral con callos, verduras y especias</p>
+                <div class="benko-tour__catalog-price">$38.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Mondongo limpio y tierno</li>
+                  <li>Yuca, plátano y ñame</li>
+                  <li>Especias aromáticas</li>
+                  <li>Porción abundante</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 9 - MEDIO -->
+            <article class="benko-tour__catalog-card" data-category="medio degustacion">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Cazuela de mariscos" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Medio</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Cazuela de Mariscos</h3>
+                <p class="benko-tour__catalog-desc">Sopa de mariscos frescos del Caribe con leche de coco</p>
+                <div class="benko-tour__catalog-price">$68.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Camarón fresco</li>
+                  <li>Pulpo tierno</li>
+                  <li>Leche de coco</li>
+                  <li>Arroz blanco incluido</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 10 - MEDIO -->
+            <article class="benko-tour__catalog-card" data-category="medio">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Pollo en salsa de coco" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Medio</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Pollo en Salsa de Coco</h3>
+                <p class="benko-tour__catalog-desc">Pollo guisado con leche de coco y especias dulces</p>
+                <div class="benko-tour__catalog-price">$42.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Pollo de corral</li>
+                  <li>Salsa de coco cremosa</li>
+                  <li>Arroz con coco</li>
+                  <li>Plátano maduro</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 11 - PREMIUM -->
+            <article class="benko-tour__catalog-card" data-category="premium taller">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Taller maestro de cocina" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Premium</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Taller Maestro: Arroz de Palo</h3>
+                <p class="benko-tour__catalog-desc">Clase privada con chef tradicional, desde la pesca hasta el plato</p>
+                <div class="benko-tour__catalog-price">$180.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>4 horas experiencia</li>
+                  <li>Chef con 30 años experiencia</li>
+                  <li>Almuerzo completo</li>
+                  <li>Certificado participación</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 12 - PREMIUM -->
+            <article class="benko-tour__catalog-card" data-category="premium degustacion">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Cena gourmet palenquera" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Premium</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Cena Gourmet Palenquera</h3>
+                <p class="benko-tour__catalog-desc">Menú de 5 tiempos con maridaje de bebidas locales</p>
+                <div class="benko-tour__catalog-price">$280.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>5 tiempos degustación</li>
+                  <li>Maridaje incluido</li>
+                  <li>Música tradicional en vivo</li>
+                  <li>Souvenir gastronómico</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 13 - PREMIUM -->
+            <article class="benko-tour__catalog-card" data-category="premium">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Catfish frito" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Premium</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Catfish Frito Especial</h3>
+                <p class="benko-tour__catalog-desc">Bagre frito crocante con acompañamientos tradicionales</p>
+                <div class="benko-tour__catalog-price">$95.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Bagre fresco del día</li>
+                  <li>Arroz de coco</li>
+                  <li>Patacón doble porción</li>
+                  <li>Salsa tártara casera</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 14 - PREMIUM -->
+            <article class="benko-tour__catalog-card" data-category="premium taller">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Experiencia fogón" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Premium</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Experiencia Fogón Palenquero</h3>
+                <p class="benko-tour__catalog-desc">Cocina tradicional al leño con abuela del pueblo</p>
+                <div class="benko-tour__catalog-price">$320.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>6 horas experiencia</li>
+                  <li>Cocina en fogón tradicional</li>
+                  <li>3 platos ancestrales</li>
+                  <li>Historia oral incluida</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 15 - ECONÓMICO -->
+            <article class="benko-tour__catalog-card" data-category="economico">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Carimañola" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Económico</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Carimañola de Queso</h3>
+                <p class="benko-tour__catalog-desc">Yuca rellena de queso costeño, frita hasta dorar</p>
+                <div class="benko-tour__catalog-price">$7.500 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Masa de yuca fresca</li>
+                  <li>Queso costeño derretido</li>
+                  <li>Salsa de ají opcional</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 16 - MEDIO -->
+            <article class="benko-tour__catalog-card" data-category="medio degustacion">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Tabla de dulces" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Medio</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Tabla de Dulces Palenqueros</h3>
+                <p class="benko-tour__catalog-desc">Selección de 8 dulces tradicionales para compartir</p>
+                <div class="benko-tour__catalog-price">$55.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>8 variedades diferentes</li>
+                  <li>Cocada, enyucado, alegrías</li>
+                  <li>Presentación especial</li>
+                  <li>Ideal para regalo</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 17 - PREMIUM -->
+            <article class="benko-tour__catalog-card" data-category="premium">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Mojarra frita" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Premium</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Mojarra Frita al Estilo Palenque</h3>
+                <p class="benko-tour__catalog-desc">Pescado entero frito con arroz de coco y patacón</p>
+                <div class="benko-tour__catalog-price">$85.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Mojarra fresca entera</li>
+                  <li>Arroz de coco</li>
+                  <li>Ensalada de aguacate</li>
+                  <li>Plátano en tentación</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 18 - ECONÓMICO -->
+            <article class="benko-tour__catalog-card" data-category="economico">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Tinto campesino" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Económico</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Tinto Campesino Tradicional</h3>
+                <p class="benko-tour__catalog-desc">Café negro colado en tela con panela y especias</p>
+                <div class="benko-tour__catalog-price">$3.500 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Café recién molido</li>
+                  <li>Panela de caña</li>
+                  <li>Clavo y canela</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 19 - MEDIO -->
+            <article class="benko-tour__catalog-card" data-category="medio taller">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Taller de dulces" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Medio</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Taller de Dulces Típicos</h3>
+                <p class="benko-tour__catalog-desc">Aprende 3 dulces tradicionales con una cocinera local</p>
+                <div class="benko-tour__catalog-price">$95.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>3 horas prácticas</li>
+                  <li>Cocada, enyucado, breva</li>
+                  <li>Ingredientes incluidos</li>
+                  <li>Llevas lo que preparas</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 20 - PREMIUM -->
+            <article class="benko-tour__catalog-card" data-category="premium">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Langosta" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Premium</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Langosta al Coco</h3>
+                <p class="benko-tour__catalog-desc">Langosta fresca con salsa de coco y especias</p>
+                <div class="benko-tour__catalog-price">$420.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Langosta del día</li>
+                  <li>Salsa de coco cremosa</li>
+                  <li>Arroz con camarones</li>
+                  <li>Vino blanco opcional</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 21 - ECONÓMICO -->
+            <article class="benko-tour__catalog-card" data-category="economico degustacion">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Enyucado" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Económico</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Enyucado Dulce</h3>
+                <p class="benko-tour__catalog-desc">Bollo de yuca rallada con queso y anís</p>
+                <div class="benko-tour__catalog-price">$6.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Yuca orgánica rallada</li>
+                  <li>Queso salado</li>
+                  <li>Sabor anisado</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 22 - MEDIO -->
+            <article class="benko-tour__catalog-card" data-category="medio">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Sudado de pescado" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Medio</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Sudado de Pescado</h3>
+                <p class="benko-tour__catalog-desc">Pescado cocinado en su jugo con tomate y cebolla</p>
+                <div class="benko-tour__catalog-price">$52.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Filete de pescado fresco</li>
+                  <li>Salsa de tomate natural</li>
+                  <li>Arroz blanco</li>
+                  <li>Plátano sancochado</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 23 - PREMIUM -->
+            <article class="benko-tour__catalog-card" data-category="premium taller">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Masterclass sancocho" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Premium</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Masterclass: Sancocho de Pescado</h3>
+                <p class="benko-tour__catalog-desc">Clase privada del sancocho más famoso del Caribe</p>
+                <div class="benko-tour__catalog-price">$250.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>5 horas experiencia completa</li>
+                  <li>Visita al mercado de pescado</li>
+                  <li>Preparación paso a paso</li>
+                  <li>Almuerzo degustación</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- PRODUCTO 24 - ECONÓMICO -->
+            <article class="benko-tour__catalog-card" data-category="economico degustacion">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-gastro.jpg" alt="Breva con queso" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Económico</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Breva con Queso</h3>
+                <p class="benko-tour__catalog-desc">Higo brevo en almíbar con queso costeño</p>
+                <div class="benko-tour__catalog-price">$9.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Brevas en almíbar</li>
+                  <li>Queso costeño fresco</li>
+                  <li>Postre tradicional</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+              </div>
             </article>
           </div>
         </section>
       </main>
+      </div>
 
       <footer class="benko-tour__footer">
         <div class="benko-tour__footer-brand">

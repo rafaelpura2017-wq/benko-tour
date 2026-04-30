@@ -50,8 +50,9 @@
       <!-- Overlay oscuro para móvil -->
       <div class="benko-tour__sidebar-overlay" id="sidebar-overlay"></div>
 
-      <!-- Menú lateral de categorías -->
-      <nav class="benko-tour__sidebar-menu" aria-label="Categorías">
+      <div class="benko-tour__content-wrapper">
+        <!-- Menú lateral de categorías -->
+        <nav class="benko-tour__sidebar-menu" aria-label="Categorías">
         <div class="benko-tour__sidebar-header">
           <span class="benko-tour__sidebar-title">Categorías</span>
         </div>
@@ -118,62 +119,410 @@
           </aside>
         </section>
 
-        <section class="benko-tour__section" id="experiencias-musica">
+        <section class="benko-tour__section" id="catalogo-musical">
           <div class="benko-tour__section-head">
             <div>
-              <span class="benko-tour__eyebrow">Experiencias</span>
-              <h2 class="benko-tour__section-title">Siente el ritmo palenquero</h2>
+              <span class="benko-tour__eyebrow">Catálogo Musical</span>
+              <h2 class="benko-tour__section-title">Descubre el ritmo del Caribe</h2>
             </div>
+            <p class="benko-tour__section-copy">Desde tambores ancestrales hasta champeta callejera, vive la música palenquera</p>
           </div>
 
-          <div class="benko-tour__package-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
-            <article class="benko-tour__package-card">
-              <div class="benko-tour__package-header">
-                <h3>Taller de Tambores</h3>
-                <p>Aprende a tocar los tambores tradicionales y sus ritmos ancestrales</p>
+          <!-- Filtros -->
+          <div class="benko-tour__catalog-filters">
+            <button class="benko-tour__filter-btn benko-tour__filter-btn--active" data-filter="todos">Todos</button>
+            <button class="benko-tour__filter-btn" data-filter="tambores">Tambores</button>
+            <button class="benko-tour__filter-btn" data-filter="champeta">Champeta</button>
+            <button class="benko-tour__filter-btn" data-filter="show">Shows</button>
+            <button class="benko-tour__filter-btn" data-filter="ruta">Rutas</button>
+            <button class="benko-tour__filter-btn" data-filter="danza">Danza</button>
+          </div>
+
+          <!-- Grid de Experiencias Musicales -->
+          <div class="benko-tour__catalog-grid">
+            <!-- EXPERIENCIA 1 - TAMBORES -->
+            <article class="benko-tour__catalog-card" data-category="tambores">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Tambor alegre para principiantes" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Taller</span>
               </div>
-              <div class="benko-tour__package-price">$150.000 COP</div>
-              <ul class="benko-tour__feature-list">
-                <li>2 horas de taller</li>
-                <li>Instrumentos proporcionados</li>
-                <li>Ritmos básicos y avanzados</li>
-                <li>Presentación final</li>
-              </ul>
-              <a href="./reservas.html?experiencia=tambores" class="benko-tour__button">Reservar experiencia</a>
+              <div class="benko-tour__catalog-content">
+                <h3>Tambor Alegre para Principiantes</h3>
+                <p class="benko-tour__catalog-desc">Aprende los ritmos ancestrales de San Basilio de Palenque con maestros tamboreros que llevan el pulso del Caribe en sus manos.</p>
+                <div class="benko-tour__catalog-price">$120.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>2 horas prácticas</li>
+                  <li>Tambor proporcionado</li>
+                  <li>Ritmos básicos</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
             </article>
 
-            <article class="benko-tour__package-card">
-              <div class="benko-tour__package-header">
-                <h3>Clase de Champeta</h3>
-                <p>Baila la champeta con maestros locales y aprende sus pasos</p>
+            <!-- EXPERIENCIA 2 - TAMBORES -->
+            <article class="benko-tour__catalog-card" data-category="tambores">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Golpe de tambor al atardecer" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Premium</span>
               </div>
-              <div class="benko-tour__package-price">$120.000 COP</div>
-              <ul class="benko-tour__feature-list">
-                <li>1.5 horas de clase</li>
-                <li>Historia de la champeta</li>
-                <li>Pasos básicos y figuras</li>
-                <li>Sesión de práctica</li>
-              </ul>
-              <a href="./reservas.html?experiencia=champeta" class="benko-tour__button">Reservar experiencia</a>
+              <div class="benko-tour__catalog-content">
+                <h3>Golpe de Tambor al Atardecer</h3>
+                <p class="benko-tour__catalog-desc">Toca el tambor mientras el sol se hunde en el mar, sintiendo la vibración del tambor alegre mezclada con la brisa del océano.</p>
+                <div class="benko-tour__catalog-price">$180.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Sesión al atardecer</li>
+                  <li>Coctel de bienvenida</li>
+                  <li>Fotos incluidas</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
             </article>
 
-            <article class="benko-tour__package-card">
-              <div class="benko-tour__package-header">
-                <h3>Noche de Tambor</h3>
-                <p>Espectáculo nocturno con tambores, cantos y danza tradicional</p>
+            <!-- EXPERIENCIA 3 - TAMBORES -->
+            <article class="benko-tour__catalog-card" data-category="tambores">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Tambores terapéuticos" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Bienestar</span>
               </div>
-              <div class="benko-tour__package-price">$280.000 COP</div>
-              <ul class="benko-tour__feature-list">
-                <li>3 horas de espectáculo</li>
-                <li>Cena tradicional incluida</li>
-                <li>Participación del público</li>
-                <li>Fotografías del evento</li>
-              </ul>
-              <a href="./reservas.html?experiencia=noche-tambor" class="benko-tour__button">Reservar experiencia</a>
+              <div class="benko-tour__catalog-content">
+                <h3>Tambores Terapéuticos del Palenque</h3>
+                <p class="benko-tour__catalog-desc">Descubre cómo el tambor sanador ancestral libera energías y conecta cuerpo y espíritu en una experiencia única de sanación sonora.</p>
+                <div class="benko-tour__catalog-price">$95.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>1.5 horas terapia</li>
+                  <li>Meditación guiada</li>
+                  <li>Ambiente natural</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 4 - TAMBORES -->
+            <article class="benko-tour__catalog-card" data-category="tambores">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Ritmo de Lumbalú" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Ceremonia</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Ritmo de Lumbalú</h3>
+                <p class="benko-tour__catalog-desc">Sumérgete en los tambores ceremoniales que acompañan las fiestas de velorio, una tradición viva de la cultura afrocolombiana.</p>
+                <div class="benko-tour__catalog-price">$150.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Ceremonia completa</li>
+                  <li>Cantos tradicionales</li>
+                  <li>Explicación histórica</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 5 - CHAMPETA -->
+            <article class="benko-tour__catalog-card" data-category="champeta">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Champeta en la calle" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Popular</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Champeta en la Calle</h3>
+                <p class="benko-tour__catalog-desc">Baila como un local en las esquinas de Cartagena, aprendiendo los pasos básicos y la historia de este ritmo nacido en los barrios caribeños.</p>
+                <div class="benko-tour__catalog-price">$45.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>1 hora de clase</li>
+                  <li>Profesor callejero</li>
+                  <li>Refresco incluido</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 6 - CHAMPETA -->
+            <article class="benko-tour__catalog-card" data-category="champeta">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Picó cultura del sonido" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Cultural</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Picó: La Cultura del Sonido</h3>
+                <p class="benko-tour__catalog-desc">Descubre el mundo de los picós cartageneros, esos enormes tocadiscos de barrio que han movido el Caribe durante décadas.</p>
+                <div class="benko-tour__catalog-price">$80.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Visita a picó real</li>
+                  <li>Historia del movimiento</li>
+                  <li>Selección de vinilos</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 7 - CHAMPETA -->
+            <article class="benko-tour__catalog-card" data-category="champeta">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Champeta criolla auténtica" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Auténtico</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Champeta Criolla Auténtica</h3>
+                <p class="benko-tour__catalog-desc">Aprende los pasos de la champeta original, no la de TikTok, con bailarines que han heredado el estilo de generación en generación.</p>
+                <div class="benko-tour__catalog-price">$130.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>2 horas intensivas</li>
+                  <li>Maestros de barrio</li>
+                  <li>Sesión de práctica</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 8 - SHOWS -->
+            <article class="benko-tour__catalog-card" data-category="show">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Noche de tambor en la plaza" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Espectáculo</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Noche de Tambor en la Plaza</h3>
+                <p class="benko-tour__catalog-desc">Vive la magia de una presentación en vivo donde tambores, cantos y danzas se mezclan bajo las estrellas del casco antiguo.</p>
+                <div class="benko-tour__catalog-price">$250.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>3 horas show completo</li>
+                  <li>Asiento preferencial</li>
+                  <li>Bebida tradicional</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 9 - SHOWS -->
+            <article class="benko-tour__catalog-card" data-category="show">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Serenata de vallenato en balcón" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Romántico</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Serenata de Vallenato en Balcón</h3>
+                <p class="benko-tour__catalog-desc">Disfruta de un acordeón, una caja y una guacharaca tocando vallenato clásico mientras ves pasar la vida desde un balcón colonial.</p>
+                <div class="benko-tour__catalog-price">$200.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Serenata privada</li>
+                  <li>Trio vallenato</li>
+                  <li>Flores incluidas</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 10 - SHOWS -->
+            <article class="benko-tour__catalog-card" data-category="show">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Bolero bajo la luna" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Intimo</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Bolero Bajo la Luna</h3>
+                <p class="benko-tour__catalog-desc">Deja que el piano y la voz de un trovador te transporten a los años dorados del bolero en una noche íntima y romántica.</p>
+                <div class="benko-tour__catalog-price">$160.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Concierto privado</li>
+                  <li>Cena romántica</li>
+                  <li>Vino de la casa</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 11 - SHOWS -->
+            <article class="benko-tour__catalog-card" data-category="show">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Son cubano en el caribe" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Fusion</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Son Cubano en el Caribe</h3>
+                <p class="benko-tour__catalog-desc">Baila son auténtico con músicos cubanos residentes que traen la tradición de La Habana al calor del Caribe colombiano.</p>
+                <div class="benko-tour__catalog-price">$190.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Banda completa</li>
+                  <li>Clase de salsa cubana</li>
+                  <li>Mojito de bienvenida</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 12 - RUTAS -->
+            <article class="benko-tour__catalog-card" data-category="ruta">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Ruta del bullerengue" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Excursión</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Ruta del Bullerengue</h3>
+                <p class="benko-tour__catalog-desc">Recorre los pueblos donde nació este ritmo de resistencia femenina, conociendo cantadoras que preservan la tradición oral.</p>
+                <div class="benko-tour__catalog-price">$220.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Transporte incluido</li>
+                  <li>Visita a cantadoras</li>
+                  <li>Almuerzo típico</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 13 - RUTAS -->
+            <article class="benko-tour__catalog-card" data-category="ruta">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Mercado de Bazurto" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Callejero</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Sonidos del Mercado de Bazurto</h3>
+                <p class="benko-tour__catalog-desc">Explora el mercado más colorido de Cartagena mientras suena champeta, vallenato y cumbia por cada rincón lleno de vida.</p>
+                <div class="benko-tour__catalog-price">$55.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Tour guiado 2 horas</li>
+                  <li>Bebida local</li>
+                  <li>Guía bilingüe</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 14 - RUTAS -->
+            <article class="benko-tour__catalog-card" data-category="ruta">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Caminata Getsemaní" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Cultural</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Caminata por el Barrio Getsemaní</h3>
+                <p class="benko-tour__catalog-desc">Descubre la historia musical del barrio más bohemio de Cartagena, donde nacieron cantautores y se gestó la revolución champetera.</p>
+                <div class="benko-tour__catalog-price">$85.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Caminata 2.5 horas</li>
+                  <li>Paradas en murales</li>
+                  <li>Café artesanal</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 15 - DANZA -->
+            <article class="benko-tour__catalog-card" data-category="danza">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Cumbia al fuego de la noche" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Nocturno</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Cumbia al Fuego de la Noche</h3>
+                <p class="benko-tour__catalog-desc">Aprende los pasos de la cumbia tradicional junto a una fogata, conociendo el simbolismo de cada movimiento ancestral.</p>
+                <div class="benko-tour__catalog-price">$140.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Noche de luna llena</li>
+                  <li>Vestuario tradicional</li>
+                  <li>Velas encendidas</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 16 - DANZA -->
+            <article class="benko-tour__catalog-card" data-category="danza">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Danza del garabato" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Festival</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Danza del Garabato</h3>
+                <p class="benko-tour__catalog-desc">Descubre esta danza festiva de las fiestas de Cartagena, donde el garabato (palo pintado) guía los movimientos de los bailarines.</p>
+                <div class="benko-tour__catalog-price">$110.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Clase práctica</li>
+                  <li>Garabato artesanal</li>
+                  <li>Disfraces coloridos</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 17 - DANZA -->
+            <article class="benko-tour__catalog-card" data-category="danza">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Mapalé en la playa" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Playa</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Mapalé en la Playa</h3>
+                <p class="benko-tour__catalog-desc">Baila este ritmo afrocolombiano de pescadores con los pies en la arena, sintiendo la energía del mar en cada movimiento.</p>
+                <div class="benko-tour__catalog-price">$60.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Clase en la playa</li>
+                  <li>Grupo reducido</li>
+                  <li>Refresco de coco</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 18 - DANZA -->
+            <article class="benko-tour__catalog-card" data-category="danza">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Fandango de San Jacinto" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Tradicional</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Fandango de San Jacinto</h3>
+                <p class="benko-tour__catalog-desc">Experimenta la fusión de tambores, cuerdas y voces en una noche de fandango, el ritmo que une generaciones en los Montes de María.</p>
+                <div class="benko-tour__catalog-price">$175.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Excursión + show</li>
+                  <li>Cena campesina</li>
+                  <li>Artesanías locales</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 19 - SHOWS -->
+            <article class="benko-tour__catalog-card" data-category="show">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Serenata en canoa" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Naturaleza</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Serenata Criolla en Canoa</h3>
+                <p class="benko-tour__catalog-desc">Navega por manglares escuchando serenatas tradicionales mientras el sol se oculta sobre las aguas tranquilas.</p>
+                <div class="benko-tour__catalog-price">$210.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Paseo en canoa</li>
+                  <li>Músico a bordo</li>
+                  <li>Picnic tradicional</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 20 - RUTAS -->
+            <article class="benko-tour__catalog-card" data-category="ruta">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-musica.jpg" alt="Ruta de las tamboras" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Artesanal</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Ruta de las Tamboras</h3>
+                <p class="benko-tour__catalog-desc">Visita los talleres donde se fabrican los tambores alegres a mano, conociendo artesanos que mantienen viva esta tradición.</p>
+                <div class="benko-tour__catalog-price">$90.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Visita a 3 talleres</li>
+                  <li>Demostración en vivo</li>
+                  <li>Pequeño tambor de regalo</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
             </article>
           </div>
         </section>
       </main>
+      </div>
 
       <footer class="benko-tour__footer">
         <div class="benko-tour__footer-brand">

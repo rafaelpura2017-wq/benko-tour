@@ -49,8 +49,9 @@
       <!-- Overlay oscuro para móvil -->
       <div class="benko-tour__sidebar-overlay" id="sidebar-overlay"></div>
 
-      <!-- Menú lateral de categorías -->
-      <nav class="benko-tour__sidebar-menu" aria-label="Categorías">
+      <div class="benko-tour__content-wrapper">
+        <!-- Menú lateral de categorías -->
+        <nav class="benko-tour__sidebar-menu" aria-label="Categorías">
         <div class="benko-tour__sidebar-header">
           <span class="benko-tour__sidebar-title">Categorías</span>
         </div>
@@ -117,62 +118,410 @@
           </aside>
         </section>
 
-        <section class="benko-tour__section" id="experiencias-moda">
+        <section class="benko-tour__section" id="catalogo-moda">
           <div class="benko-tour__section-head">
             <div>
-              <span class="benko-tour__eyebrow">Experiencias</span>
-              <h2 class="benko-tour__section-title">Viste la tradición</h2>
+              <span class="benko-tour__eyebrow">Catálogo de Moda</span>
+              <h2 class="benko-tour__section-title">Viste el alma del Caribe</h2>
             </div>
+            <p class="benko-tour__section-copy">Turbantes que cuentan historias, molas bordadas a mano y colores que vibran con el trópico</p>
           </div>
 
-          <div class="benko-tour__package-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
-            <article class="benko-tour__package-card">
-              <div class="benko-tour__package-header">
-                <h3>Taller de Turbantes</h3>
-                <p>Aprende el arte de amarrar turbantes y su significado cultural</p>
+          <!-- Filtros -->
+          <div class="benko-tour__catalog-filters">
+            <button class="benko-tour__filter-btn benko-tour__filter-btn--active" data-filter="todos">Todos</button>
+            <button class="benko-tour__filter-btn" data-filter="turbantes">Turbantes</button>
+            <button class="benko-tour__filter-btn" data-filter="molas">Molas</button>
+            <button class="benko-tour__filter-btn" data-filter="textil">Textil</button>
+            <button class="benko-tour__filter-btn" data-filter="joyeria">Joyería</button>
+            <button class="benko-tour__filter-btn" data-filter="fotos">Fotos</button>
+          </div>
+
+          <!-- Grid de Experiencias de Moda -->
+          <div class="benko-tour__catalog-grid">
+            <!-- EXPERIENCIA 1 - TURBANTES -->
+            <article class="benko-tour__catalog-card" data-category="turbantes">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Turbante corona de reina" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Taller</span>
               </div>
-              <div class="benko-tour__package-price">$130.000 COP</div>
-              <ul class="benko-tour__feature-list">
-                <li>2 horas de taller</li>
-                <li>Tela para practicar</li>
-                <li>5 estilos diferentes</li>
-                <li>Turbante de regalo</li>
-              </ul>
-              <a href="./reservas.html?experiencia=turbantes" class="benko-tour__button">Reservar experiencia</a>
+              <div class="benko-tour__catalog-content">
+                <h3>Corona de Reina: Turbante Afro</h3>
+                <p class="benko-tour__catalog-desc">Aprende a crear el icónico turbante alto que simboliza fuerza y dignidad, usado por las mujeres palenqueras desde tiempos ancestrales.</p>
+                <div class="benko-tour__catalog-price">$95.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>1.5 horas prácticas</li>
+                  <li>Tela africana incluida</li>
+                  <li>Turbante de regalo</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
             </article>
 
-            <article class="benko-tour__package-card">
-              <div class="benko-tour__package-header">
-                <h3>Taller de Molas</h3>
-                <p>Crea tu propia mola palenquera con técnicas tradicionales</p>
+            <!-- EXPERIENCIA 2 - TURBANTES -->
+            <article class="benko-tour__catalog-card" data-category="turbantes">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="5 formas de amarrar" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Intensivo</span>
               </div>
-              <div class="benko-tour__package-price">$160.000 COP</div>
-              <ul class="benko-tour__feature-list">
-                <li>3 horas de taller</li>
-                <li>Materiales incluidos</li>
-                <li>Técnicas de costura</li>
-                <li>Mola terminada para llevar</li>
-              </ul>
-              <a href="./reservas.html?experiencia=molas" class="benko-tour__button">Reservar experiencia</a>
+              <div class="benko-tour__catalog-content">
+                <h3>5 Formas de Amarrar tu Identidad</h3>
+                <p class="benko-tour__catalog-desc">Domina cinco estilos diferentes de turbantes, desde el elegante para bodas hasta el práctico para el día a día en el calor caribeño.</p>
+                <div class="benko-tour__catalog-price">$85.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>2 horas de taller</li>
+                  <li>5 técnicas distintas</li>
+                  <li>Guía ilustrada incluida</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
             </article>
 
-            <article class="benko-tour__package-card">
-              <div class="benko-tour__package-header">
-                <h3>Sesión Fotográfica Tradicional</h3>
-                <p>Vístete con trajes tradicionales palenqueros y captura el momento</p>
+            <!-- EXPERIENCIA 3 - TURBANTES -->
+            <article class="benko-tour__catalog-card" data-category="turbantes">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Turbante al atardecer" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Premium</span>
               </div>
-              <div class="benko-tour__package-price">$250.000 COP</div>
-              <ul class="benko-tour__feature-list">
-                <li>2 horas de sesión</li>
-                <li>3 cambios de vestuario</li>
-                <li>25 fotografías editadas</li>
-                <li>Locaciones tradicionales</li>
-              </ul>
-              <a href="./reservas.html?experiencia=fotos-tradicionales" class="benko-tour__button">Reservar experiencia</a>
+              <div class="benko-tour__catalog-content">
+                <h3>Turbante al Atardecer en la Muralla</h3>
+                <p class="benko-tour__catalog-desc">Amarra tu turbante mientras el sol se pinta de naranja sobre las murallas de Cartagena, en una sesión mágica de empoderamiento.</p>
+                <div class="benko-tour__catalog-price">$150.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Sesión dorada 2 horas</li>
+                  <li>Fotos profesionales</li>
+                  <li>Copa de champán</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 4 - TURBANTES -->
+            <article class="benko-tour__catalog-card" data-category="turbantes">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Turbantes para hombres" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Unisex</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Turbantes con Flow: Estilo Masculino</h3>
+                <p class="benko-tour__catalog-desc">Descubre cómo los hombres del Caribe usan el turbante con estilo urbano, mezclando tradición africana con moda contemporánea.</p>
+                <div class="benko-tour__catalog-price">$75.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Estilos masculinos</li>
+                  <li>Combinaciones modernas</li>
+                  <li>Turbante deportivo</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 5 - MOLAS -->
+            <article class="benko-tour__catalog-card" data-category="molas">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Mola desde cero" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Artesanal</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Mola desde Cero: Técnica Kuna</h3>
+                <p class="benko-tour__catalog-desc">Aprende el arte reverso de las molas, creando capas de tela que forman diseños geométricos llenos de simbolismo ancestral.</p>
+                <div class="benko-tour__catalog-price">$140.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>3 horas intensivas</li>
+                  <li>Kit de materiales</li>
+                  <li>Mola terminada</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 6 - MOLAS -->
+            <article class="benko-tour__catalog-card" data-category="molas">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Mola express" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Express</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Mola Express: Diseño en 1 Hora</h3>
+                <p class="benko-tour__catalog-desc">Un taller rápido para quienes quieren llevarse un souvenir hecho con sus propias manos, creando un mini-diseño tradicional.</p>
+                <div class="benko-tour__catalog-price">$55.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>1 hora práctica</li>
+                  <li>Diseño sencillo</li>
+                  <li>Llavero o pin terminado</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 7 - MOLAS -->
+            <article class="benko-tour__catalog-card" data-category="molas">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Mola avanzada" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Masterclass</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Masterclass: Mola Palenquera Avanzada</h3>
+                <p class="benko-tour__catalog-desc">Para quienes ya saben lo básico: aprende diseños complejos con animales, flores tropicales y figuras geométricas avanzadas.</p>
+                <div class="benko-tour__catalog-price">$220.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>4 horas avanzadas</li>
+                  <li>Diseño complejo</li>
+                  <li>Marco para tu obra</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 8 - TEXTIL -->
+            <article class="benko-tour__catalog-card" data-category="textil">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Tejido en telar" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Tradicional</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Telar Ancestral: Teje tu Historia</h3>
+                <p class="benko-tour__catalog-desc">Experimenta el tejido en telar vertical como lo hacían los indígenas Zenú, creando tu propio tapiz con hilos de colores vibrantes.</p>
+                <div class="benko-tour__catalog-price">$165.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>3 horas de tejido</li>
+                  <li>Lana de colores</li>
+                  <li>Tapiz pequeño listo</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 9 - TEXTIL -->
+            <article class="benko-tour__catalog-card" data-category="textil">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Bordado flores" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Decorativo</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Bordado de Flores Tropicales</h3>
+                <p class="benko-tour__catalog-desc">Borda heliconias, buganvilias y flores de papel en tela, creando un diseño único que huele a Caribe aunque esté enmarcado.</p>
+                <div class="benko-tour__catalog-price">$70.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>2 horas creativas</li>
+                  <li>Kit completo</li>
+                  <li>Marco incluido</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 10 - TEXTIL -->
+            <article class="benko-tour__catalog-card" data-category="textil">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Tintes naturales" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Natural</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Tintes Naturales: Color de la Tierra</h3>
+                <p class="benko-tour__catalog-desc">Aprende a teñir telas usando achiote, índigo, cúrcuma y otras plantas locales, creando colores únicos que no dañan el medio ambiente.</p>
+                <div class="benko-tour__catalog-price">$120.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>2.5 horas experimento</li>
+                  <li>3 técnicas de tinte</li>
+                  <li>Pañuelo teñido</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 11 - TEXTIL -->
+            <article class="benko-tour__catalog-card" data-category="textil">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Camisa guayabera" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Masculino</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>La Guayabera Perfecta: Bordado a Mano</h3>
+                <p class="benko-tour__catalog-desc">Conoce la historia de la guayabera caribeña y aprende a bordar el tradicional punto de cruz que decora esta prema icónica.</p>
+                <div class="benko-tour__catalog-price">$110.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>Taller 2 horas</li>
+                  <li>Historia incluida</li>
+                  <li>Bolsillo bordado</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 12 - JOYERIA -->
+            <article class="benko-tour__catalog-card" data-category="joyeria">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Collar semillas" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Natural</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Collares con Semillas del Bosque</h3>
+                <p class="benko-tour__catalog-desc">Crea joyería única usando semillas de tagua, coco y otros frutos tropicales, conectándote con la naturaleza del Caribe.</p>
+                <div class="benko-tour__catalog-price">$60.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>1.5 horas creativas</li>
+                  <li>Semillas variadas</li>
+                  <li>2 piezas terminadas</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 13 - JOYERIA -->
+            <article class="benko-tour__catalog-card" data-category="joyeria">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Aretes wayuu" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Étnico</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Aretes Wayuu: Tejido en Miniatura</h3>
+                <p class="benko-tour__catalog-desc">Aprende la técnica de tejido wayuu en pequeña escala, creando aretes coloridos que llevan la tradición guajira en cada hilo.</p>
+                <div class="benko-tour__catalog-price">$80.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>2 horas de tejido</li>
+                  <li>Hilo wayuu original</li>
+                  <li>Par de aretes listo</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 14 - JOYERIA -->
+            <article class="benko-tour__catalog-card" data-category="joyeria">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Pulseras macrame" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Boho</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Pulseras Bohemias en Macramé</h3>
+                <p class="benko-tour__catalog-desc">Nudos, hilos de colores y cuentas tropicales se combinan en pulseras que evocan días de playa y noches de fogata.</p>
+                <div class="benko-tour__catalog-price">$45.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>1 hora relajada</li>
+                  <li>3 pulseras diferentes</li>
+                  <li>Cuentas de colores</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 15 - JOYERIA -->
+            <article class="benko-tour__catalog-card" data-category="joyeria">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Collar oro caribe" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Lujo</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Diseña tu Collar de Oro Caribe</h3>
+                <p class="benko-tour__catalog-desc">Trabaja con oro laminado y piedras locales para crear una pieza única con inspiración en el tesoro de los conquistadores.</p>
+                <div class="benko-tour__catalog-price">$280.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>3 horas de joyería</li>
+                  <li>Oro laminado 18k</li>
+                  <li>Collar profesional</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 16 - FOTOS -->
+            <article class="benko-tour__catalog-card" data-category="fotos">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Sesion reina africana" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Premium</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Sesión: Reina Africana en Cartagena</h3>
+                <p class="benko-tour__catalog-desc">Vístete con vestidos de wax africano, turbantes espectaculares y accesorios dignos de realeza en una sesión fotográfica épica.</p>
+                <div class="benko-tour__catalog-price">$350.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>3 horas producción</li>
+                  <li>3 cambios vestuario</li>
+                  <li>30 fotos editadas</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 17 - FOTOS -->
+            <article class="benko-tour__catalog-card" data-category="fotos">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Sesion mola" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Artístico</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Sesión con Mola: Arte que Viste</h3>
+                <p class="benko-tour__catalog-desc">Usa piezas auténticas de mola como chalecos, bolsos y cinturones en una sesión fotográfica que celebra el arte textil.</p>
+                <div class="benko-tour__catalog-price">$180.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>2 horas locaciones</li>
+                  <li>Accesorios mola</li>
+                  <li>20 fotos digitales</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 18 - FOTOS -->
+            <article class="benko-tour__catalog-card" data-category="fotos">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Sesion callejera" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Urbano</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Street Style: Moda Callejera del Caribe</h3>
+                <p class="benko-tour__catalog-desc">Camina por Getsemaní con estilo, capturando looks urbanos que mezclan tradición africana con fashion contemporáneo en cada esquina.</p>
+                <div class="benko-tour__catalog-price">$120.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>1.5 horas caminata</li>
+                  <li>Styling asesorado</li>
+                  <li>15 fotos urbanas</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 19 - FOTOS -->
+            <article class="benko-tour__catalog-card" data-category="fotos">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Sesion pareja" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Romántico</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Sesión Pareja: Amor con Sabor Caribe</h3>
+                <p class="benko-tour__catalog-desc">Vístete a juego con tu pareja usando piezas coordinadas de moda afro-caribeña en una sesión llena de color y romanticismo tropical.</p>
+                <div class="benko-tour__catalog-price">$420.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>2.5 horas románticas</li>
+                  <li>Outfits coordinados</li>
+                  <li>40 fotos + álbum</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
+            </article>
+
+            <!-- EXPERIENCIA 20 - RUTA -->
+            <article class="benko-tour__catalog-card" data-category="textil">
+              <div class="benko-tour__catalog-media">
+                <img src="./assets/images/products/placeholder-moda.jpg" alt="Ruta artesanos" loading="lazy">
+                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Excursión</span>
+              </div>
+              <div class="benko-tour__catalog-content">
+                <h3>Ruta de los Artesanos del Trapo</h3>
+                <p class="benko-tour__catalog-desc">Visita talleres de artesanos donde se crean molas, turbantes y tejidos, conociendo las manos mágicas detrás de la moda palenquera.</p>
+                <div class="benko-tour__catalog-price">$95.000 COP</div>
+                <ul class="benko-tour__catalog-features">
+                  <li>4 horas de recorrido</li>
+                  <li>4 talleres</li>
+                  <li>Demo en vivo</li>
+                </ul>
+                <button class="benko-tour__button benko-tour__button--sm">Reservar</button>
+              </div>
             </article>
           </div>
         </section>
       </main>
+      </div>
 
       <footer class="benko-tour__footer">
         <div class="benko-tour__footer-brand">
