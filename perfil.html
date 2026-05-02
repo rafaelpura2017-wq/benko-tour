@@ -72,12 +72,10 @@
             <!-- Panel de info del usuario -->
             <div class="benko-tour__access-card">
               <div class="benko-tour__access-session" id="user-info-panel">
-                <div style="text-align: center; padding: 40px 20px;">
-                  <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--brand) 0%, #e0a030 100%); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
-                    👤
-                  </div>
-                  <h3 style="margin: 0 0 8px 0; color: var(--text);">Cargando...</h3>
-                  <p style="color: var(--muted); margin: 0;">Obteniendo tu información...</p>
+                <div class="benko-tour__member-placeholder">
+                  <div class="benko-tour__member-placeholder-badge">Comunidad Benko</div>
+                  <h3>Cargando tu espacio de miembro</h3>
+                  <p>Estamos trayendo tu perfil, tu estado de cuenta y tus beneficios activos.</p>
                 </div>
               </div>
             </div>
@@ -97,23 +95,27 @@
                   <span>Reservas guardadas</span>
                   <strong>0</strong>
                 </article>
+                <article class="benko-tour__dashboard-card">
+                  <span>Compras guardadas</span>
+                  <strong>0</strong>
+                </article>
               </div>
 
               <div class="benko-tour__access-tabs" role="tablist" aria-label="Opciones de perfil">
                 <button class="benko-tour__access-tab benko-tour__access-tab--active" type="button" data-tab="datos">
-                  📋 Mis Datos
+                  Datos de cuenta
                 </button>
                 <button class="benko-tour__access-tab" type="button" data-tab="reservas">
-                  📅 Mis Reservas
+                  Reservas
                 </button>
                 <button class="benko-tour__access-tab" type="button" data-tab="compras">
-                  🛒 Mis Compras
+                  Compras
                 </button>
               </div>
 
               <!-- Tab: Mis Datos -->
               <div class="tab-panel" id="panel-datos">
-                <h3 style="margin-bottom: 20px; color: var(--text);">Actualizar mis datos</h3>
+                <h3 style="margin-bottom: 20px; color: var(--text);">Actualizar mi información</h3>
                 <form id="update-profile-form">
                   <div class="benko-tour__field-grid">
                     <label class="benko-tour__field">
@@ -155,7 +157,7 @@
                     </label>
                   </div>
                   <div class="benko-tour__form-actions" style="margin-top: 24px;">
-                    <button type="submit" class="benko-tour__button">💾 Guardar cambios</button>
+                    <button type="submit" class="benko-tour__button">Guardar cambios</button>
                   </div>
                 </form>
                 <div id="update-status" style="margin-top: 16px;"></div>
@@ -163,10 +165,10 @@
 
               <!-- Tab: Mis Reservas -->
               <div class="tab-panel benko-tour__hidden" id="panel-reservas">
-                <h3 style="margin-bottom: 20px; color: var(--text);">📅 Tus reservas</h3>
+                <h3 style="margin-bottom: 20px; color: var(--text);">Tus reservas</h3>
                 <div id="reservas-list">
                   <p style="color: var(--muted); text-align: center; padding: 40px 20px;">
-                    🎒 Aún no tienes reservas registradas.<br>
+                    Aún no tienes reservas registradas.<br>
                     <a href="./reservas.html" style="color: var(--brand); text-decoration: underline;">Hacer tu primera reserva →</a>
                   </p>
                 </div>
@@ -174,10 +176,10 @@
 
               <!-- Tab: Mis Compras -->
               <div class="tab-panel benko-tour__hidden" id="panel-compras">
-                <h3 style="margin-bottom: 20px; color: var(--text);">🛒 Tus compras en la tienda</h3>
+                <h3 style="margin-bottom: 20px; color: var(--text);">Tus compras en la tienda</h3>
                 <div id="compras-list">
                   <p style="color: var(--muted); text-align: center; padding: 40px 20px;">
-                    🛍️ Aún no tienes compras guardadas.<br>
+                    Aún no tienes compras guardadas.<br>
                     <a href="./tienda.html" style="color: var(--brand); text-decoration: underline;">Ir a la tienda →</a>
                   </p>
                 </div>
@@ -211,10 +213,105 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const dashboard = document.getElementById('profile-dashboard');
+      const userInfoPanel = document.getElementById('user-info-panel');
+      const updateStatus = document.getElementById('update-status');
 
       function getSafeText(value, fallback) {
         const text = String(value || '').trim();
         return text || fallback;
+      }
+
+      function parseCompletionValue(value) {
+        const numeric = Number(String(value || '').replace(/[^\d]/g, ''));
+        return Number.isFinite(numeric) ? Math.max(0, Math.min(100, numeric)) : 0;
+      }
+
+      function getBenefitItems(datos) {
+        if (Array.isArray(datos?.beneficios) && datos.beneficios.length) {
+          return datos.beneficios;
+        }
+
+        return [
+          'Tu perfil conserva idioma, contacto y punto de recogida.',
+          'El acceso queda listo para retomar reservas más rápido.',
+          'Tu historial puede crecer dentro de un mismo espacio de cliente.'
+        ];
+      }
+
+      function getMissingAccountItems(datos) {
+        const missing = [];
+
+        if (!Boolean(datos?.cuenta?.emailVerificado)) {
+          missing.push('verificar tu correo');
+        }
+
+        if (!getSafeText(datos?.telefono, '')) {
+          missing.push('agregar tu WhatsApp');
+        }
+
+        if (!getSafeText(datos?.ciudad, '')) {
+          missing.push('agregar tu ciudad');
+        }
+
+        if (!getSafeText(datos?.recogida || datos?.preferencias?.recogida, '')) {
+          missing.push('definir la recogida');
+        }
+
+        return missing;
+      }
+
+      function getNextStepConfig(datos) {
+        const reservas = Array.isArray(datos?.reservas) ? datos.reservas.length : 0;
+        const compras = Array.isArray(datos?.compras) ? datos.compras.length : 0;
+        const completado = parseCompletionValue(datos?.progreso?.perfilCompleto);
+        const correoVerificado = Boolean(datos?.cuenta?.emailVerificado);
+        const missing = getMissingAccountItems(datos);
+        const missingText = missing.length
+          ? missing.join(', ')
+          : 'revisar que toda tu información siga vigente';
+
+        if (!correoVerificado) {
+          return {
+            badge: 'Confianza pendiente',
+            title: 'Verifica tu correo para cerrar el proceso de cuenta',
+            copy: 'Tu perfil ya existe y tus datos ya están guardados. Verificar el correo es el paso más importante para que la cuenta se sienta completamente confirmada.',
+            pills: ['Correo pendiente', 'Cuenta activa', 'Mayor confianza']
+          };
+        }
+
+        if (completado < 100 || missing.length) {
+          return {
+            badge: 'Perfil en progreso',
+            title: 'Completa tu ficha de viajero',
+            copy: `Aún puedes mejorar tu experiencia dejando lista esta información: ${missingText}.`,
+            pills: [`Perfil ${completado}%`, 'Datos guardados', 'Menos fricción']
+          };
+        }
+
+        if (reservas === 0) {
+          return {
+            badge: 'Lista para convertir',
+            title: 'Tu cuenta ya está preparada para tu primera reserva',
+            copy: 'Todo lo esencial ya está guardado. El siguiente paso natural es reservar desde una experiencia más corta y más clara.',
+            pills: ['Cuenta verificada', 'Sin reservas aún', 'Reservar ahora']
+          };
+        }
+
+        return {
+          badge: 'Cuenta consolidada',
+          title: 'Tu historial ya empieza a verse como una plataforma real',
+          copy: `Ya tienes ${reservas} reserva(s) y ${compras} compra(s) registradas o preparadas. Este espacio está listo para seguir creciendo contigo.`,
+          pills: [`${reservas} reserva(s)`, `${compras} compra(s)`, 'Cuenta al día']
+        };
+      }
+
+      function renderInlineStatus(target, type, title, message) {
+        target.innerHTML = `
+          <div class="benko-tour__status-card benko-tour__status-card--${type}">
+            <strong>${title}</strong>
+            <p>${message}</p>
+          </div>
+        `;
       }
 
       function formatFirestoreDate(timestamp) {
@@ -237,6 +334,7 @@
         const estado = getSafeText(datos?.cuenta?.estado, 'Activa');
         const completado = `${datos?.progreso?.perfilCompleto || 0}%`;
         const reservas = Array.isArray(datos?.reservas) ? datos.reservas.length : 0;
+        const compras = Array.isArray(datos?.compras) ? datos.compras.length : 0;
 
         dashboard.innerHTML = `
           <article class="benko-tour__dashboard-card">
@@ -251,15 +349,21 @@
             <span>Reservas guardadas</span>
             <strong>${reservas}</strong>
           </article>
+          <article class="benko-tour__dashboard-card">
+            <span>Compras guardadas</span>
+            <strong>${compras}</strong>
+          </article>
         `;
       }
 
       // Verificar autenticación
       setTimeout(async function() {
         if (typeof window.authFirebase === 'undefined') {
-          document.getElementById('user-info-panel').innerHTML = `
-            <div style="text-align: center; padding: 40px 20px;">
-              <p style="color: var(--muted);">⚠️ Sistema no disponible</p>
+          userInfoPanel.innerHTML = `
+            <div class="benko-tour__member-placeholder">
+              <div class="benko-tour__member-placeholder-badge">Sistema no disponible</div>
+              <h3>No pudimos cargar tu cuenta</h3>
+              <p>El sistema de acceso no está disponible en este momento. Intenta más tarde.</p>
             </div>
           `;
           return;
@@ -269,9 +373,11 @@
         
         if (!user) {
           // No logueado - redirigir a acceso
-          document.getElementById('user-info-panel').innerHTML = `
-            <div style="text-align: center; padding: 40px 20px;">
-              <p style="color: var(--muted); margin-bottom: 20px;">🔒 Inicia sesión para ver tu perfil</p>
+          userInfoPanel.innerHTML = `
+            <div class="benko-tour__member-placeholder">
+              <div class="benko-tour__member-placeholder-badge">Acceso requerido</div>
+              <h3>Inicia sesión para ver tu perfil</h3>
+              <p>Tu espacio de miembro se desbloquea cuando entras con tu cuenta.</p>
               <a href="./acceso.html" class="benko-tour__button">Iniciar sesión</a>
             </div>
           `;
@@ -286,6 +392,7 @@
         // Cargar datos del usuario
         const datos = await window.authFirebase.obtenerDatos();
         if (datos) {
+          document.getElementById('user-name-display').textContent = getSafeText(datos.nombre, user.email?.split('@')[0] || 'Usuario');
           mostrarDatosUsuario(datos);
           llenarFormulario(datos);
           renderDashboard(datos);
@@ -312,9 +419,9 @@
       // Actualizar perfil
       document.getElementById('update-profile-form').addEventListener('submit', async function(e) {
         e.preventDefault();
-        const status = document.getElementById('update-status');
-        
-        status.innerHTML = '<p style="color: var(--brand);">⏳ Guardando cambios...</p>';
+        const status = updateStatus;
+
+        renderInlineStatus(status, 'loading', 'Guardando cambios', 'Estamos actualizando tu perfil de viajero.');
         
         const nuevosDatos = {
           nombre: document.getElementById('field-nombre').value,
@@ -327,25 +434,16 @@
         const resultado = await window.authFirebase.actualizarDatos(nuevosDatos);
         
         if (resultado.success) {
-          status.innerHTML = `
-            <div style="background: #e8f5e9; border-left: 3px solid #4caf50; padding: 12px; border-radius: 8px;">
-              <strong style="color: #2e7d32;">✓ Cambios guardados</strong><br>
-              <span style="color: #666;">Tu información se actualizó correctamente.</span>
-            </div>
-          `;
+          renderInlineStatus(status, 'success', 'Cambios guardados', 'Tu información se actualizó correctamente.');
           // Actualizar panel lateral
           const datosActualizados = await window.authFirebase.obtenerDatos();
           if (datosActualizados) {
             mostrarDatosUsuario(datosActualizados);
             renderDashboard(datosActualizados);
+            document.getElementById('user-name-display').textContent = datosActualizados.nombre || datosActualizados.email?.split('@')[0] || 'Usuario';
           }
         } else {
-          status.innerHTML = `
-            <div style="background: #ffebee; border-left: 3px solid #f44336; padding: 12px; border-radius: 8px;">
-              <strong style="color: #c62828;">✗ Error al guardar</strong><br>
-              <span style="color: #666;">${resultado.error}</span>
-            </div>
-          `;
+          renderInlineStatus(status, 'error', 'Error al guardar', resultado.error || 'Intenta nuevamente en unos minutos.');
         }
       });
 
@@ -369,29 +467,69 @@
         const nivelCuenta = getSafeText(datos.cuenta?.nivel, 'Comunidad Benko');
         const estadoCuenta = getSafeText(datos.cuenta?.estado, 'Activa');
         const completado = `${datos.progreso?.perfilCompleto || 0}%`;
+        const completadoNumero = parseCompletionValue(datos.progreso?.perfilCompleto);
+        const beneficios = getBenefitItems(datos);
+        const nextStep = getNextStepConfig(datos);
+        const missing = getMissingAccountItems(datos);
+        const correoVerificado = Boolean(datos?.cuenta?.emailVerificado);
 
-        document.getElementById('user-info-panel').innerHTML = `
-          <div class="benko-tour__member-card benko-tour__member-card--profile">
-            <div class="benko-tour__member-card-head">
-              <div>
-                <span class="benko-tour__member-kicker">${nivelCuenta}</span>
-                <h3>${nombre}</h3>
+        userInfoPanel.innerHTML = `
+          <div class="benko-tour__member-panel-stack">
+            <div class="benko-tour__member-card benko-tour__member-card--profile">
+              <div class="benko-tour__member-card-head">
+                <div>
+                  <span class="benko-tour__member-kicker">${nivelCuenta}</span>
+                  <h3>${nombre}</h3>
+                </div>
+                <span class="benko-tour__member-code">${codigoMiembro}</span>
               </div>
-              <span class="benko-tour__member-code">${codigoMiembro}</span>
+
+              <div class="benko-tour__member-metrics">
+                <article>
+                  <span>Estado</span>
+                  <strong>${estadoCuenta}</strong>
+                </article>
+                <article>
+                  <span>Perfil</span>
+                  <strong>${completado}</strong>
+                </article>
+                <article>
+                  <span>Miembro desde</span>
+                  <strong>${fechaRegistro}</strong>
+                </article>
+              </div>
+
+              <div class="benko-tour__member-progress">
+                <div class="benko-tour__member-progress-head">
+                  <span>Preparación de la cuenta</span>
+                  <strong>${completado}</strong>
+                </div>
+                <div class="benko-tour__member-progress-track">
+                  <span class="benko-tour__member-progress-fill" style="width: ${completadoNumero}%;"></span>
+                </div>
+                <p class="benko-tour__member-progress-note">
+                  ${missing.length
+                    ? `Todavía te conviene ${missing.join(', ')} para que tu cuenta quede más lista para reservar.`
+                    : 'Tu cuenta ya tiene la información esencial para usarse como un espacio real de cliente.'}
+                </p>
+              </div>
             </div>
 
-            <div class="benko-tour__member-metrics">
-              <article>
-                <span>Estado</span>
-                <strong>${estadoCuenta}</strong>
+            <div class="benko-tour__member-detail-grid">
+              <article class="benko-tour__member-detail-card">
+                <span class="benko-tour__member-kicker">Beneficios activos</span>
+                <h4>Lo que ya tienes disponible</h4>
+                <ul class="benko-tour__member-benefit-list">
+                  ${beneficios.map((item) => `<li>${item}</li>`).join('')}
+                </ul>
               </article>
-              <article>
-                <span>Perfil</span>
-                <strong>${completado}</strong>
-              </article>
-              <article>
-                <span>Miembro desde</span>
-                <strong>${fechaRegistro}</strong>
+              <article class="benko-tour__member-detail-card benko-tour__member-detail-card--accent">
+                <span class="benko-tour__member-kicker">${nextStep.badge}</span>
+                <h4>${nextStep.title}</h4>
+                <p>${nextStep.copy}</p>
+                <div class="benko-tour__member-pills">
+                  ${nextStep.pills.map((item) => `<span class="benko-tour__member-pill">${item}</span>`).join('')}
+                </div>
               </article>
             </div>
 
@@ -401,6 +539,10 @@
                 <div class="benko-tour__data-row">
                   <span class="benko-tour__data-label">Correo</span>
                   <strong>${email}</strong>
+                </div>
+                <div class="benko-tour__data-row">
+                  <span class="benko-tour__data-label">Verificación</span>
+                  <strong>${correoVerificado ? 'Correo confirmado' : 'Pendiente de verificación'}</strong>
                 </div>
                 <div class="benko-tour__data-row">
                   <span class="benko-tour__data-label">Ciudad</span>

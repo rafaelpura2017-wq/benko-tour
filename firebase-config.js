@@ -67,6 +67,78 @@ function sanitizeText(value) {
   return String(value || '').trim();
 }
 
+function validateEmailAddress(value) {
+  const email = sanitizeText(value).toLowerCase();
+
+  if (!email) {
+    return {
+      valid: false,
+      code: 'client/missing-email',
+      message: 'Escribe un correo electrónico para continuar.'
+    };
+  }
+
+  if (email.includes(' ')) {
+    return {
+      valid: false,
+      code: 'client/invalid-email-format',
+      message: 'El correo no puede tener espacios.'
+    };
+  }
+
+  if (email.includes(',')) {
+    return {
+      valid: false,
+      code: 'client/invalid-email-format',
+      message: 'El correo debe usar punto y no coma en el dominio.'
+    };
+  }
+
+  const strictEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
+
+  if (!strictEmailRegex.test(email)) {
+    return {
+      valid: false,
+      code: 'client/invalid-email-format',
+      message: 'Escribe un correo válido, por ejemplo: nombre@correo.com.'
+    };
+  }
+
+  if (email.includes('..')) {
+    return {
+      valid: false,
+      code: 'client/invalid-email-format',
+      message: 'El correo no puede tener dos puntos seguidos.'
+    };
+  }
+
+  const [localPart = '', domainPart = ''] = email.split('@');
+
+  if (!localPart || !domainPart || localPart.startsWith('.') || localPart.endsWith('.')) {
+    return {
+      valid: false,
+      code: 'client/invalid-email-format',
+      message: 'Revisa el formato del correo antes de continuar.'
+    };
+  }
+
+  const domainLabels = domainPart.split('.');
+  const invalidDomainLabel = domainLabels.some((label) => !label || label.startsWith('-') || label.endsWith('-'));
+
+  if (invalidDomainLabel) {
+    return {
+      valid: false,
+      code: 'client/invalid-email-format',
+      message: 'El dominio del correo no es válido.'
+    };
+  }
+
+  return {
+    valid: true,
+    value: email
+  };
+}
+
 function buildMemberCode(uid = '') {
   const normalized = String(uid || '').replace(/[^a-z0-9]/gi, '').toUpperCase();
   return `BENKO-${normalized.slice(0, 6).padEnd(6, '0')}`;
@@ -90,6 +162,11 @@ function normalizeUserData(raw = {}, user = null) {
   const preferencias = raw.preferencias || {};
   const reservas = Array.isArray(raw.reservas) ? raw.reservas : [];
   const compras = Array.isArray(raw.compras) ? raw.compras : [];
+  const hasRuntimeVerificationState = typeof user?.emailVerified === 'boolean';
+  const emailVerificado = hasRuntimeVerificationState
+    ? Boolean(user.emailVerified)
+    : Boolean(raw.cuenta?.emailVerificado);
+  const estadoCuenta = emailVerificado ? 'Verificada' : 'Pendiente de verificación';
 
   const normalized = {
     ...raw,
@@ -107,9 +184,10 @@ function normalizeUserData(raw = {}, user = null) {
     },
     cuenta: {
       codigoMiembro: raw.cuenta?.codigoMiembro || buildMemberCode(user?.uid),
-      estado: raw.cuenta?.estado || (user?.emailVerified ? 'Verificada' : 'Activa'),
+      estado: hasRuntimeVerificationState ? estadoCuenta : (raw.cuenta?.estado || estadoCuenta),
       nivel: raw.cuenta?.nivel || MEMBER_LEVEL,
-      origen: raw.cuenta?.origen || 'web-acceso'
+      origen: raw.cuenta?.origen || 'web-acceso',
+      emailVerificado
     },
     beneficios: Array.isArray(raw.beneficios) && raw.beneficios.length ? raw.beneficios : DEFAULT_BENEFITS,
     estadisticas: {
@@ -147,7 +225,7 @@ function buildUserDocument(user, email, datos = {}) {
     },
     cuenta: {
       codigoMiembro: buildMemberCode(user?.uid),
-      estado: user?.emailVerified ? 'Verificada' : 'Activa',
+      estado: user?.emailVerified ? 'Verificada' : 'Pendiente de verificación',
       nivel: MEMBER_LEVEL,
       origen: 'web-acceso'
     },
@@ -178,20 +256,67 @@ function buildUserDocument(user, email, datos = {}) {
  */
 async function registrarUsuario(email, password, datos = {}) {
   try {
-    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+    const emailCheck = validateEmailAddress(email);
+
+    if (!emailCheck.valid) {
+      return {
+        success: false,
+        error: emailCheck.message,
+        errorCode: emailCheck.code
+      };
+    }
+
+    if (String(password || '').length < 6) {
+      return {
+        success: false,
+        error: 'La contraseña debe tener al menos 6 caracteres.',
+        errorCode: 'client/weak-password'
+      };
+    }
+
+    const userCredential = await auth.createUserWithEmailAndPassword(emailCheck.value, password);
     const user = userCredential.user;
     const userRef = db.collection('usuarios').doc(user.uid);
-    const payload = buildUserDocument(user, email, datos);
+    const payload = buildUserDocument(user, emailCheck.value, datos);
+    let verificationSent = false;
 
     await userRef.set(payload, { merge: true });
 
+    if (user && !user.emailVerified) {
+      try {
+        await user.sendEmailVerification();
+        verificationSent = true;
+      } catch (verificationError) {
+        console.warn('No se pudo enviar el correo de verificación en este momento.', verificationError);
+      }
+
+      await user.reload();
+    }
+
+    const finalUser = auth.currentUser || user;
+
     const storedDoc = await userRef.get();
-    const storedData = normalizeUserData(storedDoc.data(), user);
+    const storedData = normalizeUserData({
+      ...storedDoc.data(),
+      cuenta: {
+        ...(storedDoc.data()?.cuenta || {}),
+        estado: finalUser?.emailVerified ? 'Verificada' : 'Pendiente de verificación',
+        emailVerificado: Boolean(finalUser?.emailVerified)
+      }
+    }, finalUser);
+
+    await userRef.set({
+      email: emailCheck.value,
+      cuenta: storedData.cuenta,
+      progreso: storedData.progreso,
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
 
     return { 
       success: true, 
-      user: user, 
+      user: finalUser, 
       datos: storedData,
+      verificationSent,
       mensaje: 'Usuario registrado exitosamente' 
     };
   } catch (error) {
@@ -211,13 +336,32 @@ async function registrarUsuario(email, password, datos = {}) {
  */
 async function iniciarSesion(email, password) {
   try {
-    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+    const emailCheck = validateEmailAddress(email);
+
+    if (!emailCheck.valid) {
+      return {
+        success: false,
+        error: emailCheck.message,
+        errorCode: emailCheck.code
+      };
+    }
+
+    if (!sanitizeText(password)) {
+      return {
+        success: false,
+        error: 'Escribe tu contraseña para iniciar sesión.',
+        errorCode: 'client/missing-password'
+      };
+    }
+
+    const userCredential = await auth.signInWithEmailAndPassword(emailCheck.value, password);
     const user = userCredential.user;
+    await user.reload();
     const userRef = db.collection('usuarios').doc(user.uid);
     const doc = await userRef.get();
 
     if (!doc.exists) {
-      await userRef.set(buildUserDocument(user, email, {}), { merge: true });
+      await userRef.set(buildUserDocument(user, emailCheck.value, {}), { merge: true });
     }
 
     const refreshedDoc = await userRef.get();
@@ -231,7 +375,8 @@ async function iniciarSesion(email, password) {
       preferencias: datosUsuario.preferencias,
       cuenta: {
         ...datosUsuario.cuenta,
-        estado: user.emailVerified ? 'Verificada' : datosUsuario.cuenta.estado
+        estado: user.emailVerified ? 'Verificada' : 'Pendiente de verificación',
+        emailVerificado: Boolean(user.emailVerified)
       },
       progreso: {
         perfilCompleto: calculateProfileCompletion(datosUsuario)
@@ -282,7 +427,17 @@ async function cerrarSesion() {
  */
 async function restablecerPassword(email) {
   try {
-    await auth.sendPasswordResetEmail(email);
+    const emailCheck = validateEmailAddress(email);
+
+    if (!emailCheck.valid) {
+      return {
+        success: false,
+        error: emailCheck.message,
+        errorCode: emailCheck.code
+      };
+    }
+
+    await auth.sendPasswordResetEmail(emailCheck.value);
     return { 
       success: true, 
       mensaje: 'Se ha enviado un enlace para restablecer tu contraseña a tu correo' 
@@ -297,6 +452,48 @@ async function restablecerPassword(email) {
   }
 }
 
+async function reenviarVerificacionCorreo() {
+  if (!currentUser) {
+    return {
+      success: false,
+      error: 'No hay una sesión activa para reenviar la verificación.',
+      errorCode: 'client/no-active-session'
+    };
+  }
+
+  try {
+    await currentUser.reload();
+
+    if (currentUser.emailVerified) {
+      await db.collection('usuarios').doc(currentUser.uid).set({
+        cuenta: {
+          emailVerificado: true,
+          estado: 'Verificada'
+        },
+        fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+      return {
+        success: true,
+        mensaje: 'Tu correo ya está verificado. Ya puedes seguir usando tu cuenta con normalidad.'
+      };
+    }
+
+    await currentUser.sendEmailVerification();
+    return {
+      success: true,
+      mensaje: 'Hemos reenviado el correo de verificación.'
+    };
+  } catch (error) {
+    console.error('Error al reenviar verificación:', error);
+    return {
+      success: false,
+      error: traducirErrorFirebase(error.code),
+      errorCode: error.code
+    };
+  }
+}
+
 /**
  * Obtener datos del usuario actual
  */
@@ -304,6 +501,7 @@ async function obtenerDatosUsuario() {
   if (!currentUser) return null;
   
   try {
+    await currentUser.reload();
     const userRef = db.collection('usuarios').doc(currentUser.uid);
     const doc = await userRef.get();
 
@@ -314,7 +512,19 @@ async function obtenerDatosUsuario() {
       return normalizeUserData(createdDoc.data(), currentUser);
     }
 
-    return normalizeUserData(doc.data(), currentUser);
+    const normalized = normalizeUserData(doc.data(), currentUser);
+
+    await userRef.set({
+      email: normalized.email,
+      recogida: normalized.recogida,
+      preferencias: normalized.preferencias,
+      cuenta: normalized.cuenta,
+      progreso: normalized.progreso,
+      estadisticas: normalized.estadisticas,
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    return normalized;
   } catch (error) {
     console.error('Error al obtener datos:', error);
     return null;
@@ -373,6 +583,11 @@ async function actualizarDatosUsuario(datos) {
  */
 function traducirErrorFirebase(codigo) {
   const errores = {
+    'client/no-active-session': 'No hay una sesión activa para completar esta acción.',
+    'client/missing-email': 'Escribe un correo electrónico para continuar.',
+    'client/missing-password': 'Escribe tu contraseña para continuar.',
+    'client/invalid-email-format': 'El correo electrónico no tiene un formato válido.',
+    'client/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
     'auth/email-already-in-use': 'Este correo ya está registrado. Intenta iniciar sesión.',
     'auth/invalid-email': 'El correo electrónico no es válido.',
     'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
@@ -520,6 +735,8 @@ window.authFirebase = {
   login: iniciarSesion,
   logout: cerrarSesion,
   resetPassword: restablecerPassword,
+  reenviarVerificacion: reenviarVerificacionCorreo,
+  validarEmail: validateEmailAddress,
   obtenerDatos: obtenerDatosUsuario,
   actualizarDatos: actualizarDatosUsuario,
   estaLogueado: usuarioLogueado,

@@ -1277,9 +1277,11 @@ body {
 }
 
 .benko-tour__member-card--profile {
-  padding: 0;
-  border: none;
-  background: transparent;
+  padding: 20px;
+  border-color: rgba(19, 99, 108, 0.12);
+  background:
+    radial-gradient(circle at top right, rgba(19, 99, 108, 0.12), transparent 24%),
+    linear-gradient(180deg, rgba(247, 251, 252, 0.98) 0%, rgba(255, 253, 249, 0.98) 100%);
 }
 
 .benko-tour__member-card-head {
@@ -1347,6 +1349,49 @@ body {
   line-height: 1.25;
 }
 
+.benko-tour__member-progress {
+  display: grid;
+  gap: 10px;
+}
+
+.benko-tour__member-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.benko-tour__member-progress-head span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.benko-tour__member-progress-head strong {
+  color: var(--brand-dark);
+}
+
+.benko-tour__member-progress-track {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(80, 60, 34, 0.08);
+}
+
+.benko-tour__member-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #e0a030 0%, #f46f53 100%);
+}
+
+.benko-tour__member-progress-note {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+  font-size: 0.92rem;
+}
+
 .benko-tour__member-pills {
   display: flex;
   flex-wrap: wrap;
@@ -1365,6 +1410,70 @@ body {
   color: var(--brand-dark);
   font-size: 0.82rem;
   font-weight: 700;
+}
+
+.benko-tour__member-panel-stack,
+.benko-tour__member-detail-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.benko-tour__member-detail-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.benko-tour__member-detail-card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 12px 22px rgba(38, 26, 18, 0.05);
+}
+
+.benko-tour__member-detail-card--accent {
+  border-color: rgba(239, 176, 58, 0.18);
+  background:
+    radial-gradient(circle at top right, rgba(239, 176, 58, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(255, 248, 236, 0.98) 0%, rgba(255, 253, 249, 0.98) 100%);
+}
+
+.benko-tour__member-detail-card h4,
+.benko-tour__member-detail-card p {
+  margin: 0;
+}
+
+.benko-tour__member-detail-card h4 {
+  color: var(--brand-dark);
+}
+
+.benko-tour__member-detail-card p {
+  color: var(--muted);
+  line-height: 1.68;
+}
+
+.benko-tour__member-benefit-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.benko-tour__member-benefit-list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.benko-tour__member-benefit-list li::before {
+  content: '✓';
+  flex: 0 0 auto;
+  color: #e0a030;
+  font-weight: 900;
 }
 
 .benko-tour__user-data-card {
@@ -1521,16 +1630,57 @@ body {
 }
 
 .benko-tour__dashboard-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.benko-tour__member-placeholder {
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+  border-radius: 24px;
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(239, 176, 58, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(255, 249, 239, 0.98) 0%, rgba(255, 253, 249, 0.98) 100%);
+}
+
+.benko-tour__member-placeholder h3,
+.benko-tour__member-placeholder p {
+  margin: 0;
+}
+
+.benko-tour__member-placeholder h3 {
+  color: var(--text);
+}
+
+.benko-tour__member-placeholder p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.benko-tour__member-placeholder-badge {
+  display: inline-flex;
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--brand-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 @media (max-width: 980px) {
   .benko-tour__access-exclusive-grid,
   .benko-tour__member-metrics,
+  .benko-tour__member-detail-grid,
   .benko-tour__dashboard-grid {
     grid-template-columns: 1fr;
   }
 
+  .benko-tour__member-progress-head,
   .benko-tour__member-card-head,
   .benko-tour__data-row,
   .benko-tour__session-actions,
