@@ -97,24 +97,38 @@
             </div>
 
             <div class="benko-tour__access-points" aria-label="Beneficios del acceso">
-              <span class="benko-tour__access-point">Sesión más rápida</span>
-              <span class="benko-tour__access-point">Datos listos para reservar</span>
-              <span class="benko-tour__access-point">Registro guardado para Benko Tour</span>
+              <span class="benko-tour__access-point">Cuenta real de viajero</span>
+              <span class="benko-tour__access-point">Preferencias guardadas</span>
+              <span class="benko-tour__access-point">Perfil listo para reservar</span>
             </div>
           </div>
 
           <div class="benko-tour__access-layout benko-tour__access-layout--compact">
             <article class="benko-tour__access-card benko-tour__access-card--intro">
               <span class="benko-tour__card-tag">Comunidad Benko</span>
-              <h3>Tu perfil queda listo para regresar</h3>
+              <h3>Tu cuenta se siente como un espacio propio</h3>
               <p>
-                Guarda tu nombre, tu correo y tu WhatsApp para que la próxima visita tenga menos pasos y un proceso más tranquilo.
+                Guardamos tus datos principales, tus preferencias de viaje y tu punto de recogida para que volver a reservar sea más claro y más rápido.
               </p>
               <ul class="benko-tour__feature-list benko-tour__feature-list--compact">
-                <li>Ingreso más rápido</li>
-                <li>Datos listos para reservar</li>
-                <li>Sesión persistente en este navegador</li>
+                <li>Acceso a tu perfil personal de Benko Tour</li>
+                <li>Idioma y recogida favorita listos para próximas reservas</li>
+                <li>Sesión más seria, más clara y más confiable</li>
               </ul>
+              <div class="benko-tour__access-exclusive-grid" aria-label="Qué desbloquea tu cuenta">
+                <article class="benko-tour__access-exclusive-card">
+                  <strong>Reserva express</strong>
+                  <span>Menos pasos al volver a cotizar o cerrar tu tour.</span>
+                </article>
+                <article class="benko-tour__access-exclusive-card">
+                  <strong>Preferencias guardadas</strong>
+                  <span>Idioma, WhatsApp y zona de recogida listos para usar.</span>
+                </article>
+                <article class="benko-tour__access-exclusive-card">
+                  <strong>Miembro Benko</strong>
+                  <span>Un código de cuenta y un perfil propio dentro de la plataforma.</span>
+                </article>
+              </div>
               <div class="benko-tour__access-session" id="access-session"></div>
             </article>
 
@@ -128,30 +142,70 @@
                 </button>
               </div>
 
+              <p class="benko-tour__access-form-lead" id="access-form-lead">
+                Inicia sesión para continuar con tus reservas, tus preferencias y tu espacio personal dentro de Benko Tour.
+              </p>
+
               <div class="benko-tour__access-logged benko-tour__hidden" id="access-logged-panel">
-                <div class="benko-tour__success-banner" id="success-banner" style="display: none;">
-                  <span class="benko-tour__card-tag" style="background: linear-gradient(135deg, #4CAF50, #45a049); color: white;">✓ Registro exitoso</span>
-                  <p style="margin-top: 8px; color: #2e7d32; font-weight: 500;">¡Bienvenido a Benko Tour! Tu cuenta ha sido creada correctamente.</p>
+                <div class="benko-tour__success-banner benko-tour__hidden" id="success-banner">
+                  <span class="benko-tour__card-tag benko-tour__card-tag--success">Cuenta activada</span>
+                  <p>Tu registro quedó listo. Ya puedes entrar a tu perfil, reservar más rápido y guardar preferencias de viaje.</p>
                 </div>
-                
-                <span class="benko-tour__card-tag" id="session-tag">Sesión activa</span>
-                <h3 id="welcome-title">Ya haces parte de la comunidad Benko</h3>
-                
-                <div class="benko-tour__user-data-card" id="user-data-display" style="background: linear-gradient(135deg, rgba(255,247,235,0.98) 0%, rgba(255,253,249,0.98) 100%); border: 1px solid rgba(239, 176, 58, 0.3); border-radius: 16px; padding: 20px; margin: 16px 0;">
-                  <h4 style="margin: 0 0 12px 0; color: var(--brand-dark); font-size: 1rem;">📋 Tus datos registrados</h4>
-                  <div id="user-details" style="display: grid; gap: 8px;">
-                    <!-- Se llena dinámicamente -->
+
+                <div class="benko-tour__member-card">
+                  <div class="benko-tour__member-card-head">
+                    <div>
+                      <span class="benko-tour__member-kicker" id="session-tag">Miembro activo</span>
+                      <h3 id="welcome-title">Ya haces parte de la comunidad Benko</h3>
+                    </div>
+                    <span class="benko-tour__member-code" id="member-code">BENKO-000000</span>
+                  </div>
+
+                  <div class="benko-tour__member-metrics">
+                    <article>
+                      <span>Perfil completo</span>
+                      <strong id="member-completion">0%</strong>
+                    </article>
+                    <article>
+                      <span>Estado</span>
+                      <strong id="member-status">Activa</strong>
+                    </article>
+                    <article>
+                      <span>Nivel</span>
+                      <strong id="member-tier">Comunidad Benko</strong>
+                    </article>
                   </div>
                 </div>
-                
-                <p id="access-logged-copy" style="color: var(--muted); font-size: 0.95rem;">
-                  Tus datos están guardados de forma segura. Puedes usarlos para hacer reservas más rápido.
+
+                <div class="benko-tour__user-data-card">
+                  <h4>Tus datos registrados</h4>
+                  <div class="benko-tour__data-list" id="user-details"></div>
+                </div>
+
+                <div class="benko-tour__access-exclusive-grid benko-tour__access-exclusive-grid--logged" aria-label="Ventajas activas de tu cuenta">
+                  <article class="benko-tour__access-exclusive-card">
+                    <strong>Acceso a tu perfil</strong>
+                    <span>Edita tus datos, tu recogida favorita y tu información de contacto.</span>
+                  </article>
+                  <article class="benko-tour__access-exclusive-card">
+                    <strong>Reserva con menos fricción</strong>
+                    <span>Tu cuenta reduce pasos al volver a cotizar o reservar.</span>
+                  </article>
+                  <article class="benko-tour__access-exclusive-card">
+                    <strong>Historial para crecer</strong>
+                    <span>Tu espacio queda listo para sumar reservas y compras más adelante.</span>
+                  </article>
+                </div>
+
+                <p id="access-logged-copy" class="benko-tour__access-logged-copy">
+                  Tu cuenta está activa. Desde aquí puedes seguir a tu perfil, hacer una reserva nueva o cerrar tu sesión cuando quieras.
                 </p>
-                
-                <div class="benko-tour__form-actions" style="margin-top: 20px;">
-                  <a class="benko-tour__button" href="./reservas.html" target="_blank" rel="noopener noreferrer">📅 Ir a reservas</a>
-                  <button class="benko-tour__ghost benko-tour__ghost--dark" id="logout-button" type="button" style="border-color: rgba(180, 50, 50, 0.3); color: #b33232;">
-                    🚪 Cerrar sesión
+
+                <div class="benko-tour__form-actions benko-tour__member-actions">
+                  <a class="benko-tour__button" href="./perfil.html">Ir a mi perfil</a>
+                  <a class="benko-tour__ghost benko-tour__ghost--dark" href="./reservas.html" target="_blank" rel="noopener noreferrer">Ir a reservas</a>
+                  <button class="benko-tour__ghost benko-tour__ghost--dark benko-tour__ghost--danger" id="logout-button" type="button">
+                    Cerrar sesión
                   </button>
                 </div>
               </div>
@@ -172,6 +226,9 @@
                 <div class="benko-tour__form-actions">
                   <button class="benko-tour__button" type="submit">Entrar a mi cuenta</button>
                 </div>
+                <button class="benko-tour__text-button" id="reset-password-button" type="button">
+                  ¿Olvidaste tu contraseña?
+                </button>
               </form>
 
               <form class="benko-tour__access-form benko-tour__access-form--hidden" id="register-form" data-access-panel="register">
@@ -191,6 +248,28 @@
                     <input type="tel" name="phone" placeholder="+57 300 000 0000">
                   </label>
 
+                  <label class="benko-tour__field">
+                    <span>Idioma preferido</span>
+                    <select name="language">
+                      <option value="Español">Español</option>
+                      <option value="Inglés">Inglés</option>
+                      <option value="Francés">Francés</option>
+                      <option value="Portugués">Portugués</option>
+                    </select>
+                  </label>
+
+                  <label class="benko-tour__field">
+                    <span>Recogida favorita</span>
+                    <select name="pickup">
+                      <option value="">Elegir después</option>
+                      <option value="Bocagrande">Bocagrande</option>
+                      <option value="Centro Histórico">Centro Histórico</option>
+                      <option value="Castillo Grande">Castillo Grande</option>
+                      <option value="Manga">Manga</option>
+                      <option value="Otro">Otro punto</option>
+                    </select>
+                  </label>
+
                   <label class="benko-tour__field benko-tour__field--full">
                     <span>Correo electrónico</span>
                     <input type="email" name="email" placeholder="tucorreo@ejemplo.com" required>
@@ -208,7 +287,10 @@
               </form>
 
               <div class="benko-tour__status" id="access-status" aria-live="polite">
-                Crea tu cuenta o inicia sesión para guardar tus datos básicos y preparar tus próximas reservas con menos pasos.
+                <div class="benko-tour__status-card benko-tour__status-card--loading">
+                  <strong>Tu acceso Benko comienza aquí</strong>
+                  <p>Guarda tus datos, activa tu cuenta y deja lista una experiencia más clara para tus próximas reservas.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -251,7 +333,6 @@
   </div>
 
   <script>
-    // Script específico para manejar autenticación en acceso.html
     document.addEventListener('DOMContentLoaded', function() {
       const loginForm = document.getElementById('login-form');
       const registerForm = document.getElementById('register-form');
@@ -259,400 +340,380 @@
       const loggedPanel = document.getElementById('access-logged-panel');
       const accessSession = document.getElementById('access-session');
       const logoutBtn = document.getElementById('logout-button');
+      const resetPasswordButton = document.getElementById('reset-password-button');
+      const accessTabsWrap = document.querySelector('.benko-tour__access-tabs');
+      const accessFormLead = document.getElementById('access-form-lead');
+      const successBanner = document.getElementById('success-banner');
       const accessTabs = document.querySelectorAll('[data-access-tab]');
       const accessPanels = document.querySelectorAll('[data-access-panel]');
+      const sessionTag = document.getElementById('session-tag');
+      const welcomeTitle = document.getElementById('welcome-title');
+      const memberCode = document.getElementById('member-code');
+      const memberCompletion = document.getElementById('member-completion');
+      const memberStatus = document.getElementById('member-status');
+      const memberTier = document.getElementById('member-tier');
+      const userDetails = document.getElementById('user-details');
+      const loggedCopy = document.getElementById('access-logged-copy');
 
-      // Cambiar entre tabs de inicio de sesión y registro
-      accessTabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-          const targetPanel = this.dataset.accessTab;
-          
-          // Actualizar tabs activos
-          accessTabs.forEach(t => t.classList.remove('benko-tour__access-tab--active'));
-          this.classList.add('benko-tour__access-tab--active');
-          
-          // Mostrar/ocultar paneles
-          accessPanels.forEach(panel => {
-            if (panel.dataset.accessPanel === targetPanel) {
-              panel.classList.remove('benko-tour__access-form--hidden');
-            } else {
-              panel.classList.add('benko-tour__access-form--hidden');
-            }
-          });
+      const tabLeadCopy = {
+        login: 'Inicia sesión para retomar tus reservas, tus datos guardados y tu espacio personal dentro de Benko Tour.',
+        register: 'Crea tu cuenta para activar tu código de miembro, guardar preferencias y entrar a un perfil más completo.'
+      };
+
+      function getSafeText(value, fallback) {
+        const text = String(value || '').trim();
+        return text || fallback;
+      }
+
+      function formatFirestoreDate(timestamp) {
+        if (!timestamp) {
+          return 'Hoy';
+        }
+
+        if (typeof timestamp.toDate === 'function') {
+          return timestamp.toDate().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        if (typeof timestamp.seconds === 'number') {
+          return new Date(timestamp.seconds * 1000).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        if (timestamp instanceof Date) {
+          return timestamp.toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        return 'Hoy';
+      }
+
+      function renderStatus(type, title, message, actionsHtml = '') {
+        accessStatus.innerHTML = `
+          <div class="benko-tour__status-card benko-tour__status-card--${type}">
+            <strong>${title}</strong>
+            <p>${message}</p>
+            ${actionsHtml ? `<div class="benko-tour__status-actions">${actionsHtml}</div>` : ''}
+          </div>
+        `;
+      }
+
+      function updateFormLead(targetPanel) {
+        if (accessFormLead) {
+          accessFormLead.textContent = tabLeadCopy[targetPanel] || tabLeadCopy.login;
+        }
+      }
+
+      function renderGuestSession() {
+        accessSession.innerHTML = `
+          <strong>Tu futura cuenta Benko</strong>
+          <p>Al registrarte activas un perfil más serio, con datos listos para reservar, preferencias guardadas y un código de miembro propio.</p>
+          <div class="benko-tour__member-pills">
+            <span class="benko-tour__member-pill">Código personal</span>
+            <span class="benko-tour__member-pill">Datos seguros</span>
+            <span class="benko-tour__member-pill">Reserva más rápida</span>
+          </div>
+        `;
+      }
+
+      function showPanel(targetPanel) {
+        accessTabs.forEach((tab) => {
+          tab.classList.toggle('benko-tour__access-tab--active', tab.dataset.accessTab === targetPanel);
         });
-      });
 
-      // Manejar inicio de sesión con mejor UX
-      if (loginForm) {
-        loginForm.addEventListener('submit', async function(e) {
-          e.preventDefault();
-          
-          const email = this.querySelector('[name="email"]').value.trim();
-          const password = this.querySelector('[name="password"]').value;
-          
-          accessStatus.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 10px; color: var(--brand);">
-              <span style="animation: spin 1s linear infinite;">⏳</span>
-              <span>Verificando tus credenciales...</span>
-            </div>
-          `;
-          
-          // Verificar si Firebase está cargado
-          if (typeof window.authFirebase === 'undefined') {
-            accessStatus.innerHTML = `
-              <div style="background: #fff3e0; border-left: 3px solid #ff9800; padding: 12px; border-radius: 8px;">
-                <strong style="color: #e65100;">⚠ Configuración pendiente</strong><br>
-                <span style="color: #666;">El sistema de autenticación no está listo. Contacta soporte.</span>
-              </div>
-            `;
-            return;
-          }
-          
-          const resultado = await window.authFirebase.login(email, password);
-          
+        accessPanels.forEach((panel) => {
+          panel.classList.toggle('benko-tour__access-form--hidden', panel.dataset.accessPanel !== targetPanel);
+        });
+
+        loggedPanel.classList.add('benko-tour__hidden');
+        accessTabsWrap.style.display = 'inline-grid';
+        updateFormLead(targetPanel);
+      }
+
+      function buildDataRow(label, value) {
+        return `
+          <div class="benko-tour__data-row">
+            <span class="benko-tour__data-label">${label}</span>
+            <strong>${value}</strong>
+          </div>
+        `;
+      }
+
+      function mostrarUsuarioLogueado(datos, esRegistro = false) {
+        const nombre = getSafeText(datos.nombre, getSafeText(datos.email, 'Viajero').split('@')[0]);
+        const email = getSafeText(datos.email, 'No especificado');
+        const telefono = getSafeText(datos.telefono, 'Pendiente');
+        const ciudad = getSafeText(datos.ciudad, 'Pendiente');
+        const idioma = getSafeText(datos.preferencias?.idioma || datos.idioma, 'Español');
+        const recogida = getSafeText(datos.recogida || datos.preferencias?.recogida, 'Por definir');
+        const codigoMiembro = getSafeText(datos.cuenta?.codigoMiembro, 'BENKO-000000');
+        const estadoCuenta = getSafeText(datos.cuenta?.estado, 'Activa');
+        const nivelCuenta = getSafeText(datos.cuenta?.nivel, 'Comunidad Benko');
+        const completado = `${datos.progreso?.perfilCompleto || 0}%`;
+        const fechaRegistro = formatFirestoreDate(datos.fechaRegistro);
+
+        loginForm.classList.add('benko-tour__access-form--hidden');
+        registerForm.classList.add('benko-tour__access-form--hidden');
+        accessTabsWrap.style.display = 'none';
+        loggedPanel.classList.remove('benko-tour__hidden');
+        updateFormLead(esRegistro ? 'register' : 'login');
+
+        successBanner.classList.toggle('benko-tour__hidden', !esRegistro);
+        sessionTag.textContent = esRegistro ? 'Cuenta creada con éxito' : 'Sesión activa';
+        welcomeTitle.textContent = esRegistro ? `Bienvenido, ${nombre}` : `Hola de nuevo, ${nombre}`;
+        memberCode.textContent = codigoMiembro;
+        memberCompletion.textContent = completado;
+        memberStatus.textContent = estadoCuenta;
+        memberTier.textContent = nivelCuenta;
+
+        userDetails.innerHTML = [
+          buildDataRow('Nombre', nombre),
+          buildDataRow('Correo', email),
+          buildDataRow('WhatsApp', telefono),
+          buildDataRow('Ciudad', ciudad),
+          buildDataRow('Idioma', idioma),
+          buildDataRow('Recogida', recogida)
+        ].join('');
+
+        accessSession.innerHTML = `
+          <strong>Miembro ${nivelCuenta}</strong>
+          <p>Tu cuenta quedó activa desde ${fechaRegistro}. Puedes volver a entrar cuando quieras y seguir desde tu perfil.</p>
+          <div class="benko-tour__member-pills">
+            <span class="benko-tour__member-pill">${codigoMiembro}</span>
+            <span class="benko-tour__member-pill">Perfil ${completado}</span>
+            <span class="benko-tour__member-pill">${estadoCuenta}</span>
+          </div>
+        `;
+
+        loggedCopy.textContent = 'Tu cuenta ya está lista para usar. Desde aquí puedes seguir a tu perfil, reservar más rápido y mantener tus preferencias actualizadas.';
+      }
+
+      function mostrarFormularioAcceso() {
+        loggedPanel.classList.add('benko-tour__hidden');
+        successBanner.classList.add('benko-tour__hidden');
+        accessTabsWrap.style.display = 'inline-grid';
+        showPanel('login');
+        renderGuestSession();
+      }
+
+      function renderSessionPrompt(datos) {
+        const promptId = 'sesion-existente-msg';
+
+        if (document.getElementById(promptId) || !datos) {
+          return;
+        }
+
+        const nombre = getSafeText(datos.nombre, getSafeText(datos.email, 'Viajero').split('@')[0]);
+        const prompt = document.createElement('div');
+        prompt.id = promptId;
+        prompt.className = 'benko-tour__session-prompt';
+        prompt.innerHTML = `
+          <div class="benko-tour__session-prompt-body">
+            <span class="benko-tour__session-prompt-badge">Sesión detectada</span>
+            <strong>Ya hay una cuenta activa en este navegador</strong>
+            <p>Encontramos una sesión abierta de <strong>${nombre}</strong>. Puedes continuar con esa cuenta o cerrarla antes de registrar otra.</p>
+          </div>
+          <div class="benko-tour__session-actions">
+            <button class="benko-tour__button" id="continuar-sesion" type="button">Continuar con esta cuenta</button>
+            <button class="benko-tour__ghost benko-tour__ghost--dark benko-tour__ghost--danger" id="cerrar-sesion-btn" type="button">Cerrar esta sesión</button>
+          </div>
+        `;
+
+        const container = document.querySelector('.benko-tour__access-card--forms');
+        container.insertBefore(prompt, container.firstChild);
+
+        accessTabsWrap.style.display = 'none';
+        loginForm.classList.add('benko-tour__access-form--hidden');
+        registerForm.classList.add('benko-tour__access-form--hidden');
+        updateFormLead('login');
+
+        document.getElementById('continuar-sesion').addEventListener('click', function() {
+          prompt.remove();
+          mostrarUsuarioLogueado(datos, false);
+          renderStatus('success', 'Sesión restaurada', 'Tu cuenta sigue activa y lista para continuar.');
+        });
+
+        document.getElementById('cerrar-sesion-btn').addEventListener('click', async function() {
+          const resultado = await window.authFirebase.logout();
+
           if (resultado.success) {
-            mostrarUsuarioLogueado(resultado.datos, false); // false = es login, no registro
-            accessStatus.innerHTML = `
-              <div style="background: #e3f2fd; border-left: 3px solid #2196f3; padding: 12px; border-radius: 8px; animation: fadeIn 0.5s ease;">
-                <strong style="color: #1565c0;">👋 ¡Bienvenido de vuelta!</strong><br>
-                <span style="color: #666;">Tu sesión está activa. Disfruta tu experiencia en Benko Tour.</span>
-              </div>
-            `;
-            
-            // Migrar reservas temporales si existen
-            await window.authFirebase.migrarReservas();
-          } else {
-            // Mejorar mensajes de error de login
-            let mensajeError = resultado.error;
-            let tipoError = 'error';
-            
-            if (resultado.error.includes('user-not-found')) {
-              mensajeError = `
-                <strong>⚠ Cuenta no encontrada</strong><br>
-                <span style="color: #666;">No existe una cuenta con este email. ¿Quieres <a href="#" onclick="document.querySelector('[data-access-tab=register]').click(); return false;" style="color: var(--brand);">crear una cuenta nueva</a>?</span>
-              `;
-              tipoError = 'warning';
-            } else if (resultado.error.includes('wrong-password') || resultado.error.includes('invalid-credential')) {
-              mensajeError = `
-                <strong>⚠ Contraseña incorrecta</strong><br>
-                <span style="color: #666;">La contraseña no coincide. <a href="#" onclick="alert('Función de recuperación de contraseña próximamente'); return false;" style="color: var(--brand);">¿Olvidaste tu contraseña?</a></span>
-              `;
-              tipoError = 'error';
-            } else if (resultado.error.includes('user-disabled')) {
-              mensajeError = `
-                <strong>⚠ Cuenta deshabilitada</strong><br>
-                <span style="color: #666;">Esta cuenta ha sido deshabilitada. Contacta a soporte@benkotour.com</span>
-              `;
-              tipoError = 'error';
-            } else if (resultado.error.includes('too-many-requests')) {
-              mensajeError = `
-                <strong>⚠ Demasiados intentos</strong><br>
-                <span style="color: #666;">Por seguridad, espera unos minutos antes de intentar de nuevo.</span>
-              `;
-              tipoError = 'warning';
-            } else if (resultado.error.includes('network-request-failed')) {
-              mensajeError = `
-                <strong>⚠ Problema de conexión</strong><br>
-                <span style="color: #666;">Verifica tu conexión a internet e intenta de nuevo.</span>
-              `;
-              tipoError = 'warning';
-            }
-            
-            const color = tipoError === 'warning' ? '#ff9800' : '#f44336';
-            const bgColor = tipoError === 'warning' ? '#fff3e0' : '#ffebee';
-            
-            accessStatus.innerHTML = `
-              <div style="background: ${bgColor}; border-left: 3px solid ${color}; padding: 12px; border-radius: 8px;">
-                ${mensajeError}
-              </div>
-            `;
+            prompt.remove();
+            mostrarFormularioAcceso();
+            renderStatus('success', 'Sesión cerrada', 'Ahora puedes iniciar sesión con otra cuenta o crear una nueva.');
           }
         });
       }
 
-      // Manejar registro con mejor UX
+      accessTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const targetPanel = this.dataset.accessTab;
+          showPanel(targetPanel);
+        });
+      });
+
+      renderGuestSession();
+      updateFormLead('login');
+
+      if (loginForm) {
+        loginForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const email = this.querySelector('[name="email"]').value.trim();
+          const password = this.querySelector('[name="password"]').value;
+
+          renderStatus('loading', 'Verificando tus credenciales', 'Estamos revisando tu acceso para entrar a tu cuenta Benko.');
+
+          if (typeof window.authFirebase === 'undefined') {
+            renderStatus('warning', 'Configuracion pendiente', 'El sistema de autenticación no está disponible en este momento. Intenta más tarde.');
+            return;
+          }
+
+          const resultado = await window.authFirebase.login(email, password);
+
+          if (resultado.success) {
+            mostrarUsuarioLogueado(resultado.datos, false);
+            renderStatus('success', `Bienvenido de vuelta, ${getSafeText(resultado.datos?.nombre, 'viajero')}`, 'Tu cuenta está activa y tu perfil quedó listo para seguir reservando.');
+            await window.authFirebase.migrarReservas();
+          } else {
+            const errorCode = resultado.errorCode || '';
+
+            if (errorCode === 'auth/user-not-found') {
+              renderStatus(
+                'warning',
+                'Cuenta no encontrada',
+                'No existe una cuenta con este correo. Si es tu primera vez, crea tu acceso en un momento.',
+                '<button class="benko-tour__text-button" type="button" data-switch-register>Cambiar a crear cuenta</button>'
+              );
+            } else if (errorCode === 'auth/wrong-password' || errorCode === 'auth/invalid-credential') {
+              renderStatus('error', 'Contraseña incorrecta', 'La contraseña no coincide con este correo. Puedes intentar de nuevo o pedir un enlace de recuperación.');
+            } else if (errorCode === 'auth/user-disabled') {
+              renderStatus('error', 'Cuenta deshabilitada', 'Esta cuenta fue deshabilitada. Si necesitas ayuda, comunícate con el equipo de Benko Tour.');
+            } else if (errorCode === 'auth/too-many-requests') {
+              renderStatus('warning', 'Demasiados intentos', 'Por seguridad, espera unos minutos antes de intentar iniciar sesión otra vez.');
+            } else if (errorCode === 'auth/network-request-failed') {
+              renderStatus('warning', 'Problema de conexión', 'Revisa tu internet e intenta nuevamente.');
+            } else {
+              renderStatus('error', 'No pudimos iniciar tu sesión', resultado.error || 'Intenta nuevamente en unos instantes.');
+            }
+          }
+        });
+      }
+
       if (registerForm) {
         registerForm.addEventListener('submit', async function(e) {
           e.preventDefault();
-          
-          // Limpiar email (quitar espacios)
           const email = this.querySelector('[name="email"]').value.trim();
           const password = this.querySelector('[name="password"]').value;
           const datos = {
             nombre: this.querySelector('[name="name"]').value.trim(),
             ciudad: this.querySelector('[name="city"]').value.trim(),
-            telefono: this.querySelector('[name="phone"]').value.trim()
+            telefono: this.querySelector('[name="phone"]').value.trim(),
+            idioma: this.querySelector('[name="language"]').value,
+            recogida: this.querySelector('[name="pickup"]').value
           };
-          
-          // Validación básica del email
+
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (!emailRegex.test(email)) {
-            accessStatus.innerHTML = `
-              <div style="background: #ffebee; border-left: 3px solid #f44336; padding: 12px; border-radius: 8px;">
-                <strong style="color: #c62828;">⚠ Email inválido</strong><br>
-                <span style="color: #666;">Por favor ingresa un email válido como: ejemplo@gmail.com</span>
-              </div>
-            `;
+            renderStatus('error', 'Correo inválido', 'Escribe un correo válido para crear tu acceso, por ejemplo: ejemplo@gmail.com.');
             return;
           }
-          
-          accessStatus.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 10px; color: var(--brand);">
-              <span style="animation: spin 1s linear infinite;">⏳</span>
-              <span>Creando tu cuenta en Benko Tour...</span>
-            </div>
-          `;
-          
-          // Verificar si Firebase está cargado
+
+          renderStatus('loading', 'Creando tu cuenta Benko', 'Estamos activando tu perfil, tus preferencias y tu acceso a la plataforma.');
+
           if (typeof window.authFirebase === 'undefined') {
-            accessStatus.innerHTML = `
-              <div style="background: #fff3e0; border-left: 3px solid #ff9800; padding: 12px; border-radius: 8px;">
-                <strong style="color: #e65100;">⚠ Configuración pendiente</strong><br>
-                <span style="color: #666;">El sistema de autenticación no está listo. Contacta soporte.</span>
-              </div>
-            `;
+            renderStatus('warning', 'Configuracion pendiente', 'El sistema de acceso no está listo en este momento. Intenta más tarde.');
             return;
           }
-          
+
           const resultado = await window.authFirebase.registrar(email, password, datos);
-          
+
           if (resultado.success) {
-            // Guardar email en datos para mostrarlo
-            datos.email = email;
-            mostrarUsuarioLogueado(datos, true); // true = es registro nuevo
-            accessStatus.innerHTML = `
-              <div style="background: #e8f5e9; border-left: 3px solid #4caf50; padding: 12px; border-radius: 8px; animation: fadeIn 0.5s ease;">
-                <strong style="color: #2e7d32;">✓ ¡Registro exitoso!</strong><br>
-                <span style="color: #666;">Tu cuenta ha sido creada correctamente. Bienvenido a Benko Tour.</span>
-              </div>
-            `;
+            mostrarUsuarioLogueado(resultado.datos, true);
+            renderStatus('success', 'Registro exitoso', 'Tu cuenta fue creada correctamente. Ya puedes entrar a tu perfil y reservar con menos pasos.');
           } else {
-            // Mejorar mensajes de error específicos
-            let mensajeError = resultado.error;
-            let tipoError = 'error';
-            
-            if (resultado.error.includes('email-already-in-use')) {
-              mensajeError = `
-                <strong>⚠ Este email ya está registrado</strong><br>
-                <span style="color: #666;">Intenta iniciar sesión con tu contraseña o usa "¿Olvidaste tu contraseña?"</span>
-              `;
-              tipoError = 'warning';
-            } else if (resultado.error.includes('weak-password')) {
-              mensajeError = `
-                <strong>⚠ Contraseña muy débil</strong><br>
-                <span style="color: #666;">Usa al menos 6 caracteres. Mezcla letras y números para mayor seguridad.</span>
-              `;
-              tipoError = 'warning';
-            } else if (resultado.error.includes('network-request-failed')) {
-              mensajeError = `
-                <strong>⚠ Problema de conexión</strong><br>
-                <span style="color: #666;">Verifica tu conexión a internet e intenta de nuevo.</span>
-              `;
-              tipoError = 'warning';
+            const errorCode = resultado.errorCode || '';
+
+            if (errorCode === 'auth/email-already-in-use') {
+              renderStatus('warning', 'Este correo ya está registrado', 'Puedes iniciar sesión con ese correo o pedir un enlace para recuperar tu acceso.');
+            } else if (errorCode === 'auth/weak-password') {
+              renderStatus('warning', 'Contraseña débil', 'Usa al menos 6 caracteres y mezcla letras con números para que tu cuenta sea más segura.');
+            } else if (errorCode === 'auth/network-request-failed') {
+              renderStatus('warning', 'Problema de conexión', 'Revisa tu internet e intenta registrar tu cuenta nuevamente.');
+            } else {
+              renderStatus('error', 'No pudimos crear tu cuenta', resultado.error || 'Intenta de nuevo en unos minutos.');
             }
-            
-            const color = tipoError === 'warning' ? '#ff9800' : '#f44336';
-            const bgColor = tipoError === 'warning' ? '#fff3e0' : '#ffebee';
-            
-            accessStatus.innerHTML = `
-              <div style="background: ${bgColor}; border-left: 3px solid ${color}; padding: 12px; border-radius: 8px;">
-                ${mensajeError}
-              </div>
-            `;
           }
         });
       }
 
-      // Cerrar sesión
+      if (resetPasswordButton) {
+        resetPasswordButton.addEventListener('click', async function() {
+          const email = loginForm.querySelector('[name="email"]').value.trim();
+
+          if (!email) {
+            renderStatus('warning', 'Primero escribe tu correo', 'Necesitamos tu correo para enviarte el enlace de recuperación de contraseña.');
+            return;
+          }
+
+          if (typeof window.authFirebase === 'undefined') {
+            renderStatus('warning', 'Recuperación no disponible', 'El sistema de acceso no está conectado en este momento.');
+            return;
+          }
+
+          renderStatus('loading', 'Enviando enlace de recuperación', 'Estamos preparando un correo para restablecer tu contraseña.');
+
+          const resultado = await window.authFirebase.resetPassword(email);
+
+          if (resultado.success) {
+            renderStatus('success', 'Revisa tu correo', 'Te enviamos un enlace para restablecer tu contraseña y volver a entrar a tu cuenta.');
+          } else if (resultado.errorCode === 'auth/user-not-found') {
+            renderStatus('warning', 'Correo no encontrado', 'No existe una cuenta con ese correo. Si quieres, puedes crearla desde esta misma página.');
+          } else {
+            renderStatus('error', 'No pudimos enviar el enlace', resultado.error || 'Intenta nuevamente en unos minutos.');
+          }
+        });
+      }
+
       if (logoutBtn) {
         logoutBtn.addEventListener('click', async function() {
           const resultado = await window.authFirebase.logout();
           if (resultado.success) {
             mostrarFormularioAcceso();
-            accessStatus.textContent = 'Sesión cerrada. Vuelve pronto.';
+            renderStatus('success', 'Sesión cerrada', 'Tu cuenta quedó cerrada correctamente. Cuando quieras, aquí estará tu acceso.');
           }
         });
       }
 
-      // Mostrar panel de usuario logueado con datos profesionales
-      function mostrarUsuarioLogueado(datos, esRegistro = false) {
-        loginForm.classList.add('benko-tour__access-form--hidden');
-        registerForm.classList.add('benko-tour__access-form--hidden');
-        document.querySelector('.benko-tour__access-tabs').style.display = 'none';
-        loggedPanel.classList.remove('benko-tour__hidden');
-        
-        // Mostrar banner de éxito si es registro nuevo
-        const successBanner = document.getElementById('success-banner');
-        if (successBanner && esRegistro) {
-          successBanner.style.display = 'block';
-          setTimeout(() => {
-            successBanner.style.display = 'none';
-          }, 5000); // Ocultar después de 5 segundos
-        }
-        
-        if (datos) {
-          // Actualizar título de bienvenida
-          const welcomeTitle = document.getElementById('welcome-title');
-          if (welcomeTitle) {
-            welcomeTitle.textContent = `¡Hola ${datos.nombre || datos.email?.split('@')[0] || 'Viajero'}! 👋`;
-          }
-          
-          // Mostrar datos en la tarjeta profesional
-          const userDetails = document.getElementById('user-details');
-          if (userDetails) {
-            userDetails.innerHTML = `
-              <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed rgba(0,0,0,0.1);">
-                <span style="color: var(--muted);">👤 Nombre:</span>
-                <span style="font-weight: 500; color: var(--text);">${datos.nombre || 'No especificado'}</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed rgba(0,0,0,0.1);">
-                <span style="color: var(--muted);">📧 Email:</span>
-                <span style="font-weight: 500; color: var(--text);">${datos.email || 'No especificado'}</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed rgba(0,0,0,0.1);">
-                <span style="color: var(--muted);">📱 Teléfono:</span>
-                <span style="font-weight: 500; color: var(--text);">${datos.telefono || 'No especificado'}</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; padding: 8px 0;">
-                <span style="color: var(--muted);">📍 Ciudad:</span>
-                <span style="font-weight: 500; color: var(--text);">${datos.ciudad || 'No especificada'}</span>
-              </div>
-            `;
-          }
-          
-          // Actualizar panel de sesión (el de la izquierda)
-          if (accessSession) {
-            const fechaRegistro = datos.fechaRegistro ? new Date(datos.fechaRegistro.seconds * 1000).toLocaleDateString('es-CO') : 'Fecha no disponible';
-            accessSession.innerHTML = `
-              <div style="background: rgba(76, 175, 80, 0.1); border-left: 3px solid #4CAF50; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
-                <strong style="color: #2e7d32;">✓ Cuenta verificada</strong>
-                <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--muted);">Miembro desde: ${fechaRegistro}</p>
-              </div>
-              <p style="margin: 0; color: var(--muted);"><strong>Email:</strong> ${datos.email}</p>
-            `;
-          }
-          
-          // Actualizar mensaje de bienvenida
-          const loggedCopy = document.getElementById('access-logged-copy');
-          if (loggedCopy) {
-            loggedCopy.innerHTML = `
-              <strong style="color: var(--brand-dark);">Tu cuenta está activa y protegida.</strong><br>
-              Puedes usar estos datos para hacer reservas más rápido. 
-              <a href="./reservas.html" style="color: var(--brand); text-decoration: underline;">Hacer una reserva ahora →</a>
-            `;
-          }
-        }
-      }
-
-      // Mostrar formulario de acceso
-      function mostrarFormularioAcceso() {
-        loginForm.classList.remove('benko-tour__access-form--hidden');
-        document.querySelector('.benko-tour__access-tabs').style.display = 'flex';
-        loggedPanel.classList.add('benko-tour__hidden');
-        accessSession.innerHTML = '';
-        
-        // Resetear a tab de login
-        accessTabs.forEach(t => t.classList.remove('benko-tour__access-tab--active'));
-        accessTabs[0].classList.add('benko-tour__access-tab--active');
-        accessPanels.forEach(panel => {
-          if (panel.dataset.accessPanel === 'login') {
-            panel.classList.remove('benko-tour__access-form--hidden');
-          } else {
-            panel.classList.add('benko-tour__access-form--hidden');
-          }
-        });
-      }
-
-      // Verificar sesión usando Firebase Auth state (más confiable que setTimeout)
       let sessionChecked = false;
-      
+
       const checkAuthState = setInterval(async function() {
         if (typeof window.authFirebase === 'undefined') return;
         if (sessionChecked) {
           clearInterval(checkAuthState);
           return;
         }
-        
-        // Verificar si Firebase Auth ya determinó el estado
+
         const auth = firebase.auth();
-        if (auth.currentUser !== undefined) { // undefined = aún cargando, null = no hay sesión, object = hay sesión
+        if (auth.currentUser !== undefined) {
           sessionChecked = true;
           clearInterval(checkAuthState);
-          
+
           if (auth.currentUser) {
-            // Hay usuario logueado - verificar si es sesión de otro usuario
             const datos = await window.authFirebase.obtenerDatos();
             if (datos) {
-              const userName = datos.nombre || datos.email?.split('@')[0] || 'otro usuario';
-              
-              // Mostrar mensaje de sesión existente
-              const sesionExistente = document.createElement('div');
-              sesionExistente.id = 'sesion-existente-msg';
-              sesionExistente.style.cssText = 'background: #fff8e1; border: 2px solid #ffb300; padding: 20px; border-radius: 12px; margin-bottom: 20px; animation: fadeIn 0.5s ease;';
-              sesionExistente.innerHTML = `
-                <div style="display: flex; align-items: start; gap: 12px;">
-                  <span style="font-size: 24px;">⚠️</span>
-                  <div style="flex: 1;">
-                    <strong style="color: #e65100; font-size: 1.1rem;">Sesión activa detectada</strong>
-                    <p style="color: #666; margin: 8px 0;">
-                      Hay una sesión activa de: <strong>${userName}</strong><br>
-                      ¿Deseas continuar con esta sesión o cerrarla para registrar una nueva cuenta?
-                    </p>
-                    <div style="display: flex; gap: 10px; margin-top: 12px;">
-                      <button id="continuar-sesion" class="benko-tour__button" style="font-size: 0.9rem; padding: 10px 16px;">
-                        ✅ Continuar con esta sesión
-                      </button>
-                      <button id="cerrar-sesion-btn" class="benko-tour__ghost" style="font-size: 0.9rem; padding: 10px 16px; border-color: #e53935; color: #e53935;">
-                        🚪 Cerrar esta sesión
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              `;
-              
-              // Insertar antes de los tabs
-              const container = document.querySelector('.benko-tour__access-card');
-              container.insertBefore(sesionExistente, container.firstChild);
-              
-              // Ocultar formularios hasta que elija
-              document.querySelector('.benko-tour__access-tabs').style.display = 'none';
-              loginForm.classList.add('benko-tour__access-form--hidden');
-              registerForm.classList.add('benko-tour__access-form--hidden');
-              
-              // Botón: Continuar sesión
-              document.getElementById('continuar-sesion').addEventListener('click', function() {
-                sesionExistente.remove();
-                mostrarUsuarioLogueado(datos);
-                accessStatus.textContent = 'Tu sesión está activa.';
-              });
-              
-              // Botón: Cerrar sesión
-              document.getElementById('cerrar-sesion-btn').addEventListener('click', async function() {
-                const resultado = await window.authFirebase.logout();
-                if (resultado.success) {
-                  sesionExistente.remove();
-                  mostrarFormularioAcceso();
-                  accessStatus.innerHTML = `
-                    <div style="background: #e8f5e9; border-left: 3px solid #4caf50; padding: 12px; border-radius: 8px;">
-                      <strong style="color: #2e7d32;">✓ Sesión cerrada</strong><br>
-                      <span style="color: #666;">Ahora puedes crear una nueva cuenta o iniciar sesión.</span>
-                    </div>
-                  `;
-                }
-              });
+              renderSessionPrompt(datos);
             }
           }
-          // Si no hay usuario, los formularios ya están visibles por defecto
         }
       }, 500);
-      
-      // Timeout de seguridad: después de 5 segundos, detener la verificación
+
       setTimeout(function() {
         if (!sessionChecked) {
           clearInterval(checkAuthState);
-          console.log('Firebase Auth: timeout de verificación');
         }
       }, 5000);
+
+      document.addEventListener('click', function(event) {
+        if (event.target.matches('[data-switch-register]')) {
+          showPanel('register');
+        }
+      });
     });
   </script>
 </body>

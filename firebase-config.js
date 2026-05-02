@@ -24,6 +24,12 @@ const firebaseConfig = {
 let auth;
 let db;
 let currentUser = null;
+const MEMBER_LEVEL = 'Comunidad Benko';
+const DEFAULT_BENEFITS = [
+  'Reserva más rápida',
+  'Preferencias guardadas',
+  'Perfil activo en Benko Tour'
+];
 
 // Inicializar Firebase
 document.addEventListener('DOMContentLoaded', function() {
@@ -57,6 +63,113 @@ document.addEventListener('DOMContentLoaded', function() {
 // FUNCIONES DE AUTENTICACIÓN
 // ============================================
 
+function sanitizeText(value) {
+  return String(value || '').trim();
+}
+
+function buildMemberCode(uid = '') {
+  const normalized = String(uid || '').replace(/[^a-z0-9]/gi, '').toUpperCase();
+  return `BENKO-${normalized.slice(0, 6).padEnd(6, '0')}`;
+}
+
+function calculateProfileCompletion(profile = {}) {
+  const checkpoints = [
+    profile.nombre,
+    profile.email,
+    profile.telefono,
+    profile.ciudad,
+    profile.recogida || profile.preferencias?.recogida,
+    profile.preferencias?.idioma
+  ];
+
+  const completed = checkpoints.filter((item) => sanitizeText(item)).length;
+  return Math.round((completed / checkpoints.length) * 100);
+}
+
+function normalizeUserData(raw = {}, user = null) {
+  const preferencias = raw.preferencias || {};
+  const reservas = Array.isArray(raw.reservas) ? raw.reservas : [];
+  const compras = Array.isArray(raw.compras) ? raw.compras : [];
+
+  const normalized = {
+    ...raw,
+    nombre: sanitizeText(raw.nombre),
+    telefono: sanitizeText(raw.telefono),
+    ciudad: sanitizeText(raw.ciudad),
+    email: raw.email || user?.email || '',
+    reservas,
+    compras,
+    recogida: sanitizeText(raw.recogida || preferencias.recogida),
+    preferencias: {
+      idioma: sanitizeText(preferencias.idioma || raw.idiomaPreferido) || 'Español',
+      recogida: sanitizeText(preferencias.recogida || raw.recogida),
+      intereses: Array.isArray(preferencias.intereses) ? preferencias.intereses : []
+    },
+    cuenta: {
+      codigoMiembro: raw.cuenta?.codigoMiembro || buildMemberCode(user?.uid),
+      estado: raw.cuenta?.estado || (user?.emailVerified ? 'Verificada' : 'Activa'),
+      nivel: raw.cuenta?.nivel || MEMBER_LEVEL,
+      origen: raw.cuenta?.origen || 'web-acceso'
+    },
+    beneficios: Array.isArray(raw.beneficios) && raw.beneficios.length ? raw.beneficios : DEFAULT_BENEFITS,
+    estadisticas: {
+      reservas: typeof raw.estadisticas?.reservas === 'number' ? raw.estadisticas.reservas : reservas.length,
+      compras: typeof raw.estadisticas?.compras === 'number' ? raw.estadisticas.compras : compras.length
+    },
+    onboarding: {
+      bienvenidaVista: Boolean(raw.onboarding?.bienvenidaVista),
+      ultimaSeccion: raw.onboarding?.ultimaSeccion || 'acceso'
+    }
+  };
+
+  normalized.progreso = {
+    perfilCompleto: typeof raw.progreso?.perfilCompleto === 'number'
+      ? raw.progreso.perfilCompleto
+      : calculateProfileCompletion(normalized)
+  };
+
+  return normalized;
+}
+
+function buildUserDocument(user, email, datos = {}) {
+  const draft = normalizeUserData({
+    nombre: datos.nombre || datos.name,
+    telefono: datos.telefono || datos.phone,
+    ciudad: datos.ciudad || datos.city,
+    email,
+    reservas: [],
+    compras: [],
+    recogida: datos.recogida || datos.pickup || '',
+    preferencias: {
+      idioma: datos.idioma || datos.language || 'Español',
+      recogida: datos.recogida || datos.pickup || '',
+      intereses: Array.isArray(datos.intereses) ? datos.intereses : []
+    },
+    cuenta: {
+      codigoMiembro: buildMemberCode(user?.uid),
+      estado: user?.emailVerified ? 'Verificada' : 'Activa',
+      nivel: MEMBER_LEVEL,
+      origen: 'web-acceso'
+    },
+    beneficios: DEFAULT_BENEFITS,
+    estadisticas: {
+      reservas: 0,
+      compras: 0
+    },
+    onboarding: {
+      bienvenidaVista: false,
+      ultimaSeccion: 'acceso'
+    }
+  }, user);
+
+  return {
+    ...draft,
+    fechaRegistro: firebase.firestore.FieldValue.serverTimestamp(),
+    ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp(),
+    fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+  };
+}
+
 /**
  * Registrar nuevo usuario
  * @param {string} email - Correo electrónico
@@ -65,36 +178,28 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 async function registrarUsuario(email, password, datos = {}) {
   try {
-    // Crear usuario en Authentication
     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
     const user = userCredential.user;
-    
-    // Guardar datos adicionales en Firestore
-    await db.collection('usuarios').doc(user.uid).set({
-      nombre: datos.nombre || '',
-      telefono: datos.telefono || '',
-      ciudad: datos.ciudad || '',
-      email: email,
-      fechaRegistro: firebase.firestore.FieldValue.serverTimestamp(),
-      ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp(),
-      reservas: [],
-      preferencias: {
-        idioma: datos.idioma || 'español',
-        recogida: datos.recogida || 'Bocagrande'
-      }
-    });
-    
+    const userRef = db.collection('usuarios').doc(user.uid);
+    const payload = buildUserDocument(user, email, datos);
+
+    await userRef.set(payload, { merge: true });
+
+    const storedDoc = await userRef.get();
+    const storedData = normalizeUserData(storedDoc.data(), user);
+
     return { 
       success: true, 
       user: user, 
+      datos: storedData,
       mensaje: 'Usuario registrado exitosamente' 
     };
-    
   } catch (error) {
     console.error('Error en registro:', error);
     return { 
       success: false, 
-      error: traducirErrorFirebase(error.code) 
+      error: traducirErrorFirebase(error.code),
+      errorCode: error.code
     };
   }
 }
@@ -108,28 +213,52 @@ async function iniciarSesion(email, password) {
   try {
     const userCredential = await auth.signInWithEmailAndPassword(email, password);
     const user = userCredential.user;
-    
-    // Actualizar último acceso
-    await db.collection('usuarios').doc(user.uid).update({
-      ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    
-    // Obtener datos completos del usuario
-    const doc = await db.collection('usuarios').doc(user.uid).get();
-    const datosUsuario = doc.data();
-    
+    const userRef = db.collection('usuarios').doc(user.uid);
+    const doc = await userRef.get();
+
+    if (!doc.exists) {
+      await userRef.set(buildUserDocument(user, email, {}), { merge: true });
+    }
+
+    const refreshedDoc = await userRef.get();
+    const datosUsuario = normalizeUserData(refreshedDoc.data(), user);
+
+    await userRef.set({
+      email: datosUsuario.email,
+      recogida: datosUsuario.recogida,
+      ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp(),
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp(),
+      preferencias: datosUsuario.preferencias,
+      cuenta: {
+        ...datosUsuario.cuenta,
+        estado: user.emailVerified ? 'Verificada' : datosUsuario.cuenta.estado
+      },
+      progreso: {
+        perfilCompleto: calculateProfileCompletion(datosUsuario)
+      },
+      estadisticas: {
+        reservas: datosUsuario.reservas.length,
+        compras: datosUsuario.compras.length
+      }
+    }, { merge: true });
+
     return { 
       success: true, 
       user: user, 
-      datos: datosUsuario,
+      datos: {
+        ...datosUsuario,
+        progreso: {
+          perfilCompleto: calculateProfileCompletion(datosUsuario)
+        }
+      },
       mensaje: 'Sesión iniciada correctamente'
     };
-    
   } catch (error) {
     console.error('Error en inicio de sesión:', error);
     return { 
       success: false, 
-      error: traducirErrorFirebase(error.code) 
+      error: traducirErrorFirebase(error.code),
+      errorCode: error.code
     };
   }
 }
@@ -162,7 +291,8 @@ async function restablecerPassword(email) {
     console.error('Error al restablecer password:', error);
     return { 
       success: false, 
-      error: traducirErrorFirebase(error.code) 
+      error: traducirErrorFirebase(error.code),
+      errorCode: error.code
     };
   }
 }
@@ -174,8 +304,17 @@ async function obtenerDatosUsuario() {
   if (!currentUser) return null;
   
   try {
-    const doc = await db.collection('usuarios').doc(currentUser.uid).get();
-    return doc.exists ? doc.data() : null;
+    const userRef = db.collection('usuarios').doc(currentUser.uid);
+    const doc = await userRef.get();
+
+    if (!doc.exists) {
+      const payload = buildUserDocument(currentUser, currentUser.email || '', {});
+      await userRef.set(payload, { merge: true });
+      const createdDoc = await userRef.get();
+      return normalizeUserData(createdDoc.data(), currentUser);
+    }
+
+    return normalizeUserData(doc.data(), currentUser);
   } catch (error) {
     console.error('Error al obtener datos:', error);
     return null;
@@ -192,10 +331,32 @@ async function actualizarDatosUsuario(datos) {
   }
   
   try {
-    await db.collection('usuarios').doc(currentUser.uid).update({
-      ...datos,
+    const currentData = await obtenerDatosUsuario();
+    const mergedData = normalizeUserData({
+      ...currentData,
+      nombre: datos.nombre ?? currentData?.nombre,
+      ciudad: datos.ciudad ?? currentData?.ciudad,
+      telefono: datos.telefono ?? currentData?.telefono,
+      recogida: datos.recogida ?? currentData?.recogida,
+      preferencias: {
+        ...(currentData?.preferencias || {}),
+        idioma: datos.idioma ?? currentData?.preferencias?.idioma,
+        recogida: datos.recogida ?? currentData?.preferencias?.recogida
+      }
+    }, currentUser);
+
+    await db.collection('usuarios').doc(currentUser.uid).set({
+      nombre: mergedData.nombre,
+      ciudad: mergedData.ciudad,
+      telefono: mergedData.telefono,
+      recogida: mergedData.recogida,
+      preferencias: mergedData.preferencias,
+      progreso: {
+        perfilCompleto: calculateProfileCompletion(mergedData)
+      },
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    }, { merge: true });
+
     return { success: true, mensaje: 'Datos actualizados' };
   } catch (error) {
     console.error('Error al actualizar:', error);

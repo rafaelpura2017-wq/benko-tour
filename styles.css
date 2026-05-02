@@ -1197,6 +1197,354 @@ body {
   gap: 14px;
 }
 
+.benko-tour__access-form-lead,
+.benko-tour__access-logged-copy {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.benko-tour__success-banner {
+  display: grid;
+  gap: 10px;
+  padding: 16px 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(76, 175, 80, 0.18);
+  background: linear-gradient(180deg, rgba(238, 252, 241, 0.98) 0%, rgba(255, 253, 249, 0.98) 100%);
+}
+
+.benko-tour__success-banner p {
+  margin: 0;
+  color: #2e7d32;
+  line-height: 1.65;
+}
+
+.benko-tour__card-tag--success {
+  background: linear-gradient(135deg, #4caf50 0%, #3d8f41 100%);
+  color: #fff;
+}
+
+.benko-tour__access-exclusive-grid,
+.benko-tour__member-metrics,
+.benko-tour__dashboard-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.benko-tour__access-exclusive-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.benko-tour__access-exclusive-grid--logged {
+  margin-top: 4px;
+}
+
+.benko-tour__access-exclusive-card,
+.benko-tour__dashboard-card {
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 12px 22px rgba(38, 26, 18, 0.05);
+}
+
+.benko-tour__access-exclusive-card {
+  display: grid;
+  gap: 6px;
+}
+
+.benko-tour__access-exclusive-card strong,
+.benko-tour__dashboard-card strong {
+  color: var(--brand-dark);
+}
+
+.benko-tour__access-exclusive-card span,
+.benko-tour__dashboard-card span {
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+
+.benko-tour__member-card {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(239, 176, 58, 0.18);
+  background:
+    radial-gradient(circle at top right, rgba(239, 176, 58, 0.16), transparent 28%),
+    linear-gradient(180deg, rgba(255, 247, 235, 0.98) 0%, rgba(255, 253, 249, 0.98) 100%);
+}
+
+.benko-tour__member-card--profile {
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.benko-tour__member-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+}
+
+.benko-tour__member-card-head h3 {
+  margin: 6px 0 0;
+  color: var(--text);
+}
+
+.benko-tour__member-kicker {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  color: var(--brand-dark);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.benko-tour__member-code {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(19, 99, 108, 0.08);
+  border: 1px solid rgba(19, 99, 108, 0.12);
+  color: var(--emerald);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-size: 0.84rem;
+}
+
+.benko-tour__member-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.benko-tour__member-metrics article {
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(80, 60, 34, 0.08);
+}
+
+.benko-tour__member-metrics span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.benko-tour__member-metrics strong,
+.benko-tour__dashboard-card strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.benko-tour__member-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.benko-tour__member-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  color: var(--brand-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.benko-tour__user-data-card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 252, 247, 0.98) 0%, rgba(255, 248, 240, 0.98) 100%);
+  border: 1px solid rgba(239, 176, 58, 0.18);
+}
+
+.benko-tour__user-data-card h4 {
+  margin: 0;
+  color: var(--brand-dark);
+}
+
+.benko-tour__data-list {
+  display: grid;
+  gap: 10px;
+}
+
+.benko-tour__data-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(32, 24, 20, 0.12);
+}
+
+.benko-tour__data-row:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.benko-tour__data-row strong {
+  text-align: right;
+  color: var(--text);
+}
+
+.benko-tour__data-label {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.benko-tour__member-actions {
+  align-items: stretch;
+}
+
+.benko-tour__ghost--danger {
+  border-color: rgba(179, 50, 50, 0.2);
+  color: #a83636;
+}
+
+.benko-tour__text-button {
+  width: fit-content;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--brand);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.benko-tour__status-card {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(80, 60, 34, 0.08);
+}
+
+.benko-tour__status-card strong,
+.benko-tour__status-card p {
+  margin: 0;
+}
+
+.benko-tour__status-card p {
+  color: var(--muted);
+  line-height: 1.62;
+}
+
+.benko-tour__status-card--loading {
+  background: rgba(19, 99, 108, 0.06);
+  border-color: rgba(19, 99, 108, 0.12);
+}
+
+.benko-tour__status-card--success {
+  background: rgba(76, 175, 80, 0.08);
+  border-color: rgba(76, 175, 80, 0.16);
+}
+
+.benko-tour__status-card--warning {
+  background: rgba(255, 152, 0, 0.08);
+  border-color: rgba(255, 152, 0, 0.18);
+}
+
+.benko-tour__status-card--error {
+  background: rgba(244, 67, 54, 0.08);
+  border-color: rgba(244, 67, 54, 0.16);
+}
+
+.benko-tour__status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.benko-tour__session-prompt {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(239, 176, 58, 0.22);
+  background: linear-gradient(180deg, rgba(255, 249, 237, 0.98) 0%, rgba(255, 253, 249, 0.98) 100%);
+}
+
+.benko-tour__session-prompt-body {
+  display: grid;
+  gap: 8px;
+}
+
+.benko-tour__session-prompt-badge {
+  display: inline-flex;
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  color: var(--brand-dark);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.benko-tour__session-prompt strong,
+.benko-tour__session-prompt p {
+  margin: 0;
+}
+
+.benko-tour__session-prompt p {
+  color: var(--muted);
+  line-height: 1.68;
+}
+
+.benko-tour__session-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.benko-tour__dashboard-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 980px) {
+  .benko-tour__access-exclusive-grid,
+  .benko-tour__member-metrics,
+  .benko-tour__dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .benko-tour__member-card-head,
+  .benko-tour__data-row,
+  .benko-tour__session-actions,
+  .benko-tour__status-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .benko-tour__member-code,
+  .benko-tour__data-row strong {
+    text-align: left;
+  }
+}
+
 .benko-tour__feedback-showcase {
   display: grid;
   gap: 18px;
