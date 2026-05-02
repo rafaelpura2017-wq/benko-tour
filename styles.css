@@ -1623,6 +1623,33 @@ body {
   align-items: stretch;
 }
 
+.benko-tour__access-actions-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 6px;
+}
+
+.benko-tour__access-dropdown-wrap {
+  position: relative;
+}
+
+.benko-tour__access-dropdown-wrap .benko-tour__account-toggle {
+  width: 44px;
+  min-height: 44px;
+}
+
+.benko-tour__access-dropdown-wrap .benko-tour__account-dropdown {
+  min-width: 210px;
+}
+
+.benko-tour__access-dropdown-wrap .benko-tour__account-dropdown button {
+  justify-content: flex-start;
+}
+
+.benko-tour__access-dropdown-wrap #resend-verification-button:not(.benko-tour__hidden) {
+  display: flex;
+}
+
 .benko-tour__ghost--danger {
   border-color: rgba(179, 50, 50, 0.2);
   color: #a83636;

@@ -147,6 +147,33 @@
               </p>
 
               <div class="benko-tour__access-logged benko-tour__hidden" id="access-logged-panel">
+                <div class="benko-tour__access-actions-bar">
+                  <div class="benko-tour__access-dropdown-wrap">
+                    <button
+                      id="access-actions-toggle"
+                      class="benko-tour__account-toggle"
+                      type="button"
+                      aria-label="Abrir opciones de tu cuenta"
+                      aria-expanded="false"
+                      aria-controls="access-actions-dropdown"
+                    >
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </button>
+                    <div class="benko-tour__account-dropdown benko-tour__hidden" id="access-actions-dropdown">
+                      <button class="benko-tour__ghost benko-tour__ghost--danger" id="logout-button" type="button">
+                        Cerrar sesión
+                      </button>
+                      <a href="./perfil.html">Ir a mi perfil</a>
+                      <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Ir a reservas</a>
+                      <button class="benko-tour__hidden" id="resend-verification-button" type="button">
+                        Reenviar verificación de correo
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="benko-tour__success-banner benko-tour__hidden" id="success-banner">
                   <span class="benko-tour__card-tag benko-tour__card-tag--success">Cuenta creada</span>
                   <p>Tu acceso quedó iniciado. Revisa el estado de tu correo para dejar la cuenta completamente verificada.</p>
@@ -229,17 +256,6 @@
                 <p id="access-logged-copy" class="benko-tour__access-logged-copy">
                   Tu cuenta está activa. Desde aquí puedes seguir a tu perfil, hacer una reserva nueva o cerrar tu sesión cuando quieras.
                 </p>
-
-                <div class="benko-tour__form-actions benko-tour__member-actions">
-                  <a class="benko-tour__button" href="./perfil.html">Ir a mi perfil</a>
-                  <a class="benko-tour__ghost benko-tour__ghost--dark" href="./reservas.html" target="_blank" rel="noopener noreferrer">Ir a reservas</a>
-                  <button class="benko-tour__text-button benko-tour__hidden" id="resend-verification-button" type="button">
-                    Reenviar verificación de correo
-                  </button>
-                  <button class="benko-tour__ghost benko-tour__ghost--dark benko-tour__ghost--danger" id="logout-button" type="button">
-                    Cerrar sesión
-                  </button>
-                </div>
               </div>
 
               <form class="benko-tour__access-form" id="login-form" data-access-panel="login">
@@ -381,6 +397,9 @@
       const accessTabsWrap = document.querySelector('.benko-tour__access-tabs');
       const accessFormLead = document.getElementById('access-form-lead');
       const successBanner = document.getElementById('success-banner');
+      const accessActionsToggle = document.getElementById('access-actions-toggle');
+      const accessActionsDropdown = document.getElementById('access-actions-dropdown');
+      const accessDropdownWrap = document.querySelector('.benko-tour__access-dropdown-wrap');
       const accessTabs = document.querySelectorAll('[data-access-tab]');
       const accessPanels = document.querySelectorAll('[data-access-panel]');
       const sessionTag = document.getElementById('session-tag');
@@ -491,6 +510,24 @@
         if (accessFormLead) {
           accessFormLead.textContent = tabLeadCopy[targetPanel] || tabLeadCopy.login;
         }
+      }
+
+      function closeAccessActionsMenu() {
+        if (!accessActionsDropdown || !accessActionsToggle) {
+          return;
+        }
+
+        accessActionsDropdown.classList.add('benko-tour__hidden');
+        accessActionsToggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function openAccessActionsMenu() {
+        if (!accessActionsDropdown || !accessActionsToggle) {
+          return;
+        }
+
+        accessActionsDropdown.classList.remove('benko-tour__hidden');
+        accessActionsToggle.setAttribute('aria-expanded', 'true');
       }
 
       function renderGuestSession() {
@@ -702,6 +739,7 @@
         loggedPanel.classList.add('benko-tour__hidden');
         successBanner.classList.add('benko-tour__hidden');
         resendVerificationButton.classList.add('benko-tour__hidden');
+        closeAccessActionsMenu();
         accessTabsWrap.style.display = 'inline-grid';
         showPanel('login');
         renderGuestSession();
@@ -769,6 +807,18 @@
           showPanel(targetPanel);
         });
       });
+
+      if (accessActionsToggle) {
+        accessActionsToggle.addEventListener('click', function() {
+          const isOpen = !accessActionsDropdown.classList.contains('benko-tour__hidden');
+
+          if (isOpen) {
+            closeAccessActionsMenu();
+          } else {
+            openAccessActionsMenu();
+          }
+        });
+      }
 
       renderGuestSession();
       updateFormLead('login');
@@ -988,6 +1038,8 @@
 
       if (resendVerificationButton) {
         resendVerificationButton.addEventListener('click', async function() {
+          closeAccessActionsMenu();
+
           if (typeof window.authFirebase === 'undefined') {
             renderStatus('warning', 'Verificación no disponible', 'El sistema de acceso no está conectado en este momento.');
             return;
@@ -1013,6 +1065,7 @@
 
       if (logoutBtn) {
         logoutBtn.addEventListener('click', async function() {
+          closeAccessActionsMenu();
           const resultado = await window.authFirebase.logout();
           if (resultado.success) {
             mostrarFormularioAcceso();
@@ -1078,6 +1131,16 @@
       document.addEventListener('click', function(event) {
         if (event.target.matches('[data-switch-register]')) {
           showPanel('register');
+        }
+
+        if (accessDropdownWrap && !accessDropdownWrap.contains(event.target)) {
+          closeAccessActionsMenu();
+        }
+      });
+
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+          closeAccessActionsMenu();
         }
       });
     });
