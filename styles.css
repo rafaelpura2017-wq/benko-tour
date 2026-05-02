@@ -1553,6 +1553,13 @@ body {
   line-height: 1.68;
 }
 
+.benko-tour__member-next-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
 .benko-tour__member-benefit-list {
   display: grid;
   gap: 10px;

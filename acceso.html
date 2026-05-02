@@ -50,7 +50,37 @@
             <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
             <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
           </nav>
-          <a class="benko-tour__login" href="./acceso.html#acceso">Iniciar sesión</a>
+          <div class="benko-tour__account-menu benko-tour__hidden" id="access-user-menu">
+            <a href="./perfil.html" class="benko-tour__account-pill" aria-label="Ir a tu perfil">
+              <span class="benko-tour__account-label">Mi cuenta</span>
+              <strong class="benko-tour__account-name" id="access-user-name">Usuario</strong>
+            </a>
+            <div class="benko-tour__account-dropdown-wrap" id="access-dropdown-wrap">
+              <button
+                id="access-actions-toggle"
+                class="benko-tour__account-toggle"
+                type="button"
+                aria-label="Abrir menú de tu cuenta"
+                aria-expanded="false"
+                aria-controls="access-actions-dropdown"
+              >
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+              <div class="benko-tour__account-dropdown benko-tour__hidden" id="access-actions-dropdown">
+                <button class="benko-tour__ghost benko-tour__ghost--danger" id="logout-button" type="button">
+                  Cerrar sesión
+                </button>
+                <a href="./perfil.html">Ir a mi perfil</a>
+                <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Ir a reservas</a>
+                <button class="benko-tour__hidden" id="resend-verification-button" type="button">
+                  Reenviar verificación de correo
+                </button>
+              </div>
+            </div>
+          </div>
+          <a class="benko-tour__login" href="./acceso.html#acceso" id="access-login-link">Iniciar sesión</a>
         </div>
       </header>
 
@@ -147,33 +177,6 @@
               </p>
 
               <div class="benko-tour__access-logged benko-tour__hidden" id="access-logged-panel">
-                <div class="benko-tour__access-actions-bar">
-                  <div class="benko-tour__access-dropdown-wrap">
-                    <button
-                      id="access-actions-toggle"
-                      class="benko-tour__account-toggle"
-                      type="button"
-                      aria-label="Abrir opciones de tu cuenta"
-                      aria-expanded="false"
-                      aria-controls="access-actions-dropdown"
-                    >
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </button>
-                    <div class="benko-tour__account-dropdown benko-tour__hidden" id="access-actions-dropdown">
-                      <button class="benko-tour__ghost benko-tour__ghost--danger" id="logout-button" type="button">
-                        Cerrar sesión
-                      </button>
-                      <a href="./perfil.html">Ir a mi perfil</a>
-                      <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Ir a reservas</a>
-                      <button class="benko-tour__hidden" id="resend-verification-button" type="button">
-                        Reenviar verificación de correo
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
                 <div class="benko-tour__success-banner benko-tour__hidden" id="success-banner">
                   <span class="benko-tour__card-tag benko-tour__card-tag--success">Cuenta creada</span>
                   <p>Tu acceso quedó iniciado. Revisa el estado de tu correo para dejar la cuenta completamente verificada.</p>
@@ -235,6 +238,9 @@
                       Revisa los puntos pendientes para que tu acceso se vea completo y listo para reservar.
                     </p>
                     <div class="benko-tour__member-pills" id="member-next-step-pills"></div>
+                    <div class="benko-tour__member-next-actions">
+                      <a class="benko-tour__ghost benko-tour__ghost--dark" href="./perfil.html" id="member-complete-link">Completar mi registro</a>
+                    </div>
                   </article>
                 </div>
 
@@ -392,6 +398,9 @@
       const accessStatus = document.getElementById('access-status');
       const loggedPanel = document.getElementById('access-logged-panel');
       const accessSession = document.getElementById('access-session');
+      const accessUserMenu = document.getElementById('access-user-menu');
+      const accessUserName = document.getElementById('access-user-name');
+      const accessLoginLink = document.getElementById('access-login-link');
       const logoutBtn = document.getElementById('logout-button');
       const resetPasswordButton = document.getElementById('reset-password-button');
       const accessTabsWrap = document.querySelector('.benko-tour__access-tabs');
@@ -399,7 +408,7 @@
       const successBanner = document.getElementById('success-banner');
       const accessActionsToggle = document.getElementById('access-actions-toggle');
       const accessActionsDropdown = document.getElementById('access-actions-dropdown');
-      const accessDropdownWrap = document.querySelector('.benko-tour__access-dropdown-wrap');
+      const accessDropdownWrap = document.getElementById('access-dropdown-wrap');
       const accessTabs = document.querySelectorAll('[data-access-tab]');
       const accessPanels = document.querySelectorAll('[data-access-panel]');
       const sessionTag = document.getElementById('session-tag');
@@ -416,6 +425,7 @@
       const memberNextStepTitle = document.getElementById('member-next-step-title');
       const memberNextStepCopy = document.getElementById('member-next-step-copy');
       const memberNextStepPills = document.getElementById('member-next-step-pills');
+      const memberCompleteLink = document.getElementById('member-complete-link');
       const userDetails = document.getElementById('user-details');
       const loggedCopy = document.getElementById('access-logged-copy');
       const resendVerificationButton = document.getElementById('resend-verification-button');
@@ -510,6 +520,18 @@
         if (accessFormLead) {
           accessFormLead.textContent = tabLeadCopy[targetPanel] || tabLeadCopy.login;
         }
+      }
+
+      function setHeaderGuestState() {
+        closeAccessActionsMenu();
+        accessUserMenu.classList.add('benko-tour__hidden');
+        accessLoginLink.classList.remove('benko-tour__hidden');
+      }
+
+      function setHeaderUserState(nombre) {
+        accessUserName.textContent = nombre;
+        accessUserMenu.classList.remove('benko-tour__hidden');
+        accessLoginLink.classList.add('benko-tour__hidden');
       }
 
       function closeAccessActionsMenu() {
@@ -707,7 +729,9 @@
         memberNextStepPills.innerHTML = nextStep.pills
           .map((item) => `<span class="benko-tour__member-pill">${item}</span>`)
           .join('');
+        memberCompleteLink.textContent = (missingItems.length || !correoVerificado) ? 'Completar mi registro' : 'Ver mi perfil';
         resendVerificationButton.classList.toggle('benko-tour__hidden', correoVerificado);
+        setHeaderUserState(nombre);
 
         userDetails.innerHTML = [
           buildDataRow('Nombre', nombre),
@@ -739,6 +763,7 @@
         loggedPanel.classList.add('benko-tour__hidden');
         successBanner.classList.add('benko-tour__hidden');
         resendVerificationButton.classList.add('benko-tour__hidden');
+        setHeaderGuestState();
         closeAccessActionsMenu();
         accessTabsWrap.style.display = 'inline-grid';
         showPanel('login');
@@ -755,6 +780,7 @@
         const nombre = getSafeText(datos.nombre, getSafeText(datos.email, 'Viajero').split('@')[0]);
         const email = getSafeText(datos.email, 'sin correo');
         const correoVerificado = Boolean(datos.cuenta?.emailVerificado);
+        setHeaderUserState(nombre);
         const prompt = document.createElement('div');
         prompt.id = promptId;
         prompt.className = 'benko-tour__session-prompt';
@@ -822,6 +848,7 @@
 
       renderGuestSession();
       updateFormLead('login');
+      setHeaderGuestState();
 
       if (loginForm) {
         loginForm.addEventListener('submit', async function(e) {
