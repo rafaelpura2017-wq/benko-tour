@@ -73,12 +73,8 @@ body {
   margin: 0 auto;
 }
 
-/* Shell en páginas con sidebar - llenar espacio disponible */
-.benko-tour__main-with-sidebar .benko-tour__shell {
-  max-width: none;
-  width: 100%;
-  margin: 0;
-  padding: 0 24px;
+.benko-tour__shell--wide {
+  max-width: 1400px;
 }
 
 .benko-tour__header {
@@ -1564,16 +1560,19 @@ body {
 
 .benko-tour__service-list {
   display: grid;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 14px;
 }
 
 .benko-tour__service-row {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--line);
+  padding: 14px 16px;
+  border: 1px solid rgba(32, 24, 20, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
 }
 
 .benko-tour__service-row strong {
@@ -1582,6 +1581,7 @@ body {
 
 .benko-tour__service-row span {
   color: var(--muted);
+  max-width: 18ch;
   text-align: right;
 }
 
@@ -1816,6 +1816,8 @@ body {
 }
 
 .benko-tour__booking-form {
+  display: grid;
+  gap: 20px;
   background: linear-gradient(180deg, #fff9f1 0%, #fffdf9 100%);
 }
 
@@ -1832,6 +1834,20 @@ body {
 
 .benko-tour__field--full {
   grid-column: 1 / -1;
+}
+
+.benko-tour__field-heading {
+  display: grid;
+  gap: 4px;
+}
+
+.benko-tour__field-hint,
+.benko-tour__booking-help,
+.benko-tour__payment-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.6;
 }
 
 .benko-tour__field span {
@@ -1854,11 +1870,112 @@ body {
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
+.benko-tour__field select {
+  padding-right: 48px;
+  text-overflow: ellipsis;
+}
+
+.benko-tour__field textarea {
+  min-height: 132px;
+  resize: vertical;
+}
+
 .benko-tour__field input:focus,
 .benko-tour__field select:focus,
 .benko-tour__field textarea:focus {
   border-color: rgba(143, 67, 24, 0.42);
   box-shadow: 0 0 0 4px rgba(143, 67, 24, 0.08);
+}
+
+.benko-tour__traveler-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.benko-tour__traveler-card {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(239, 176, 58, 0.24);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 249, 241, 0.92) 100%);
+  box-shadow: 0 16px 28px rgba(38, 26, 18, 0.06);
+}
+
+.benko-tour__traveler-card--free {
+  border-color: rgba(76, 175, 80, 0.26);
+  background: linear-gradient(180deg, rgba(247, 255, 248, 0.98) 0%, rgba(255, 252, 247, 0.96) 100%);
+}
+
+.benko-tour__traveler-meta {
+  display: grid;
+  gap: 4px;
+}
+
+.benko-tour__traveler-title {
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.benko-tour__traveler-copy {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.benko-tour__traveler-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.benko-tour__counter-btn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(32, 24, 20, 0.14);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 1.45rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.benko-tour__counter-btn:hover,
+.benko-tour__counter-btn:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(209, 94, 56, 0.34);
+  box-shadow: 0 10px 18px rgba(38, 26, 18, 0.08);
+  outline: none;
+}
+
+.benko-tour__counter-input {
+  width: 54px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--brand-dark);
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 800;
+  pointer-events: none;
+}
+
+.benko-tour__traveler-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #3f9f51;
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 .benko-tour__form-actions {
@@ -1910,6 +2027,26 @@ body {
 
 .benko-tour__estimate span {
   color: var(--muted);
+}
+
+.benko-tour__summary-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.benko-tour__summary-highlight {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  color: var(--brand-dark);
+  font-size: 0.8rem;
+  font-weight: 800;
 }
 
 .benko-tour__payment-panel {
@@ -2568,10 +2705,11 @@ body {
 .benko-tour__content-wrapper {
   display: flex;
   align-items: flex-start;
-  gap: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  gap: 24px;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
 
 /* ============================================
@@ -2580,21 +2718,77 @@ body {
 .benko-tour__sidebar-menu {
   width: 250px;
   flex-shrink: 0;
+  align-self: flex-start;
   background: linear-gradient(175deg, #fffbf6 0%, #f5efe6 50%, #ebe4d9 100%);
   z-index: 50;
   display: flex;
   flex-direction: column;
-  padding: 20px 16px;
-  border-radius: 16px;
+  padding: 18px 14px;
+  border-radius: 24px;
   border: 1px solid rgba(209, 94, 56, 0.15);
   box-shadow: 0 8px 32px rgba(38, 26, 18, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  overflow: hidden;
+  overflow: hidden auto;
+  scrollbar-gutter: stable;
+}
+
+.benko-tour__shell--wide .benko-tour__content-wrapper {
+  gap: 24px;
+}
+
+.benko-tour__shell--wide .benko-tour__sidebar-menu {
+  width: 228px;
+  max-height: calc(100vh - 122px);
+}
+
+.benko-tour__shell--wide .benko-tour__main-with-sidebar {
+  flex: 1;
+  min-width: 0;
+}
+
+.benko-tour__shell--wide .benko-tour__booking-layout {
+  grid-template-columns: minmax(0, 1.22fr) minmax(340px, 0.88fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.benko-tour__shell--wide .benko-tour__shop-layout {
+  grid-template-columns: minmax(0, 1.14fr) minmax(320px, 0.86fr);
+  gap: 22px;
+  align-items: start;
+}
+
+@media (min-width: 1025px) {
+  .benko-tour__shell--wide .benko-tour__sidebar-menu,
+  .benko-tour__shell--wide .benko-tour__booking-summary {
+    position: sticky;
+    top: 104px;
+  }
+}
+
+@media (max-width: 1180px) and (min-width: 821px) {
+  .benko-tour__shell--wide .benko-tour__booking-layout,
+  .benko-tour__shell--wide .benko-tour__shop-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.benko-tour__sidebar-menu::-webkit-scrollbar {
+  width: 7px;
+}
+
+.benko-tour__sidebar-menu::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(209, 94, 56, 0.28);
+}
+
+.benko-tour__sidebar-menu::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* Header del sidebar */
 .benko-tour__sidebar-header {
-  margin-bottom: 20px;
-  padding-bottom: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
   border-bottom: 2px solid rgba(209, 94, 56, 0.15);
   position: relative;
 }
@@ -2636,7 +2830,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .benko-tour__sidebar-item {
@@ -2647,14 +2841,16 @@ body {
 .benko-tour__sidebar-link {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 14px;
+  gap: 14px;
+  min-height: 70px;
+  padding: 12px 14px;
+  border-radius: 22px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 251, 246, 0.8) 100%);
   color: #5a4a42;
   text-decoration: none;
-  font-size: 0.88rem;
-  font-weight: 600;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.22;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'DM Sans', sans-serif;
   border: 1px solid rgba(239, 176, 58, 0.2);
@@ -2678,7 +2874,7 @@ body {
 .benko-tour__sidebar-link:hover {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 248, 240, 0.95) 100%);
   color: #d15e38;
-  transform: translateX(8px);
+  transform: translateX(4px);
   box-shadow: 0 6px 20px rgba(209, 94, 56, 0.12), 0 2px 8px rgba(38, 26, 18, 0.06);
   border-color: rgba(209, 94, 56, 0.35);
 }
@@ -2702,14 +2898,15 @@ body {
 
 .benko-tour__sidebar-link--active:hover {
   background: linear-gradient(135deg, rgba(209, 94, 56, 0.18) 0%, rgba(239, 176, 58, 0.15) 100%);
-  transform: translateX(8px);
+  transform: translateX(4px);
 }
 
 /* Iconos con diseño mejorado */
 .benko-tour__sidebar-icon {
-  font-size: 1.15rem;
-  width: 30px;
-  height: 30px;
+  font-size: 1.2rem;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2734,7 +2931,7 @@ body {
 
 /* Footer del sidebar */
 .benko-tour__sidebar-footer {
-  padding-top: 20px;
+  padding-top: 16px;
   margin-top: auto;
   position: relative;
 }
@@ -2757,6 +2954,7 @@ body {
   gap: 10px;
   border: 1px solid rgba(209, 94, 56, 0.3);
   box-shadow: 0 4px 12px rgba(209, 94, 56, 0.1);
+  min-height: 56px;
 }
 
 .benko-tour__sidebar-footer .benko-tour__sidebar-link:hover {
@@ -2819,16 +3017,17 @@ body {
   .benko-tour__sidebar-menu {
     transform: translateX(-100%);
     transition: transform 0.3s ease;
-    width: 280px;
+    width: min(304px, calc(100vw - 56px));
     position: fixed;
     left: 0;
     top: 0;
     height: 100vh;
     border-radius: 0 20px 20px 0;
     box-shadow: 4px 0 30px rgba(0, 0, 0, 0.3);
-    padding: 24px 20px;
+    padding: 18px 14px 26px;
     z-index: 100;
     border: none;
+    max-height: none;
   }
   
   .benko-tour__sidebar-menu--open {
@@ -2887,8 +3086,20 @@ body {
   }
   
   /* Mejorar toques en móvil */
+  .benko-tour__sidebar-list {
+    gap: 8px;
+  }
+
   .benko-tour__sidebar-link {
-    padding: 14px 16px;
+    min-height: 64px;
+    padding: 12px 14px;
+    border-radius: 20px;
+  }
+
+  .benko-tour__sidebar-icon {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
   }
 }
 

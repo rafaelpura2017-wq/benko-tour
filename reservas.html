@@ -28,7 +28,7 @@
 </head>
 <body>
   <div class="benko-tour">
-    <div class="benko-tour__shell">
+    <div class="benko-tour__shell benko-tour__shell--wide">
       <header class="benko-tour__header">
         <div class="benko-tour__topbar">
           <a class="benko-tour__topbar-brand" href="./index.html" aria-label="Benko Tour, ir al inicio">
@@ -150,7 +150,7 @@
               <h2 class="benko-tour__section-title" id="reservas-title">Reserva tu itinerario en menos pasos</h2>
             </div>
             <p class="benko-tour__section-copy">
-              Este formulario está pensado para convertir y mandar el lead directo con la información clave.
+              Completa solo lo esencial para cotizar mejor, confirmar disponibilidad y cerrar la reserva por el canal más cómodo.
             </p>
           </div>
 
@@ -173,51 +173,58 @@
                 </label>
 
                 <div class="benko-tour__field benko-tour__field--full">
-                  <span>Viajeros y habitaciones</span>
-                  <div class="benko-tour__traveler-selector" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px;">
-                    
-                    <!-- Adultos -->
-                    <div class="benko-tour__counter" style="background: #fff; border: 1px solid rgba(239, 176, 58, 0.3); border-radius: 12px; padding: 12px; text-align: center;">
-                      <div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 4px;">Adultos</div>
-                      <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
-                        <button type="button" class="benko-tour__counter-btn" data-target="adults" data-action="minus" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;">−</button>
-                        <input type="number" id="adults" name="adults" value="2" min="1" max="20" readonly style="width: 40px; text-align: center; border: none; font-size: 1.1rem; font-weight: 600; background: transparent;">
-                        <button type="button" class="benko-tour__counter-btn" data-target="adults" data-action="plus" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;">+</button>
+                  <div class="benko-tour__field-heading">
+                    <span>Viajeros del grupo</span>
+                    <p class="benko-tour__field-hint">Niños viajan con tarifa reducida y los bebés de 0 a 2 años no pagan.</p>
+                  </div>
+                  <div class="benko-tour__traveler-selector" aria-label="Selector de viajeros por edad">
+                    <div class="benko-tour__traveler-card">
+                      <div class="benko-tour__traveler-meta">
+                        <strong class="benko-tour__traveler-title">Adultos</strong>
+                        <span class="benko-tour__traveler-copy">Tarifa completa del tour</span>
+                      </div>
+                      <div class="benko-tour__traveler-controls">
+                        <button type="button" class="benko-tour__counter-btn" data-target="adults" data-action="minus" aria-label="Restar adultos">−</button>
+                        <input class="benko-tour__counter-input" type="number" id="adults" name="adults" value="2" min="1" max="20" readonly>
+                        <button type="button" class="benko-tour__counter-btn" data-target="adults" data-action="plus" aria-label="Sumar adultos">+</button>
                       </div>
                     </div>
 
-                    <!-- Niños -->
-                    <div class="benko-tour__counter" style="background: #fff; border: 1px solid rgba(239, 176, 58, 0.3); border-radius: 12px; padding: 12px; text-align: center;">
-                      <div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 4px;">Niños</div>
-                      <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
-                        <button type="button" class="benko-tour__counter-btn" data-target="children" data-action="minus" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;">−</button>
-                        <input type="number" id="children" name="children" value="0" min="0" max="10" readonly style="width: 40px; text-align: center; border: none; font-size: 1.1rem; font-weight: 600; background: transparent;">
-                        <button type="button" class="benko-tour__counter-btn" data-target="children" data-action="plus" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;">+</button>
+                    <div class="benko-tour__traveler-card">
+                      <div class="benko-tour__traveler-meta">
+                        <strong class="benko-tour__traveler-title">Niños</strong>
+                        <span class="benko-tour__traveler-copy">Tarifa especial para menores</span>
+                      </div>
+                      <div class="benko-tour__traveler-controls">
+                        <button type="button" class="benko-tour__counter-btn" data-target="children" data-action="minus" aria-label="Restar niños">−</button>
+                        <input class="benko-tour__counter-input" type="number" id="children" name="children" value="0" min="0" max="10" readonly>
+                        <button type="button" class="benko-tour__counter-btn" data-target="children" data-action="plus" aria-label="Sumar niños">+</button>
                       </div>
                     </div>
 
-                    <!-- Niños menores de 2 años (gratis) -->
-                    <div class="benko-tour__counter" style="background: #fff; border: 1px solid rgba(76, 175, 80, 0.4); border-radius: 12px; padding: 12px; text-align: center;">
-                      <div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 4px;">
-                        Bebés <span style="color: #4caf50; font-weight: 600;">(2-0 años)</span>
+                    <div class="benko-tour__traveler-card benko-tour__traveler-card--free">
+                      <div class="benko-tour__traveler-meta">
+                        <strong class="benko-tour__traveler-title">Bebés de 0 a 2 años</strong>
+                        <span class="benko-tour__traveler-copy">Acompañan sin costo</span>
                       </div>
-                      <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
-                        <button type="button" class="benko-tour__counter-btn" data-target="toddlers" data-action="minus" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;">−</button>
-                        <input type="number" id="toddlers" name="toddlers" value="0" min="0" max="5" readonly style="width: 40px; text-align: center; border: none; font-size: 1.1rem; font-weight: 600; background: transparent;">
-                        <button type="button" class="benko-tour__counter-btn" data-target="toddlers" data-action="plus" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;">+</button>
+                      <div class="benko-tour__traveler-controls">
+                        <button type="button" class="benko-tour__counter-btn" data-target="toddlers" data-action="minus" aria-label="Restar bebés">−</button>
+                        <input class="benko-tour__counter-input" type="number" id="toddlers" name="toddlers" value="0" min="0" max="5" readonly>
+                        <button type="button" class="benko-tour__counter-btn" data-target="toddlers" data-action="plus" aria-label="Sumar bebés">+</button>
                       </div>
-                      <div style="font-size: 0.75rem; color: #4caf50; margin-top: 4px; font-weight: 500;">✓ Gratis</div>
+                      <span class="benko-tour__traveler-note">Incluidos gratis en el recorrido</span>
                     </div>
                   </div>
+                  <p class="benko-tour__booking-help">Puedes ajustar el tamaño del grupo antes de confirmar disponibilidad o pasar al pago.</p>
                   <input type="hidden" id="travelers" name="travelers" value="2">
                 </div>
 
                 <label class="benko-tour__field">
                   <span>Paquete</span>
                   <select id="package-select" name="package" required>
-                    <option value="comunitaria" data-price="300000">Ruta Comunitaria - $300.000</option>
-                    <option value="principal" data-price="320000" selected>Ruta Principal - $320.000</option>
-                    <option value="premium" data-price="395000">Inmersión Premium - $395.000</option>
+                    <option value="comunitaria" data-price="300000" data-label="Ruta Comunitaria">Ruta comunitaria · $300 mil</option>
+                    <option value="principal" data-price="320000" data-label="Ruta Principal" selected>Ruta principal · $320 mil</option>
+                    <option value="premium" data-price="395000" data-label="Inmersión Premium">Inmersión premium · $395 mil</option>
                   </select>
                 </label>
 
@@ -262,6 +269,11 @@
             <aside class="benko-tour__booking-summary">
               <span class="benko-tour__card-tag">Resumen en vivo</span>
               <h3>Estimado de la reserva</h3>
+              <div class="benko-tour__summary-highlights" aria-label="Beneficios de esta reserva">
+                <span class="benko-tour__summary-highlight">Equipo local</span>
+                <span class="benko-tour__summary-highlight">Respuesta por WhatsApp</span>
+                <span class="benko-tour__summary-highlight">Pago opcional</span>
+              </div>
               <div class="benko-tour__estimate" aria-live="polite">
                 <strong id="estimate-total">$640.000 COP</strong>
                 <span id="estimate-caption">2 viajeros en Ruta Principal</span>
@@ -270,15 +282,15 @@
               <div class="benko-tour__service-list">
                 <div class="benko-tour__service-row">
                   <strong>Incluye</strong>
-                  <span>transporte + guía + almuerzo</span>
+                  <span>Transporte, guía local y almuerzo típico</span>
                 </div>
                 <div class="benko-tour__service-row">
                   <strong>Confirmación</strong>
-                  <span>sujeto a disponibilidad</span>
+                  <span>Revisión manual según fecha y cupos</span>
                 </div>
                 <div class="benko-tour__service-row">
                   <strong>Reserva sugerida</strong>
-                  <span>48 horas antes</span>
+                  <span>48 horas antes o más para grupos</span>
                 </div>
               </div>
 
@@ -286,7 +298,7 @@
                 <span class="benko-tour__card-tag">Pago real</span>
                 <h4>Checkout de reserva</h4>
                 <p>
-                  Elige el proveedor de pago que prefieras para la reserva. Ambos quedan listos para conectarse a backend real.
+                  Puedes pagar online para asegurar tu cupo o enviar primero la solicitud y confirmar los detalles con el equipo.
                 </p>
                 <div class="benko-tour__form-actions benko-tour__form-actions--stack">
                   <button class="benko-tour__button" id="reservation-pay-wompi" type="button">Pagar reserva con Wompi</button>
@@ -294,6 +306,7 @@
                     Pagar reserva con Mercado Pago
                   </button>
                 </div>
+                <p class="benko-tour__payment-note">Si prefieres una validación humana primero, usa también el botón de WhatsApp del formulario.</p>
               </div>
 
               <p class="benko-tour__note">
@@ -370,7 +383,7 @@
         const toddlers = parseInt(toddlersInput.value) || 0;
         const selectedOption = packageSelect.options[packageSelect.selectedIndex];
         const adultPrice = parseInt(selectedOption.dataset.price) || 0;
-        const packageName = selectedOption.text.split(' - ')[0];
+        const packageName = selectedOption.dataset.label || selectedOption.text;
 
         // Calcular totales (bebés son gratis)
         const adultTotal = adults * adultPrice;
