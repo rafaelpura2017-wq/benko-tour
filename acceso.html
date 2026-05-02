@@ -50,12 +50,12 @@
             <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
             <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
           </nav>
-          <div class="benko-tour__account-menu benko-tour__hidden" id="access-user-menu">
-            <a href="./perfil.html" class="benko-tour__account-pill" aria-label="Ir a tu perfil">
-              <span class="benko-tour__account-label">Mi cuenta</span>
-              <strong class="benko-tour__account-name" id="access-user-name">Usuario</strong>
-            </a>
-            <div class="benko-tour__account-dropdown-wrap" id="access-dropdown-wrap">
+          <div class="benko-tour__account-menu benko-tour__account-menu--access benko-tour__hidden" id="access-user-menu">
+            <div class="benko-tour__account-summary" aria-live="polite">
+              <span class="benko-tour__account-summary-label">Sesión activa</span>
+              <strong class="benko-tour__account-summary-name" id="access-user-name">Usuario</strong>
+            </div>
+            <div class="benko-tour__account-dropdown-wrap benko-tour__access-dropdown-wrap" id="access-dropdown-wrap">
               <button
                 id="access-actions-toggle"
                 class="benko-tour__account-toggle"
@@ -69,14 +69,23 @@
                 <span></span>
               </button>
               <div class="benko-tour__account-dropdown benko-tour__hidden" id="access-actions-dropdown">
+                <div class="benko-tour__account-dropdown-meta">
+                  <span class="benko-tour__account-dropdown-tag">Miembro Benko</span>
+                  <strong id="access-dropdown-name">Usuario</strong>
+                  <p id="access-dropdown-copy">Tu cuenta ya está lista para seguir reservando y completar tus datos.</p>
+                </div>
                 <button class="benko-tour__ghost benko-tour__ghost--danger" id="logout-button" type="button">
                   Cerrar sesión
                 </button>
-                <a href="./perfil.html">Ir a mi perfil</a>
+                <a href="./perfil.html#panel-datos" id="access-menu-profile-link">Completar mi registro</a>
                 <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Ir a reservas</a>
+                <a href="./index.html">Ir a la portada</a>
                 <button class="benko-tour__hidden" id="resend-verification-button" type="button">
                   Reenviar verificación de correo
                 </button>
+                <a href="./perfil.html#security-zone" class="benko-tour__account-dropdown-link benko-tour__account-dropdown-link--danger">
+                  Cerrar mi cuenta
+                </a>
               </div>
             </div>
           </div>
@@ -400,6 +409,9 @@
       const accessSession = document.getElementById('access-session');
       const accessUserMenu = document.getElementById('access-user-menu');
       const accessUserName = document.getElementById('access-user-name');
+      const accessDropdownName = document.getElementById('access-dropdown-name');
+      const accessDropdownCopy = document.getElementById('access-dropdown-copy');
+      const accessMenuProfileLink = document.getElementById('access-menu-profile-link');
       const accessLoginLink = document.getElementById('access-login-link');
       const logoutBtn = document.getElementById('logout-button');
       const resetPasswordButton = document.getElementById('reset-password-button');
@@ -524,12 +536,30 @@
 
       function setHeaderGuestState() {
         closeAccessActionsMenu();
+        if (accessUserName) {
+          accessUserName.textContent = 'Usuario';
+        }
+        if (accessDropdownName) {
+          accessDropdownName.textContent = 'Usuario';
+        }
+        if (accessDropdownCopy) {
+          accessDropdownCopy.textContent = 'Tu cuenta ya está lista para seguir reservando y completar tus datos.';
+        }
+        if (accessMenuProfileLink) {
+          accessMenuProfileLink.textContent = 'Completar mi registro';
+          accessMenuProfileLink.href = './perfil.html#panel-datos';
+        }
         accessUserMenu.classList.add('benko-tour__hidden');
         accessLoginLink.classList.remove('benko-tour__hidden');
       }
 
       function setHeaderUserState(nombre) {
-        accessUserName.textContent = nombre;
+        const safeName = getSafeText(nombre, 'Viajero');
+        const firstName = safeName.split(/\s+/)[0];
+        accessUserName.textContent = firstName;
+        if (accessDropdownName) {
+          accessDropdownName.textContent = safeName;
+        }
         accessUserMenu.classList.remove('benko-tour__hidden');
         accessLoginLink.classList.add('benko-tour__hidden');
       }
@@ -729,7 +759,21 @@
         memberNextStepPills.innerHTML = nextStep.pills
           .map((item) => `<span class="benko-tour__member-pill">${item}</span>`)
           .join('');
-        memberCompleteLink.textContent = (missingItems.length || !correoVerificado) ? 'Completar mi registro' : 'Ver mi perfil';
+        const shouldCompleteProfile = Boolean(missingItems.length || !correoVerificado);
+        const profileActionHref = shouldCompleteProfile ? './perfil.html#panel-datos' : './perfil.html';
+        const profileActionLabel = shouldCompleteProfile ? 'Completar mi registro' : 'Ir a mi perfil';
+
+        memberCompleteLink.textContent = shouldCompleteProfile ? 'Completar mi registro' : 'Ver mi perfil';
+        memberCompleteLink.href = profileActionHref;
+        if (accessMenuProfileLink) {
+          accessMenuProfileLink.textContent = profileActionLabel;
+          accessMenuProfileLink.href = profileActionHref;
+        }
+        if (accessDropdownCopy) {
+          accessDropdownCopy.textContent = shouldCompleteProfile
+            ? 'Completa tus datos clave para reservar más rápido y con mayor confianza.'
+            : 'Tu cuenta ya está lista para volver a reservar, revisar tu perfil y seguir con Benko Tour.';
+        }
         resendVerificationButton.classList.toggle('benko-tour__hidden', correoVerificado);
         setHeaderUserState(nombre);
 
