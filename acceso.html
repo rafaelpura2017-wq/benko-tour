@@ -246,12 +246,12 @@
                 <div class="benko-tour__field-grid">
                   <label class="benko-tour__field benko-tour__field--full">
                     <span>Correo electrónico</span>
-                    <input type="email" name="email" placeholder="tucorreo@ejemplo.com" required>
+                    <input type="email" name="email" placeholder="tucorreo@ejemplo.com" autocomplete="email" required>
                   </label>
 
                   <label class="benko-tour__field benko-tour__field--full">
                     <span>Contraseña</span>
-                    <input type="password" name="password" placeholder="Ingresa tu contraseña" minlength="6" required>
+                    <input type="password" name="password" placeholder="Ingresa tu contraseña" autocomplete="current-password" minlength="6" required>
                   </label>
                 </div>
 
@@ -267,7 +267,7 @@
                 <div class="benko-tour__field-grid">
                   <label class="benko-tour__field">
                     <span>Nombre completo</span>
-                    <input type="text" name="name" placeholder="Tu nombre" required>
+                    <input type="text" name="name" placeholder="Tu nombre" autocomplete="name" required>
                   </label>
 
                   <label class="benko-tour__field">
@@ -277,7 +277,7 @@
 
                   <label class="benko-tour__field benko-tour__field--full">
                     <span>WhatsApp</span>
-                    <input type="tel" name="phone" placeholder="+57 300 000 0000">
+                    <input type="tel" name="phone" placeholder="+57 300 000 0000" autocomplete="tel" inputmode="tel" minlength="10" required>
                   </label>
 
                   <label class="benko-tour__field">
@@ -304,17 +304,17 @@
 
                   <label class="benko-tour__field benko-tour__field--full">
                     <span>Correo electrónico</span>
-                    <input type="email" name="email" placeholder="tucorreo@ejemplo.com" required>
+                    <input type="email" name="email" placeholder="tucorreo@ejemplo.com" autocomplete="email" required>
                   </label>
 
                   <label class="benko-tour__field benko-tour__field--full">
                     <span>Contraseña</span>
-                    <input type="password" name="password" placeholder="Mínimo 6 caracteres" minlength="6" required>
+                    <input type="password" name="password" placeholder="Mínimo 8 caracteres, letras y números" autocomplete="new-password" minlength="8" required>
                   </label>
 
                   <label class="benko-tour__field benko-tour__field--full">
                     <span>Confirmar contraseña</span>
-                    <input type="password" name="passwordConfirm" placeholder="Repite tu contraseña" minlength="6" required>
+                    <input type="password" name="passwordConfirm" placeholder="Repite tu contraseña" autocomplete="new-password" minlength="8" required>
                   </label>
                 </div>
 
@@ -463,6 +463,27 @@
         return {
           valid: true,
           value: normalized
+        };
+      }
+
+      function validatePhoneWithService(value) {
+        if (window.authFirebase?.validarTelefono) {
+          return window.authFirebase.validarTelefono(value);
+        }
+
+        const phone = String(value || '').trim();
+
+        if (!phone) {
+          return {
+            valid: false,
+            code: 'client/missing-phone',
+            message: 'Escribe un número de WhatsApp o teléfono para continuar.'
+          };
+        }
+
+        return {
+          valid: true,
+          value: phone
         };
       }
 
@@ -828,10 +849,11 @@
           const email = normalizeEmail(this.querySelector('[name="email"]').value);
           const password = this.querySelector('[name="password"]').value;
           const passwordConfirm = this.querySelector('[name="passwordConfirm"]').value;
+          const phone = this.querySelector('[name="phone"]').value.trim();
           const datos = {
             nombre: this.querySelector('[name="name"]').value.trim(),
             ciudad: this.querySelector('[name="city"]').value.trim(),
-            telefono: this.querySelector('[name="phone"]').value.trim(),
+            telefono: phone,
             idioma: this.querySelector('[name="language"]').value,
             recogida: this.querySelector('[name="pickup"]').value
           };
@@ -848,8 +870,20 @@
             return;
           }
 
-          if (String(password || '').length < 6) {
-            renderStatus('warning', 'Contraseña débil', 'Usa al menos 6 caracteres y mezcla letras con números para que tu acceso sea más confiable.');
+          const phoneValidation = validatePhoneWithService(phone);
+
+          if (!phoneValidation.valid) {
+            renderStatus('error', 'Teléfono inválido', phoneValidation.message);
+            return;
+          }
+
+          if (String(password || '').length < 8) {
+            renderStatus('warning', 'Contraseña débil', 'Usa al menos 8 caracteres para que tu acceso sea más serio y confiable.');
+            return;
+          }
+
+          if (!/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+            renderStatus('warning', 'Contraseña incompleta', 'La contraseña debe combinar letras y números para proteger mejor tu cuenta.');
             return;
           }
 
@@ -876,7 +910,10 @@
             return;
           }
 
-          const resultado = await window.authFirebase.registrar(emailValidation.value, password, datos);
+          const resultado = await window.authFirebase.registrar(emailValidation.value, password, {
+            ...datos,
+            telefono: phoneValidation.value
+          });
 
           if (resultado.success) {
             const correoVerificado = Boolean(resultado.datos?.cuenta?.emailVerificado);
@@ -899,10 +936,12 @@
 
             if (errorCode === 'client/missing-email' || errorCode === 'client/invalid-email-format' || errorCode === 'auth/invalid-email') {
               renderStatus('error', 'Correo inválido', resultado.error || 'Revisa el formato del correo antes de crear tu cuenta.');
+            } else if (errorCode === 'client/missing-phone' || errorCode === 'client/invalid-phone') {
+              renderStatus('error', 'Teléfono inválido', resultado.error || 'Revisa tu número de WhatsApp antes de crear tu cuenta.');
             } else if (errorCode === 'auth/email-already-in-use') {
               renderStatus('warning', 'Este correo ya está registrado', 'Puedes iniciar sesión con ese correo o pedir un enlace para recuperar tu acceso.');
-            } else if (errorCode === 'auth/weak-password' || errorCode === 'client/weak-password') {
-              renderStatus('warning', 'Contraseña débil', 'Usa al menos 6 caracteres y mezcla letras con números para que tu cuenta sea más segura.');
+            } else if (errorCode === 'auth/weak-password' || errorCode === 'client/weak-password' || errorCode === 'client/weak-password-format') {
+              renderStatus('warning', 'Contraseña débil', resultado.error || 'Usa al menos 8 caracteres y combina letras con números para que tu cuenta sea más segura.');
             } else if (errorCode === 'auth/network-request-failed') {
               renderStatus('warning', 'Problema de conexión', 'Revisa tu internet e intenta registrar tu cuenta nuevamente.');
             } else {

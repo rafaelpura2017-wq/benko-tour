@@ -605,6 +605,106 @@ body {
   box-shadow: 0 14px 26px rgba(17, 29, 23, 0.16);
 }
 
+.benko-tour__account-menu {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.benko-tour__account-pill {
+  display: inline-grid;
+  gap: 2px;
+  min-height: 50px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  border: 1px solid rgba(123, 53, 18, 0.12);
+  background: linear-gradient(135deg, rgba(255, 232, 196, 0.98), rgba(255, 244, 231, 0.96));
+  box-shadow: 0 14px 26px rgba(17, 29, 23, 0.16);
+}
+
+.benko-tour__account-label {
+  color: #8b5120;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.benko-tour__account-name {
+  color: var(--brand-dark);
+  font-size: 0.96rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.benko-tour__account-dropdown-wrap {
+  position: relative;
+}
+
+.benko-tour__account-toggle {
+  display: inline-grid;
+  gap: 5px;
+  align-content: center;
+  justify-items: center;
+  width: 50px;
+  min-height: 50px;
+  padding: 0;
+  border-radius: 18px;
+  border: 1px solid rgba(123, 53, 18, 0.12);
+  background: linear-gradient(135deg, rgba(255, 248, 236, 0.98), rgba(255, 255, 255, 0.94));
+  box-shadow: 0 14px 26px rgba(17, 29, 23, 0.12);
+  cursor: pointer;
+}
+
+.benko-tour__account-toggle span {
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--brand-dark);
+}
+
+.benko-tour__account-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 30;
+  display: grid;
+  gap: 6px;
+  min-width: 220px;
+  padding: 10px;
+  border-radius: 22px;
+  border: 1px solid rgba(80, 60, 34, 0.12);
+  background: linear-gradient(180deg, rgba(255, 252, 246, 0.98) 0%, rgba(246, 239, 226, 0.96) 100%);
+  box-shadow: var(--shadow);
+}
+
+.benko-tour__account-dropdown a,
+.benko-tour__account-dropdown button {
+  display: flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.benko-tour__account-dropdown a:hover,
+.benko-tour__account-dropdown a:focus-visible,
+.benko-tour__account-dropdown button:hover,
+.benko-tour__account-dropdown button:focus-visible {
+  border-color: rgba(123, 53, 18, 0.12);
+  outline: none;
+  transform: translateY(-1px);
+}
+
 .benko-tour__button {
   background: linear-gradient(135deg, var(--accent) 0%, #f28a4b 55%, #f15c62 100%);
   color: #26150b;
@@ -1672,6 +1772,99 @@ body {
   text-transform: uppercase;
 }
 
+.benko-tour__card-tag--danger {
+  background: linear-gradient(135deg, #c44b4b 0%, #a83636 100%);
+  color: #fff;
+}
+
+.benko-tour__danger-zone {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+  padding: 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(179, 50, 50, 0.16);
+  background: linear-gradient(180deg, rgba(255, 245, 245, 0.98) 0%, rgba(255, 252, 250, 0.98) 100%);
+}
+
+.benko-tour__danger-zone h4,
+.benko-tour__danger-zone p {
+  margin: 0;
+}
+
+.benko-tour__danger-zone p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.benko-tour__danger-zone .benko-tour__ghost--danger[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.benko-tour__activity-list {
+  display: grid;
+  gap: 14px;
+}
+
+.benko-tour__activity-card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 12px 22px rgba(38, 26, 18, 0.05);
+}
+
+.benko-tour__activity-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.benko-tour__activity-card-head h4,
+.benko-tour__activity-card p {
+  margin: 0;
+}
+
+.benko-tour__activity-card-head h4 {
+  color: var(--text);
+}
+
+.benko-tour__activity-card p {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.benko-tour__activity-empty {
+  display: grid;
+  gap: 10px;
+  padding: 24px;
+  border-radius: 22px;
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  background: rgba(255, 255, 255, 0.76);
+  text-align: center;
+}
+
+.benko-tour__activity-empty strong,
+.benko-tour__activity-empty p {
+  margin: 0;
+}
+
+.benko-tour__activity-empty p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.benko-tour__activity-empty a {
+  color: var(--brand);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
 @media (max-width: 980px) {
   .benko-tour__access-exclusive-grid,
   .benko-tour__member-metrics,
@@ -1680,6 +1873,7 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .benko-tour__activity-card-head,
   .benko-tour__member-progress-head,
   .benko-tour__member-card-head,
   .benko-tour__data-row,
@@ -2988,6 +3182,31 @@ body {
   .benko-tour__topbar > .benko-tour__menu,
   .benko-tour__topbar > .benko-tour__login {
     display: none;
+  }
+
+  .benko-tour__account-menu {
+    margin-left: auto;
+  }
+
+  .benko-tour__account-pill {
+    min-height: 44px;
+    padding: 8px 14px;
+  }
+
+  .benko-tour__account-name {
+    max-width: 110px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .benko-tour__account-toggle {
+    width: 44px;
+    min-height: 44px;
+  }
+
+  .benko-tour__account-dropdown {
+    min-width: 200px;
   }
 
   .benko-tour__hamburger {

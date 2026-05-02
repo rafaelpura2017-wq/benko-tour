@@ -47,10 +47,33 @@
             <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
             <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
           </nav>
-          <div class="benko-tour__user-menu" id="user-menu" style="display: none;">
-            <span class="benko-tour__user-name" id="user-name-display" style="color: var(--brand-dark); font-weight: 600; font-size: 0.9rem; margin-right: 12px;"></span>
-            <a href="./perfil.html" class="benko-tour__login" style="background: linear-gradient(135deg, var(--brand) 0%, #e0a030 100%); color: white; margin-right: 8px;">Mi Perfil</a>
-            <button id="logout-btn" class="benko-tour__ghost" style="padding: 8px 14px; font-size: 0.85rem;">Salir</button>
+          <div class="benko-tour__account-menu" id="user-menu" style="display: none;">
+            <a href="./perfil.html" class="benko-tour__account-pill" aria-label="Ir a tu perfil">
+              <span class="benko-tour__account-label">Mi cuenta</span>
+              <strong class="benko-tour__account-name" id="user-name-display"></strong>
+            </a>
+            <div class="benko-tour__account-dropdown-wrap">
+              <button
+                id="account-menu-toggle"
+                class="benko-tour__account-toggle"
+                type="button"
+                aria-label="Abrir menú de cuenta"
+                aria-expanded="false"
+                aria-controls="account-dropdown"
+              >
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+              <div class="benko-tour__account-dropdown benko-tour__hidden" id="account-dropdown">
+                <a href="./index.html">Página principal</a>
+                <a href="./perfil.html">Mi perfil</a>
+                <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
+                <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
+                <a href="#security-zone" id="open-security-zone">Cerrar mi cuenta</a>
+                <button id="logout-btn" type="button">Cerrar sesión</button>
+              </div>
+            </div>
           </div>
           <a class="benko-tour__login" href="./acceso.html#acceso" id="login-link">Iniciar sesión</a>
         </div>
@@ -161,6 +184,25 @@
                   </div>
                 </form>
                 <div id="update-status" style="margin-top: 16px;"></div>
+
+                <div class="benko-tour__danger-zone" id="security-zone">
+                  <span class="benko-tour__card-tag benko-tour__card-tag--danger">Zona de seguridad</span>
+                  <h4>Cerrar mi cuenta</h4>
+                  <p>
+                    Esta acción elimina tu acceso, tu perfil y la información guardada en esta cuenta. Para continuar escribe
+                    <strong>CERRAR</strong> exactamente como aparece aquí.
+                  </p>
+                  <label class="benko-tour__field benko-tour__field--full">
+                    <span>Confirmación</span>
+                    <input type="text" id="delete-account-confirm" placeholder="Escribe CERRAR">
+                  </label>
+                  <div class="benko-tour__form-actions">
+                    <button type="button" class="benko-tour__ghost benko-tour__ghost--danger" id="delete-account-button" disabled>
+                      Cerrar mi cuenta
+                    </button>
+                  </div>
+                  <div id="delete-account-status"></div>
+                </div>
               </div>
 
               <!-- Tab: Mis Reservas -->
@@ -215,6 +257,15 @@
       const dashboard = document.getElementById('profile-dashboard');
       const userInfoPanel = document.getElementById('user-info-panel');
       const updateStatus = document.getElementById('update-status');
+      const accountMenu = document.getElementById('user-menu');
+      const accountMenuToggle = document.getElementById('account-menu-toggle');
+      const accountDropdown = document.getElementById('account-dropdown');
+      const openSecurityZone = document.getElementById('open-security-zone');
+      const deleteAccountInput = document.getElementById('delete-account-confirm');
+      const deleteAccountButton = document.getElementById('delete-account-button');
+      const deleteAccountStatus = document.getElementById('delete-account-status');
+      const reservasList = document.getElementById('reservas-list');
+      const comprasList = document.getElementById('compras-list');
 
       function getSafeText(value, fallback) {
         const text = String(value || '').trim();
@@ -314,6 +365,155 @@
         `;
       }
 
+      function formatCurrency(value) {
+        const numeric = Number(value || 0);
+        return numeric.toLocaleString('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+          maximumFractionDigits: 0
+        });
+      }
+
+      function formatEntryDate(value) {
+        if (!value) {
+          return 'Pendiente de fecha';
+        }
+
+        if (typeof value.toDate === 'function') {
+          return value.toDate().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        if (typeof value.seconds === 'number') {
+          return new Date(value.seconds * 1000).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        const parsed = new Date(value);
+
+        if (!Number.isNaN(parsed.getTime())) {
+          return parsed.toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        return 'Pendiente de fecha';
+      }
+
+      function closeAccountDropdown() {
+        if (!accountDropdown || !accountMenuToggle) {
+          return;
+        }
+
+        accountDropdown.classList.add('benko-tour__hidden');
+        accountMenuToggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function openAccountDropdown() {
+        if (!accountDropdown || !accountMenuToggle) {
+          return;
+        }
+
+        accountDropdown.classList.remove('benko-tour__hidden');
+        accountMenuToggle.setAttribute('aria-expanded', 'true');
+      }
+
+      function showTab(tabId) {
+        document.querySelectorAll('[data-tab]').forEach((tab) => {
+          tab.classList.toggle('benko-tour__access-tab--active', tab.dataset.tab === tabId);
+        });
+
+        document.querySelectorAll('.tab-panel').forEach((panel) => {
+          panel.classList.add('benko-tour__hidden');
+        });
+
+        document.getElementById(`panel-${tabId}`)?.classList.remove('benko-tour__hidden');
+      }
+
+      function renderEmptyActivity(target, title, message, href, cta) {
+        target.innerHTML = `
+          <div class="benko-tour__activity-empty">
+            <strong>${title}</strong>
+            <p>${message}</p>
+            <a href="${href}">${cta}</a>
+          </div>
+        `;
+      }
+
+      function renderReservations(datos) {
+        const reservas = Array.isArray(datos?.reservas) ? [...datos.reservas].reverse() : [];
+
+        if (!reservas.length) {
+          renderEmptyActivity(
+            reservasList,
+            'Aún no tienes reservas registradas',
+            'Cuando envíes una reserva desde la página dedicada, aparecerá aquí con su estado y detalles principales.',
+            './reservas.html',
+            'Hacer tu primera reserva →'
+          );
+          return;
+        }
+
+        reservasList.innerHTML = `
+          <div class="benko-tour__activity-list">
+            ${reservas.map((reserva) => `
+              <article class="benko-tour__activity-card">
+                <div class="benko-tour__activity-card-head">
+                  <div>
+                    <span class="benko-tour__member-kicker">${getSafeText(reserva.estado, 'Pendiente')}</span>
+                    <h4>${getSafeText(reserva.paqueteNombre || reserva.paquete, 'Experiencia Benko')}</h4>
+                  </div>
+                  <strong>${reserva.total ? formatCurrency(reserva.total) : 'Pendiente'}</strong>
+                </div>
+                <div class="benko-tour__member-pills">
+                  <span class="benko-tour__member-pill">${getSafeText(reserva.fecha, 'Fecha por confirmar')}</span>
+                  <span class="benko-tour__member-pill">${getSafeText(reserva.idioma, 'Español')}</span>
+                  <span class="benko-tour__member-pill">${reserva.adultos || 0} adulto(s)</span>
+                </div>
+                <p>
+                  Recogida: <strong>${getSafeText(reserva.recogida, 'Por definir')}</strong><br>
+                  Guardada: <strong>${formatEntryDate(reserva.fechaCreacion || reserva.fechaGuardado)}</strong>
+                </p>
+              </article>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      function renderPurchases(datos) {
+        const compras = Array.isArray(datos?.compras) ? [...datos.compras].reverse() : [];
+
+        if (!compras.length) {
+          renderEmptyActivity(
+            comprasList,
+            'Aún no tienes compras guardadas',
+            'Cuando registres productos o artesanías desde la tienda, este historial quedará visible dentro de tu cuenta.',
+            './tienda.html',
+            'Ir a la tienda →'
+          );
+          return;
+        }
+
+        comprasList.innerHTML = `
+          <div class="benko-tour__activity-list">
+            ${compras.map((compra) => `
+              <article class="benko-tour__activity-card">
+                <div class="benko-tour__activity-card-head">
+                  <div>
+                    <span class="benko-tour__member-kicker">${getSafeText(compra.estado, 'Registrada')}</span>
+                    <h4>${getSafeText(compra.nombre || compra.producto, 'Producto Benko')}</h4>
+                  </div>
+                  <strong>${compra.total ? formatCurrency(compra.total) : 'Pendiente'}</strong>
+                </div>
+                <div class="benko-tour__member-pills">
+                  <span class="benko-tour__member-pill">${getSafeText(compra.categoria, 'Tienda')}</span>
+                  <span class="benko-tour__member-pill">${getSafeText(compra.cantidad, 1)} unidad(es)</span>
+                </div>
+                <p>
+                  Registrada: <strong>${formatEntryDate(compra.fechaCreacion || compra.fecha)}</strong>
+                </p>
+              </article>
+            `).join('')}
+          </div>
+        `;
+      }
+
       function formatFirestoreDate(timestamp) {
         if (!timestamp) {
           return 'Hoy';
@@ -386,7 +586,7 @@
 
         // Usuario logueado - mostrar menú
         document.getElementById('login-link').style.display = 'none';
-        document.getElementById('user-menu').style.display = 'flex';
+        accountMenu.style.display = 'flex';
         document.getElementById('user-name-display').textContent = user.email?.split('@')[0] || 'Usuario';
 
         // Cargar datos del usuario
@@ -396,25 +596,45 @@
           mostrarDatosUsuario(datos);
           llenarFormulario(datos);
           renderDashboard(datos);
-          cargarReservas();
-          cargarCompras();
+          renderReservations(datos);
+          renderPurchases(datos);
         }
       }, 1000);
 
       // Tabs
       document.querySelectorAll('[data-tab]').forEach(tab => {
         tab.addEventListener('click', function() {
-          const target = this.dataset.tab;
-          
-          // Actualizar tabs
-          document.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('benko-tour__access-tab--active'));
-          this.classList.add('benko-tour__access-tab--active');
-          
-          // Mostrar panel
-          document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('benko-tour__hidden'));
-          document.getElementById('panel-' + target).classList.remove('benko-tour__hidden');
+          showTab(this.dataset.tab);
         });
       });
+
+      if (accountMenuToggle) {
+        accountMenuToggle.addEventListener('click', function() {
+          const isOpen = !accountDropdown.classList.contains('benko-tour__hidden');
+
+          if (isOpen) {
+            closeAccountDropdown();
+          } else {
+            openAccountDropdown();
+          }
+        });
+      }
+
+      if (openSecurityZone) {
+        openSecurityZone.addEventListener('click', function(event) {
+          event.preventDefault();
+          closeAccountDropdown();
+          showTab('datos');
+          document.getElementById('security-zone')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          deleteAccountInput?.focus();
+        });
+      }
+
+      if (deleteAccountInput && deleteAccountButton) {
+        deleteAccountInput.addEventListener('input', function() {
+          deleteAccountButton.disabled = this.value.trim().toUpperCase() !== 'CERRAR';
+        });
+      }
 
       // Actualizar perfil
       document.getElementById('update-profile-form').addEventListener('submit', async function(e) {
@@ -440,6 +660,8 @@
           if (datosActualizados) {
             mostrarDatosUsuario(datosActualizados);
             renderDashboard(datosActualizados);
+            renderReservations(datosActualizados);
+            renderPurchases(datosActualizados);
             document.getElementById('user-name-display').textContent = datosActualizados.nombre || datosActualizados.email?.split('@')[0] || 'Usuario';
           }
         } else {
@@ -447,13 +669,42 @@
         }
       });
 
+      if (deleteAccountButton) {
+        deleteAccountButton.addEventListener('click', async function() {
+          if (!deleteAccountInput || deleteAccountInput.value.trim().toUpperCase() !== 'CERRAR') {
+            renderInlineStatus(deleteAccountStatus, 'warning', 'Confirmación incompleta', 'Escribe CERRAR exactamente para habilitar el cierre de cuenta.');
+            return;
+          }
+
+          renderInlineStatus(deleteAccountStatus, 'loading', 'Cerrando tu cuenta', 'Estamos procesando el cierre definitivo de tu acceso.');
+
+          const resultado = await window.authFirebase.deleteAccount();
+
+          if (resultado.success) {
+            renderInlineStatus(deleteAccountStatus, 'success', 'Cuenta cerrada', resultado.mensaje || 'Tu cuenta fue cerrada correctamente.');
+            setTimeout(function() {
+              window.location.href = './index.html';
+            }, 1500);
+          } else {
+            renderInlineStatus(
+              deleteAccountStatus,
+              resultado.errorCode === 'auth/requires-recent-login' ? 'warning' : 'error',
+              resultado.errorCode === 'auth/requires-recent-login' ? 'Vuelve a iniciar sesión' : 'No pudimos cerrar tu cuenta',
+              resultado.error || 'Intenta nuevamente en unos minutos.'
+            );
+          }
+        });
+      }
+
       // Logout
-      document.getElementById('logout-btn').addEventListener('click', async function() {
+      document.getElementById('logout-btn').onclick = async function(event) {
+        event.preventDefault();
+        closeAccountDropdown();
         const resultado = await window.authFirebase.logout();
         if (resultado.success) {
           window.location.href = './index.html';
         }
-      });
+      };
 
       function mostrarDatosUsuario(datos) {
         const fechaRegistro = formatFirestoreDate(datos.fechaRegistro);
@@ -575,15 +826,17 @@
         document.getElementById('field-recogida').value = datos.recogida || datos.preferencias?.recogida || '';
       }
 
-      async function cargarReservas() {
-        // TODO: Implementar carga de reservas desde Firestore
-        // Por ahora muestra mensaje por defecto
-      }
+      document.addEventListener('click', function(event) {
+        if (accountDropdown && accountMenu && !accountMenu.contains(event.target)) {
+          closeAccountDropdown();
+        }
+      });
 
-      async function cargarCompras() {
-        // TODO: Implementar carga de compras desde Firestore
-        // Por ahora muestra mensaje por defecto
-      }
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+          closeAccountDropdown();
+        }
+      });
     });
   </script>
 </body>

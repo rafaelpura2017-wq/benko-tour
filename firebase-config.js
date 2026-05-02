@@ -67,6 +67,65 @@ function sanitizeText(value) {
   return String(value || '').trim();
 }
 
+function validatePhoneNumber(value) {
+  const phone = sanitizeText(value);
+  const digits = phone.replace(/\D/g, '');
+
+  if (!phone) {
+    return {
+      valid: false,
+      code: 'client/missing-phone',
+      message: 'Escribe un número de WhatsApp o teléfono para crear tu cuenta.'
+    };
+  }
+
+  if (digits.length < 10 || digits.length > 15) {
+    return {
+      valid: false,
+      code: 'client/invalid-phone',
+      message: 'Escribe un número real de 10 a 15 dígitos, con o sin prefijo internacional.'
+    };
+  }
+
+  if (/^(\d)\1+$/.test(digits)) {
+    return {
+      valid: false,
+      code: 'client/invalid-phone',
+      message: 'El número no parece válido. Revisa tu WhatsApp o teléfono.'
+    };
+  }
+
+  return {
+    valid: true,
+    value: phone,
+    digits
+  };
+}
+
+function validatePasswordStrength(value) {
+  const password = String(value || '');
+
+  if (password.length < 8) {
+    return {
+      valid: false,
+      code: 'client/weak-password-format',
+      message: 'La contraseña debe tener al menos 8 caracteres.'
+    };
+  }
+
+  if (!/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+    return {
+      valid: false,
+      code: 'client/weak-password-format',
+      message: 'La contraseña debe combinar al menos una letra y un número.'
+    };
+  }
+
+  return {
+    valid: true
+  };
+}
+
 function validateEmailAddress(value) {
   const email = sanitizeText(value).toLowerCase();
 
@@ -257,6 +316,8 @@ function buildUserDocument(user, email, datos = {}) {
 async function registrarUsuario(email, password, datos = {}) {
   try {
     const emailCheck = validateEmailAddress(email);
+    const phoneCheck = validatePhoneNumber(datos.telefono || datos.phone);
+    const passwordCheck = validatePasswordStrength(password);
 
     if (!emailCheck.valid) {
       return {
@@ -266,18 +327,30 @@ async function registrarUsuario(email, password, datos = {}) {
       };
     }
 
-    if (String(password || '').length < 6) {
+    if (!phoneCheck.valid) {
       return {
         success: false,
-        error: 'La contraseña debe tener al menos 6 caracteres.',
-        errorCode: 'client/weak-password'
+        error: phoneCheck.message,
+        errorCode: phoneCheck.code
+      };
+    }
+
+    if (!passwordCheck.valid) {
+      return {
+        success: false,
+        error: passwordCheck.message,
+        errorCode: passwordCheck.code
       };
     }
 
     const userCredential = await auth.createUserWithEmailAndPassword(emailCheck.value, password);
     const user = userCredential.user;
     const userRef = db.collection('usuarios').doc(user.uid);
-    const payload = buildUserDocument(user, emailCheck.value, datos);
+    const payload = buildUserDocument(user, emailCheck.value, {
+      ...datos,
+      telefono: phoneCheck.value,
+      phone: phoneCheck.value
+    });
     let verificationSent = false;
 
     await userRef.set(payload, { merge: true });
@@ -494,6 +567,45 @@ async function reenviarVerificacionCorreo() {
   }
 }
 
+async function eliminarCuentaActual() {
+  if (!currentUser) {
+    return {
+      success: false,
+      error: 'No hay una sesión activa para cerrar la cuenta.',
+      errorCode: 'client/no-active-session'
+    };
+  }
+
+  try {
+    const userToDelete = currentUser;
+    const userId = userToDelete.uid;
+    const userEmail = userToDelete.email || '';
+
+    await userToDelete.delete();
+    currentUser = null;
+
+    try {
+      await db.collection('usuarios').doc(userId).delete();
+    } catch (firestoreError) {
+      console.warn('La cuenta de autenticación se eliminó, pero el documento del usuario no se pudo borrar automáticamente.', firestoreError);
+    }
+
+    localStorage.removeItem('reservasTemp');
+
+    return {
+      success: true,
+      mensaje: `La cuenta ${userEmail} fue cerrada correctamente.`
+    };
+  } catch (error) {
+    console.error('Error al cerrar cuenta:', error);
+    return {
+      success: false,
+      error: traducirErrorFirebase(error.code),
+      errorCode: error.code
+    };
+  }
+}
+
 /**
  * Obtener datos del usuario actual
  */
@@ -542,11 +654,26 @@ async function actualizarDatosUsuario(datos) {
   
   try {
     const currentData = await obtenerDatosUsuario();
+    const shouldValidatePhone = Object.prototype.hasOwnProperty.call(datos || {}, 'telefono');
+    const phoneCheck = shouldValidatePhone
+      ? validatePhoneNumber(datos.telefono)
+      : { valid: true, value: currentData?.telefono || '' };
+
+    if (shouldValidatePhone && !phoneCheck.valid) {
+      return {
+        success: false,
+        error: phoneCheck.message,
+        errorCode: phoneCheck.code
+      };
+    }
+
     const mergedData = normalizeUserData({
       ...currentData,
       nombre: datos.nombre ?? currentData?.nombre,
       ciudad: datos.ciudad ?? currentData?.ciudad,
-      telefono: datos.telefono ?? currentData?.telefono,
+      telefono: shouldValidatePhone ? phoneCheck.value : currentData?.telefono,
+      reservas: Array.isArray(datos.reservas) ? datos.reservas : currentData?.reservas,
+      compras: Array.isArray(datos.compras) ? datos.compras : currentData?.compras,
       recogida: datos.recogida ?? currentData?.recogida,
       preferencias: {
         ...(currentData?.preferencias || {}),
@@ -559,8 +686,11 @@ async function actualizarDatosUsuario(datos) {
       nombre: mergedData.nombre,
       ciudad: mergedData.ciudad,
       telefono: mergedData.telefono,
+      reservas: mergedData.reservas,
+      compras: mergedData.compras,
       recogida: mergedData.recogida,
       preferencias: mergedData.preferencias,
+      estadisticas: mergedData.estadisticas,
       progreso: {
         perfilCompleto: calculateProfileCompletion(mergedData)
       },
@@ -585,9 +715,12 @@ function traducirErrorFirebase(codigo) {
   const errores = {
     'client/no-active-session': 'No hay una sesión activa para completar esta acción.',
     'client/missing-email': 'Escribe un correo electrónico para continuar.',
+    'client/missing-phone': 'Escribe un número de teléfono o WhatsApp válido.',
     'client/missing-password': 'Escribe tu contraseña para continuar.',
+    'client/invalid-phone': 'El número de teléfono no parece válido.',
     'client/invalid-email-format': 'El correo electrónico no tiene un formato válido.',
     'client/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
+    'client/weak-password-format': 'La contraseña debe tener al menos 8 caracteres e incluir letras y números.',
     'auth/email-already-in-use': 'Este correo ya está registrado. Intenta iniciar sesión.',
     'auth/invalid-email': 'El correo electrónico no es válido.',
     'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
@@ -597,7 +730,7 @@ function traducirErrorFirebase(codigo) {
     'auth/too-many-requests': 'Demasiados intentos fallidos. Intenta más tarde.',
     'auth/network-request-failed': 'Error de conexión. Verifica tu internet.',
     'auth/user-disabled': 'Esta cuenta ha sido deshabilitada.',
-    'auth/requires-recent-login': 'Por seguridad, vuelve a iniciar sesión.'
+    'auth/requires-recent-login': 'Por seguridad, vuelve a iniciar sesión antes de cerrar tu cuenta.'
   };
   
   return errores[codigo] || 'Ha ocurrido un error. Intenta de nuevo.';
@@ -734,9 +867,11 @@ window.authFirebase = {
   registrar: registrarUsuario,
   login: iniciarSesion,
   logout: cerrarSesion,
+  deleteAccount: eliminarCuentaActual,
   resetPassword: restablecerPassword,
   reenviarVerificacion: reenviarVerificacionCorreo,
   validarEmail: validateEmailAddress,
+  validarTelefono: validatePhoneNumber,
   obtenerDatos: obtenerDatosUsuario,
   actualizarDatos: actualizarDatosUsuario,
   estaLogueado: usuarioLogueado,
