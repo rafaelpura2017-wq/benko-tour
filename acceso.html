@@ -27,6 +27,13 @@
   <script src="./script.js" defer></script>
 </head>
 <body>
+  <div class="benko-tour__page-loader benko-tour__hidden" id="access-page-loader" aria-live="polite" aria-hidden="true">
+    <div class="benko-tour__page-loader-card">
+      <span class="benko-tour__page-loader-spinner" aria-hidden="true"></span>
+      <strong id="access-page-loader-title">Abriendo tu cuenta</strong>
+      <p id="access-page-loader-copy">Estamos preparando tu espacio dentro de Benko Tour.</p>
+    </div>
+  </div>
   <div class="benko-tour">
     <div class="benko-tour__shell">
       <header class="benko-tour__header">
@@ -407,6 +414,9 @@
       const accessStatus = document.getElementById('access-status');
       const loggedPanel = document.getElementById('access-logged-panel');
       const accessSession = document.getElementById('access-session');
+      const accessPageLoader = document.getElementById('access-page-loader');
+      const accessPageLoaderTitle = document.getElementById('access-page-loader-title');
+      const accessPageLoaderCopy = document.getElementById('access-page-loader-copy');
       const accessUserMenu = document.getElementById('access-user-menu');
       const accessUserName = document.getElementById('access-user-name');
       const accessDropdownName = document.getElementById('access-dropdown-name');
@@ -480,6 +490,43 @@
             ${actionsHtml ? `<div class="benko-tour__status-actions">${actionsHtml}</div>` : ''}
           </div>
         `;
+      }
+
+      function showAccessPageLoader(title, message) {
+        if (!accessPageLoader) {
+          return;
+        }
+
+        accessPageLoaderTitle.textContent = title || 'Abriendo tu cuenta';
+        accessPageLoaderCopy.textContent = message || 'Estamos preparando tu espacio dentro de Benko Tour.';
+        accessPageLoader.classList.remove('benko-tour__hidden');
+        accessPageLoader.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('benko-tour__body-locked');
+      }
+
+      function hideAccessPageLoader() {
+        if (!accessPageLoader) {
+          return;
+        }
+
+        accessPageLoader.classList.add('benko-tour__hidden');
+        accessPageLoader.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('benko-tour__body-locked');
+      }
+
+      function redirectToProfile(entry, title, message) {
+        const target = entry ? `./perfil.html?entry=${encodeURIComponent(entry)}` : './perfil.html';
+        showAccessPageLoader(title, message);
+        window.setTimeout(function() {
+          window.location.assign(target);
+        }, 420);
+      }
+
+      function redirectToHome(title, message) {
+        showAccessPageLoader(title, message);
+        window.setTimeout(function() {
+          window.location.replace('./index.html');
+        }, 420);
       }
 
       function normalizeEmail(value) {
@@ -850,24 +897,25 @@
 
         document.getElementById('continuar-sesion').addEventListener('click', function() {
           prompt.remove();
-          mostrarUsuarioLogueado(datos, { esRegistro: false });
-          renderStatus(
-            correoVerificado ? 'success' : 'warning',
-            correoVerificado ? 'Sesión restaurada' : 'Sesión restaurada con verificación pendiente',
+          redirectToProfile(
+            correoVerificado ? 'session' : 'session-pending',
+            correoVerificado ? 'Abriendo tu cuenta' : 'Retomando tu cuenta',
             correoVerificado
-              ? 'Tu cuenta sigue activa y lista para continuar.'
-              : 'Tu cuenta sigue activa, pero todavía falta verificar el correo para dejarla completamente confirmada.'
+              ? 'Estamos preparando tu perfil para que continúes desde tu espacio personal.'
+              : 'Estamos abriendo tu perfil para que sigas y completes la verificación del correo.'
           );
         });
 
         document.getElementById('cerrar-sesion-btn').addEventListener('click', async function() {
+          showAccessPageLoader('Cerrando sesión', 'Estamos cerrando tu acceso y llevándote al inicio de Benko Tour.');
           const resultado = await window.authFirebase.logout();
 
           if (resultado.success) {
-            prompt.remove();
-            mostrarFormularioAcceso();
-            renderStatus('success', 'Sesión cerrada', 'Ahora puedes iniciar sesión con otra cuenta o crear una nueva.');
+            redirectToHome('Sesión cerrada', 'Tu acceso ya quedó cerrado. Te estamos llevando al inicio.');
+            return;
           }
+
+          hideAccessPageLoader();
         });
       }
 
@@ -922,19 +970,21 @@
           const resultado = await window.authFirebase.login(emailValidation.value, password);
 
           if (resultado.success) {
+            const nombre = getSafeText(resultado.datos?.nombre, 'viajero');
             const correoVerificado = Boolean(resultado.datos?.cuenta?.emailVerificado);
 
-            mostrarUsuarioLogueado(resultado.datos, { esRegistro: false });
-            renderStatus(
-              correoVerificado ? 'success' : 'warning',
+            if (typeof window.authFirebase.migrarReservas === 'function') {
+              Promise.resolve(window.authFirebase.migrarReservas()).catch(() => {});
+            }
+
+            redirectToProfile(
+              correoVerificado ? 'login' : 'login-pending',
+              correoVerificado ? `Entrando a tu cuenta, ${nombre}` : `Acceso iniciado, ${nombre}`,
               correoVerificado
-                ? `Bienvenido de vuelta, ${getSafeText(resultado.datos?.nombre, 'viajero')}`
-                : `Acceso iniciado, ${getSafeText(resultado.datos?.nombre, 'viajero')}`,
-              correoVerificado
-                ? 'Tu cuenta está activa y tu perfil quedó listo para seguir reservando.'
-                : 'Entraste correctamente, pero tu correo todavía está pendiente de verificación. Revisa tu bandeja o reenvía el mensaje desde esta misma página.'
+                ? 'Estamos abriendo tu perfil para que sigas reservando desde un espacio más claro.'
+                : 'Estamos abriendo tu perfil para que revises tu cuenta y completes la verificación del correo.'
             );
-            await window.authFirebase.migrarReservas();
+            return;
           } else {
             const errorCode = resultado.errorCode || '';
 
@@ -1038,20 +1088,18 @@
 
           if (resultado.success) {
             const correoVerificado = Boolean(resultado.datos?.cuenta?.emailVerificado);
+            const nombre = getSafeText(resultado.datos?.nombre, 'viajero');
 
-            mostrarUsuarioLogueado(resultado.datos, {
-              esRegistro: true,
-              verificationSent: Boolean(resultado.verificationSent)
-            });
-            renderStatus(
-              'success',
-              correoVerificado ? 'Cuenta creada y verificada' : 'Cuenta creada correctamente',
+            redirectToProfile(
+              correoVerificado ? 'register' : 'register-pending',
+              correoVerificado ? `Tu cuenta ya está lista, ${nombre}` : `Cuenta creada, ${nombre}`,
               correoVerificado
-                ? 'Tu cuenta quedó confirmada y lista para entrar, reservar y guardar tus preferencias.'
+                ? 'Estamos abriendo tu nueva cuenta Benko para que sigas completando tu experiencia.'
                 : (resultado.verificationSent
-                  ? 'Tu cuenta fue creada y te enviamos un correo de verificación. Revísalo antes de dar por finalizado el registro.'
-                  : 'Tu cuenta fue creada, pero no pudimos confirmar el envío del correo de verificación. Puedes usar el botón para reenviarlo desde esta misma página.')
+                  ? 'Estamos abriendo tu nueva cuenta para que revises tu perfil y completes la verificación del correo.'
+                  : 'Estamos abriendo tu cuenta. Luego podrás reenviar la verificación del correo desde tu perfil.')
             );
+            return;
           } else {
             const errorCode = resultado.errorCode || '';
 
@@ -1137,11 +1185,15 @@
       if (logoutBtn) {
         logoutBtn.addEventListener('click', async function() {
           closeAccessActionsMenu();
+          showAccessPageLoader('Cerrando sesión', 'Estamos cerrando tu acceso y llevándote al inicio de Benko Tour.');
           const resultado = await window.authFirebase.logout();
           if (resultado.success) {
-            mostrarFormularioAcceso();
-            renderStatus('success', 'Sesión cerrada', 'Tu cuenta quedó cerrada correctamente. Cuando quieras, aquí estará tu acceso.');
+            redirectToHome('Sesión cerrada', 'Tu sesión ya quedó cerrada. Te estamos llevando al inicio.');
+            return;
           }
+
+          hideAccessPageLoader();
+          renderStatus('error', 'No pudimos cerrar tu sesión', 'Intenta nuevamente en unos instantes.');
         });
       }
 

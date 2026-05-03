@@ -27,6 +27,13 @@
   <script src="./script.js" defer></script>
 </head>
 <body>
+  <div class="benko-tour__page-loader benko-tour__hidden" id="profile-page-loader" aria-live="polite" aria-hidden="true">
+    <div class="benko-tour__page-loader-card">
+      <span class="benko-tour__page-loader-spinner" aria-hidden="true"></span>
+      <strong id="profile-page-loader-title">Cargando tu cuenta</strong>
+      <p id="profile-page-loader-copy">Estamos preparando tu espacio personal dentro de Benko Tour.</p>
+    </div>
+  </div>
   <div class="benko-tour">
     <div class="benko-tour__shell">
       <header class="benko-tour__header">
@@ -266,6 +273,10 @@
       const deleteAccountStatus = document.getElementById('delete-account-status');
       const reservasList = document.getElementById('reservas-list');
       const comprasList = document.getElementById('compras-list');
+      const profilePageLoader = document.getElementById('profile-page-loader');
+      const profilePageLoaderTitle = document.getElementById('profile-page-loader-title');
+      const profilePageLoaderCopy = document.getElementById('profile-page-loader-copy');
+      const profileEntry = new URLSearchParams(window.location.search).get('entry');
 
       function getSafeText(value, fallback) {
         const text = String(value || '').trim();
@@ -363,6 +374,90 @@
             <p>${message}</p>
           </div>
         `;
+      }
+
+      function getProfileLoaderState(entry) {
+        switch (entry) {
+          case 'login':
+            return {
+              title: 'Bienvenido de nuevo',
+              message: 'Estamos cargando tu perfil para que sigas reservando desde tu espacio personal.'
+            };
+          case 'login-pending':
+            return {
+              title: 'Tu cuenta ya abrió',
+              message: 'Estamos cargando tu perfil para que revises tu información y completes la verificación del correo.'
+            };
+          case 'register':
+            return {
+              title: 'Tu nueva cuenta ya está lista',
+              message: 'Estamos preparando tu perfil para que termines de organizar tus datos como miembro Benko.'
+            };
+          case 'register-pending':
+            return {
+              title: 'Tu cuenta fue creada',
+              message: 'Estamos cargando tu nueva página de perfil para que completes tu registro y revises el correo de verificación.'
+            };
+          case 'session':
+            return {
+              title: 'Retomando tu cuenta',
+              message: 'Estamos trayendo tu perfil, tus preferencias y tu historial reciente.'
+            };
+          case 'session-pending':
+            return {
+              title: 'Retomando tu cuenta',
+              message: 'Estamos cargando tu perfil para que continúes y termines de confirmar tu cuenta.'
+            };
+          default:
+            return {
+              title: 'Cargando tu cuenta',
+              message: 'Estamos preparando tu espacio personal dentro de Benko Tour.'
+            };
+        }
+      }
+
+      function showProfileLoader(title, message) {
+        if (!profilePageLoader) {
+          return;
+        }
+
+        profilePageLoaderTitle.textContent = title || 'Cargando tu cuenta';
+        profilePageLoaderCopy.textContent = message || 'Estamos preparando tu espacio personal dentro de Benko Tour.';
+        profilePageLoader.classList.remove('benko-tour__hidden');
+        profilePageLoader.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('benko-tour__body-locked');
+      }
+
+      function hideProfileLoader() {
+        if (!profilePageLoader) {
+          return;
+        }
+
+        profilePageLoader.classList.add('benko-tour__hidden');
+        profilePageLoader.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('benko-tour__body-locked');
+      }
+
+      function clearProfileEntryState() {
+        if (!profileEntry || !window.history?.replaceState) {
+          return;
+        }
+
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.delete('entry');
+        window.history.replaceState({}, '', `${currentUrl.pathname}${currentUrl.search}${currentUrl.hash}`);
+      }
+
+      async function waitForAuthService(maxAttempts = 16, delay = 180) {
+        for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+          if (typeof window.authFirebase !== 'undefined') {
+            return window.authFirebase;
+          }
+
+          await new Promise((resolve) => window.setTimeout(resolve, delay));
+        }
+
+        return null;
       }
 
       function formatCurrency(value) {
@@ -556,50 +651,68 @@
         `;
       }
 
-      // Verificar autenticación
-      setTimeout(async function() {
-        if (typeof window.authFirebase === 'undefined') {
-          userInfoPanel.innerHTML = `
-            <div class="benko-tour__member-placeholder">
-              <div class="benko-tour__member-placeholder-badge">Sistema no disponible</div>
-              <h3>No pudimos cargar tu cuenta</h3>
-              <p>El sistema de acceso no está disponible en este momento. Intenta más tarde.</p>
-            </div>
-          `;
-          return;
-        }
+      async function bootProfilePage() {
+        const loaderState = getProfileLoaderState(profileEntry);
+        showProfileLoader(loaderState.title, loaderState.message);
 
-        const user = window.authFirebase.obtenerUsuarioActual();
-        
-        if (!user) {
-          // No logueado - redirigir a acceso
-          userInfoPanel.innerHTML = `
-            <div class="benko-tour__member-placeholder">
-              <div class="benko-tour__member-placeholder-badge">Acceso requerido</div>
-              <h3>Inicia sesión para ver tu perfil</h3>
-              <p>Tu espacio de miembro se desbloquea cuando entras con tu cuenta.</p>
-              <a href="./acceso.html" class="benko-tour__button">Iniciar sesión</a>
-            </div>
-          `;
-          return;
-        }
+        try {
+          const authService = await waitForAuthService();
 
-        // Usuario logueado - mostrar menú
-        document.getElementById('login-link').style.display = 'none';
-        accountMenu.style.display = 'flex';
-        document.getElementById('user-name-display').textContent = user.email?.split('@')[0] || 'Usuario';
+          if (!authService) {
+            userInfoPanel.innerHTML = `
+              <div class="benko-tour__member-placeholder">
+                <div class="benko-tour__member-placeholder-badge">Sistema no disponible</div>
+                <h3>No pudimos cargar tu cuenta</h3>
+                <p>El sistema de acceso no está disponible en este momento. Intenta más tarde.</p>
+              </div>
+            `;
+            return;
+          }
 
-        // Cargar datos del usuario
-        const datos = await window.authFirebase.obtenerDatos();
-        if (datos) {
+          const user = authService.obtenerUsuarioActual();
+
+          if (!user) {
+            userInfoPanel.innerHTML = `
+              <div class="benko-tour__member-placeholder">
+                <div class="benko-tour__member-placeholder-badge">Acceso requerido</div>
+                <h3>Inicia sesión para ver tu perfil</h3>
+                <p>Tu espacio de miembro se desbloquea cuando entras con tu cuenta.</p>
+                <a href="./acceso.html" class="benko-tour__button">Iniciar sesión</a>
+              </div>
+            `;
+            return;
+          }
+
+          document.getElementById('login-link').style.display = 'none';
+          accountMenu.style.display = 'flex';
+          document.getElementById('user-name-display').textContent = user.email?.split('@')[0] || 'Usuario';
+
+          const datos = await authService.obtenerDatos();
+
+          if (!datos) {
+            userInfoPanel.innerHTML = `
+              <div class="benko-tour__member-placeholder">
+                <div class="benko-tour__member-placeholder-badge">Perfil en preparación</div>
+                <h3>Tu cuenta ya abrió, pero faltan algunos datos</h3>
+                <p>Recarga en un momento o vuelve a intentarlo para terminar de sincronizar tu información.</p>
+              </div>
+            `;
+            return;
+          }
+
           document.getElementById('user-name-display').textContent = getSafeText(datos.nombre, user.email?.split('@')[0] || 'Usuario');
           mostrarDatosUsuario(datos);
           llenarFormulario(datos);
           renderDashboard(datos);
           renderReservations(datos);
           renderPurchases(datos);
+        } finally {
+          clearProfileEntryState();
+          hideProfileLoader();
         }
-      }, 1000);
+      }
+
+      bootProfilePage();
 
       // Tabs
       document.querySelectorAll('[data-tab]').forEach(tab => {
@@ -682,9 +795,10 @@
 
           if (resultado.success) {
             renderInlineStatus(deleteAccountStatus, 'success', 'Cuenta cerrada', resultado.mensaje || 'Tu cuenta fue cerrada correctamente.');
+            showProfileLoader('Cuenta cerrada', 'Estamos cerrando tu espacio y llevándote al inicio de Benko Tour.');
             setTimeout(function() {
-              window.location.href = './index.html';
-            }, 1500);
+              window.location.replace('./index.html');
+            }, 700);
           } else {
             renderInlineStatus(
               deleteAccountStatus,
@@ -700,10 +814,14 @@
       document.getElementById('logout-btn').onclick = async function(event) {
         event.preventDefault();
         closeAccountDropdown();
+        showProfileLoader('Cerrando sesión', 'Estamos cerrando tu acceso y llevándote al inicio de Benko Tour.');
         const resultado = await window.authFirebase.logout();
         if (resultado.success) {
-          window.location.href = './index.html';
+          window.location.replace('./index.html');
+          return;
         }
+        hideProfileLoader();
+        renderInlineStatus(updateStatus, 'error', 'No pudimos cerrar la sesión', 'Intenta nuevamente en unos instantes.');
       };
 
       function mostrarDatosUsuario(datos) {
