@@ -529,6 +529,13 @@
         }, 420);
       }
 
+      function redirectToAccess(title, message) {
+        showAccessPageLoader(title, message);
+        window.setTimeout(function() {
+          window.location.replace('./acceso.html#acceso');
+        }, 420);
+      }
+
       function normalizeEmail(value) {
         return String(value || '').trim().toLowerCase();
       }
@@ -907,11 +914,11 @@
         });
 
         document.getElementById('cerrar-sesion-btn').addEventListener('click', async function() {
-          showAccessPageLoader('Cerrando sesión', 'Estamos cerrando tu acceso y llevándote al inicio de Benko Tour.');
+          showAccessPageLoader('Cerrando sesión', 'Estamos cerrando tu acceso y regresándote al inicio de sesión.');
           const resultado = await window.authFirebase.logout();
 
           if (resultado.success) {
-            redirectToHome('Sesión cerrada', 'Tu acceso ya quedó cerrado. Te estamos llevando al inicio.');
+            redirectToAccess('Sesión cerrada', 'Tu acceso ya quedó cerrado. Te estamos llevando otra vez al inicio de sesión.');
             return;
           }
 
@@ -1185,10 +1192,10 @@
       if (logoutBtn) {
         logoutBtn.addEventListener('click', async function() {
           closeAccessActionsMenu();
-          showAccessPageLoader('Cerrando sesión', 'Estamos cerrando tu acceso y llevándote al inicio de Benko Tour.');
+          showAccessPageLoader('Cerrando sesión', 'Estamos cerrando tu acceso y regresándote al inicio de sesión.');
           const resultado = await window.authFirebase.logout();
           if (resultado.success) {
-            redirectToHome('Sesión cerrada', 'Tu sesión ya quedó cerrada. Te estamos llevando al inicio.');
+            redirectToAccess('Sesión cerrada', 'Tu sesión ya quedó cerrada. Te estamos llevando otra vez al inicio de sesión.');
             return;
           }
 
