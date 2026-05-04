@@ -450,6 +450,10 @@
           if (datos) {
             prellenarFormulario(datos);
           }
+
+          renderReservationAccountStatus(user, datos);
+        } else {
+          renderReservationAccountStatus(null);
         }
 
         // Logout handler
@@ -492,6 +496,7 @@
       const reservationForm = document.getElementById('booking-form');
       const submitBtn = reservationForm?.querySelector('button[type="submit"]');
       const RESERVATION_CONFIRMATION_KEY = 'benkoTourReservationConfirmation';
+      const bookingStatus = document.getElementById('booking-status');
 
       function formatCurrency(value) {
         return `$${Number(value || 0).toLocaleString('es-CO')} COP`;
@@ -539,6 +544,20 @@
         }
 
         return parts.join(' + ') || `${reserva.personas || 0} viajero(s)`;
+      }
+
+      function renderReservationAccountStatus(user, datos = null) {
+        if (!bookingStatus) {
+          return;
+        }
+
+        if (user) {
+          const displayName = datos?.nombre || user.email?.split('@')[0] || 'tu cuenta';
+          bookingStatus.innerHTML = `<strong>Sesión activa:</strong> esta reserva también quedará guardada en la cuenta de ${escapeHtml(displayName)}.`;
+          return;
+        }
+
+        bookingStatus.textContent = 'Completa tus datos para enviar la reserva por el canal configurado. Si inicias sesión, también quedará guardada en tu historial.';
       }
 
       function buildWhatsAppUrl(reserva) {
@@ -720,7 +739,9 @@
               });
 
               if (resultadoGuardado?.success) {
-                if (resultadoGuardado.storage?.public) {
+                if (resultadoGuardado.storage?.public && resultadoGuardado.storage?.account) {
+                  estadoGuardado = 'database-account';
+                } else if (resultadoGuardado.storage?.public) {
                   estadoGuardado = 'database';
                 } else if (resultadoGuardado.storage?.account) {
                   estadoGuardado = 'account';
@@ -748,11 +769,17 @@
           // Mostrar mensaje de estado
           const statusMsg = document.createElement('div');
           statusMsg.className = 'js-reservation-inline-status';
-          if (estadoGuardado === 'database' || estadoGuardado === 'account') {
+          if (estadoGuardado === 'database-account') {
+            statusMsg.style.cssText = 'background: #e8f5e9; border-left: 3px solid #2e7d32; padding: 16px; border-radius: 8px; margin: 16px 0; animation: fadeIn 0.5s ease;';
+            statusMsg.innerHTML = `
+              <strong style="color: #1b5e20; font-size: 1.1rem;">✓ Reserva guardada en la base de datos y en la cuenta del cliente</strong><br>
+              <span style="color: #666;">Abrimos una ventana nueva con el resumen de tu solicitud y además quedó ligada al historial del usuario.</span>
+            `;
+          } else if (estadoGuardado === 'database' || estadoGuardado === 'account') {
             statusMsg.style.cssText = 'background: #e8f5e9; border-left: 3px solid #4caf50; padding: 16px; border-radius: 8px; margin: 16px 0; animation: fadeIn 0.5s ease;';
             statusMsg.innerHTML = `
               <strong style="color: #2e7d32; font-size: 1.1rem;">✓ Reserva registrada satisfactoriamente</strong><br>
-              <span style="color: #666;">Abrimos una ventana nueva con el resumen de tu solicitud.</span>
+              <span style="color: #666;">Abrimos una ventana nueva con el resumen de tu solicitud${estadoGuardado === 'account' ? ' y quedó ligada a la cuenta del cliente.' : '.'}</span>
             `;
           } else if (estadoGuardado === 'temporary') {
             statusMsg.style.cssText = 'background: #e8f1ff; border-left: 3px solid #2563eb; padding: 16px; border-radius: 8px; margin: 16px 0;';
@@ -777,7 +804,7 @@
             submitBtn.disabled = false;
           }
 
-          if (estadoGuardado === 'database' || estadoGuardado === 'account' || estadoGuardado === 'temporary') {
+          if (estadoGuardado === 'database-account' || estadoGuardado === 'database' || estadoGuardado === 'account' || estadoGuardado === 'temporary') {
             const reservaGuardada = resultadoGuardado?.reserva || reserva;
             const confirmationPayload = {
               id: reservaGuardada.id || resultadoGuardado?.reserva?.id || '',
@@ -785,10 +812,14 @@
               status: estadoGuardado,
               title: estadoGuardado === 'temporary'
                 ? 'Tu reserva quedó guardada temporalmente'
-                : 'Tu reserva quedó registrada satisfactoriamente',
+                : estadoGuardado === 'database-account'
+                  ? 'Tu reserva quedó registrada y ligada a la cuenta del cliente'
+                  : 'Tu reserva quedó registrada satisfactoriamente',
               message: estadoGuardado === 'temporary'
                 ? 'Ya dejamos tu solicitud guardada y lista para revisarla. Cuando inicies sesión podremos vincularla mejor a tu cuenta.'
-                : 'Tu solicitud ya quedó registrada en Benko Tour. Aquí tienes el resumen para revisarlo con calma.',
+                : estadoGuardado === 'database-account'
+                  ? 'Tu solicitud ya quedó registrada en Benko Tour y además se guardó dentro del historial del usuario para futuras consultas.'
+                  : 'Tu solicitud ya quedó registrada en Benko Tour. Aquí tienes el resumen para revisarlo con calma.',
               createdAt: new Date().toISOString(),
               reservationDateRaw: reservaGuardada.fecha || '',
               displayDate: formatDisplayDate(reservaGuardada.fecha),
@@ -800,11 +831,14 @@
               customerPhone: reservaGuardada.telefono || 'No compartido',
               pickup: reservaGuardada.recogida || 'Por definir',
               comments: reservaGuardada.comentarios || '',
-              storageLabel: estadoGuardado === 'database'
-                ? 'Base de datos de reservas'
-                : estadoGuardado === 'account'
-                  ? 'Cuenta del viajero'
-                  : 'Guardado temporal',
+              storageLabel: estadoGuardado === 'database-account'
+                ? 'Base de datos y cuenta del viajero'
+                : estadoGuardado === 'database'
+                  ? 'Base de datos de reservas'
+                  : estadoGuardado === 'account'
+                    ? 'Cuenta del viajero'
+                    : 'Guardado temporal',
+              accountLinked: estadoGuardado === 'database-account' || estadoGuardado === 'account',
               whatsappUrl: buildWhatsAppUrl(reservaGuardada)
             };
 

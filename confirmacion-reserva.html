@@ -339,6 +339,12 @@
           </article>
 
           <article class="benko-tour__confirmation-detail">
+            <span>Cuenta del viajero</span>
+            <strong id="confirmation-account">Pendiente de validar</strong>
+            <p id="confirmation-account-copy">Si la sesión estaba activa, esta reserva también puede quedar en el historial del cliente.</p>
+          </article>
+
+          <article class="benko-tour__confirmation-detail">
             <span>Solicitud creada</span>
             <strong id="confirmation-created-at">-</strong>
             <p>La revisaremos para validar fecha, cupos y siguientes pasos.</p>
@@ -462,6 +468,13 @@
       setText('confirmation-pickup', payload.pickup || 'Por definir');
       setText('confirmation-storage', payload.storageLabel || 'Solicitud registrada');
       setText('confirmation-created-at', formatDateTime(payload.createdAt));
+      setText('confirmation-account', payload.accountLinked ? 'Ligada a la cuenta del cliente' : 'Reserva enviada como invitado');
+      setText(
+        'confirmation-account-copy',
+        payload.accountLinked
+          ? 'Esta solicitud también quedó asociada al historial del usuario para futuras consultas.'
+          : 'La solicitud quedó en la base de datos pública. Si luego inicias sesión, podremos fortalecer el historial del cliente.'
+      );
 
       const notesTitle = document.getElementById('confirmation-notes-title');
       const notesCopy = document.getElementById('confirmation-notes');
