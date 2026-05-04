@@ -259,14 +259,37 @@
             >
             <span>Benko Tour</span>
           </a>
-          <nav class="benko-tour__menu" aria-label="Navegación principal">
-            <a href="./index.html">Inicio</a>
-            <a href="./reservas.html">Reservas</a>
-            <a href="./experiencia.html" target="_blank" rel="noopener noreferrer">Experiencia</a>
-            <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
+          <nav class="benko-tour__menu" aria-label="Secciones principales">
+            <a href="./experiencia.html" target="_blank" rel="noopener noreferrer"><strong>Biáje</strong><span>Experiencia</span></a>
+            <a href="./nosotros.html" target="_blank" rel="noopener noreferrer"><strong>Kumunirá</strong><span>Nosotros</span></a>
+            <a href="./lengua-palenquera.html" target="_blank" rel="noopener noreferrer"><strong>Luénga</strong><span>Lengua palenquera</span></a>
+            <a href="./index.html#paquetes" target="_blank" rel="noopener noreferrer"><strong>Kaddume</strong><span>Paquetes</span></a>
+            <a href="./index.html#itinerario" target="_blank" rel="noopener noreferrer"><strong>Itoría</strong><span>Itinerario</span></a>
+            <a href="./index.html#opiniones" target="_blank" rel="noopener noreferrer"><strong>Kuchá</strong><span>Opiniones</span></a>
+            <a href="./tienda.html" target="_blank" rel="noopener noreferrer"><strong>Kumblá</strong><span>Tienda</span></a>
+            <a href="./reservas.html" target="_blank" rel="noopener noreferrer"><strong>Chitiá</strong><span>Reservas</span></a>
           </nav>
           <a class="benko-tour__login" href="./acceso.html#acceso">Iniciar sesión</a>
+          <button class="benko-tour__hamburger" aria-label="Abrir menú" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
         </div>
+
+        <nav class="benko-tour__mobile-menu" aria-label="Menú móvil desplegable" hidden>
+          <div class="benko-tour__mobile-menu-inner">
+            <a href="./experiencia.html" target="_blank" rel="noopener noreferrer"><strong>Biáje</strong><span>Experiencia</span></a>
+            <a href="./nosotros.html" target="_blank" rel="noopener noreferrer"><strong>Kumunirá</strong><span>Nosotros</span></a>
+            <a href="./lengua-palenquera.html" target="_blank" rel="noopener noreferrer"><strong>Luénga</strong><span>Lengua palenquera</span></a>
+            <a href="./index.html#paquetes" target="_blank" rel="noopener noreferrer"><strong>Kaddume</strong><span>Paquetes</span></a>
+            <a href="./index.html#itinerario" target="_blank" rel="noopener noreferrer"><strong>Itoría</strong><span>Itinerario</span></a>
+            <a href="./index.html#opiniones" target="_blank" rel="noopener noreferrer"><strong>Kuchá</strong><span>Opiniones</span></a>
+            <a href="./tienda.html" target="_blank" rel="noopener noreferrer"><strong>Kumblá</strong><span>Tienda</span></a>
+            <a href="./reservas.html" target="_blank" rel="noopener noreferrer"><strong>Chitiá</strong><span>Reservas</span></a>
+            <a href="./acceso.html#acceso"><strong>Komenasá</strong><span>Iniciar sesión</span></a>
+          </div>
+        </nav>
       </header>
 
       <main class="benko-tour__confirmation-main">
@@ -401,6 +424,33 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      const hamburger = document.querySelector('.benko-tour__hamburger');
+      const mobileMenu = document.querySelector('.benko-tour__mobile-menu');
+
+      if (hamburger && mobileMenu) {
+        const closeMobileMenu = function() {
+          hamburger.setAttribute('aria-expanded', 'false');
+          mobileMenu.hidden = true;
+        };
+
+        hamburger.addEventListener('click', function(event) {
+          event.stopPropagation();
+          const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+          hamburger.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+          mobileMenu.hidden = isExpanded;
+        });
+
+        mobileMenu.querySelectorAll('a').forEach(function(link) {
+          link.addEventListener('click', closeMobileMenu);
+        });
+
+        document.addEventListener('click', function(event) {
+          if (!hamburger.contains(event.target) && !mobileMenu.contains(event.target)) {
+            closeMobileMenu();
+          }
+        });
+      }
+
       const STORAGE_KEY = 'benkoTourReservationConfirmation';
       const params = new URLSearchParams(window.location.search);
       const requestedRef = params.get('ref') || '';

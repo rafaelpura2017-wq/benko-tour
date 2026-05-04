@@ -1335,9 +1335,43 @@ if (reviewForm) {
   });
 }
 
+function initMobileMenu() {
+  const hamburger = document.querySelector(".benko-tour__hamburger");
+  const mobileMenu = document.querySelector(".benko-tour__mobile-menu");
+
+  if (!hamburger || !mobileMenu || hamburger.dataset.menuReady === "true") {
+    return;
+  }
+
+  const closeMenu = () => {
+    hamburger.setAttribute("aria-expanded", "false");
+    mobileMenu.hidden = true;
+  };
+
+  hamburger.dataset.menuReady = "true";
+
+  hamburger.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const isExpanded = hamburger.getAttribute("aria-expanded") === "true";
+    hamburger.setAttribute("aria-expanded", isExpanded ? "false" : "true");
+    mobileMenu.hidden = isExpanded;
+  });
+
+  mobileMenu.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", closeMenu);
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!hamburger.contains(event.target) && !mobileMenu.contains(event.target)) {
+      closeMenu();
+    }
+  });
+}
+
 renderAccessState();
 renderReviews();
 startReviewRotation();
 startExperienceRotation();
 setActiveAccessTab(activeAccessTab);
 renderCart();
+initMobileMenu();
