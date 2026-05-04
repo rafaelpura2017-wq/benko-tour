@@ -155,6 +155,46 @@
       line-height: 1.55;
     }
 
+    .benko-tour__language-subnav {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .benko-tour__language-subnav a {
+      display: grid;
+      gap: 6px;
+      padding: 18px 20px;
+      text-decoration: none;
+      border-radius: 24px;
+      border: 1px solid rgba(80, 60, 34, 0.08);
+      background: rgba(255, 252, 247, 0.92);
+      box-shadow: 0 16px 32px rgba(38, 26, 18, 0.08);
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .benko-tour__language-subnav a:hover,
+    .benko-tour__language-subnav a:focus-visible {
+      transform: translateY(-2px);
+      border-color: rgba(239, 176, 58, 0.32);
+      box-shadow: 0 20px 36px rgba(38, 26, 18, 0.12);
+      outline: none;
+    }
+
+    .benko-tour__language-subnav strong {
+      font-size: 1.3rem;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--brand-dark);
+    }
+
+    .benko-tour__language-subnav span {
+      color: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
     .benko-tour__language-visual {
       min-height: 100%;
       background:
@@ -233,6 +273,62 @@
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 16px;
+    }
+
+    .benko-tour__language-quote {
+      margin: 0 0 22px;
+      padding: 22px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(239, 176, 58, 0.16), rgba(36, 150, 192, 0.14));
+      border: 1px solid rgba(80, 60, 34, 0.08);
+    }
+
+    .benko-tour__language-quote strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--brand-dark);
+      font-size: 1.1rem;
+    }
+
+    .benko-tour__language-quote p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .benko-tour__language-vocab {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .benko-tour__language-vocab-card {
+      padding: 20px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(246, 239, 226, 0.88));
+      border: 1px solid rgba(80, 60, 34, 0.08);
+    }
+
+    .benko-tour__language-vocab-card strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--brand-dark);
+      font-size: 1.1rem;
+    }
+
+    .benko-tour__language-vocab-card span {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 0.94rem;
+    }
+
+    .benko-tour__language-vocab-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.95rem;
     }
 
     .benko-tour__language-item {
@@ -402,7 +498,9 @@
     @media (max-width: 1120px) {
       .benko-tour__language-hero,
       .benko-tour__language-cta,
+      .benko-tour__language-subnav,
       .benko-tour__language-grid,
+      .benko-tour__language-vocab,
       .benko-tour__language-path,
       .benko-tour__language-offers {
         grid-template-columns: 1fr;
@@ -492,7 +590,7 @@
       </header>
 
       <main class="benko-tour__language-page">
-        <section class="benko-tour__language-hero" aria-label="Curso de lengua palenquera">
+        <section class="benko-tour__language-hero" id="komenasa" aria-label="Curso de lengua palenquera">
           <article class="benko-tour__language-card">
             <span class="benko-tour__pill">Nueva línea formativa</span>
             <h1 class="benko-tour__language-title">Aprende lengua palenquera desde la raíz viva del territorio</h1>
@@ -556,6 +654,74 @@
           </aside>
         </section>
 
+        <nav class="benko-tour__language-subnav" aria-label="Secciones de lengua palenquera">
+          <a href="#komenasa">
+            <strong>Komenasá</strong>
+            <span>Inicio</span>
+          </a>
+          <a href="#kajangari">
+            <strong>Kajangarí</strong>
+            <span>Diccionario vivo</span>
+          </a>
+          <a href="#yurumbi">
+            <strong>Yurumbí</strong>
+            <span>Expresiones y ruta</span>
+          </a>
+          <a href="#arrelike">
+            <strong>Arrelike</strong>
+            <span>Curso y modalidades</span>
+          </a>
+        </nav>
+
+        <section class="benko-tour__language-section" id="kajangari" aria-labelledby="lengua-diccionario">
+          <div class="benko-tour__language-section-head">
+            <span class="benko-tour__eyebrow">Kajangarí</span>
+            <h2 id="lengua-diccionario">Un primer diccionario vivo para la web</h2>
+            <p>
+              Tomé palabras reales del material que me compartiste para que esta página ya comience a sonar
+              más palenquera sin perder la claridad en español.
+            </p>
+          </div>
+
+          <div class="benko-tour__language-quote">
+            <strong>Jundo suto senda ung chocha</strong>
+            <p>Juntos somos más. Esta clase de frase es perfecta para héroes, banners, llamadas de acción y bloques de identidad.</p>
+          </div>
+
+          <div class="benko-tour__language-vocab">
+            <article class="benko-tour__language-vocab-card">
+              <strong>Kuchá</strong>
+              <span>Escuchar</span>
+              <p>Una palabra fuerte para abrir la experiencia desde la escucha, la oralidad y la conversación.</p>
+            </article>
+            <article class="benko-tour__language-vocab-card">
+              <strong>Kelé</strong>
+              <span>Querer</span>
+              <p>Ideal para mensajes de comunidad, cuidado, relación con el territorio y vínculos afectivos.</p>
+            </article>
+            <article class="benko-tour__language-vocab-card">
+              <strong>Abalenga</strong>
+              <span>Sol</span>
+              <p>Sirve muy bien para identidad visual, frases poéticas y secciones con atmósfera territorial.</p>
+            </article>
+            <article class="benko-tour__language-vocab-card">
+              <strong>Anabakurú</strong>
+              <span>Ancestros</span>
+              <p>Una entrada poderosa para conectar la lengua con memoria, linaje y herencia cultural.</p>
+            </article>
+            <article class="benko-tour__language-vocab-card">
+              <strong>Baranganga</strong>
+              <span>Secreto</span>
+              <p>Funciona bien para piezas narrativas, storytelling, curiosidades o cápsulas de aprendizaje.</p>
+            </article>
+            <article class="benko-tour__language-vocab-card">
+              <strong>Bilongo</strong>
+              <span>Encanto</span>
+              <p>Perfecta para hablar del poder simbólico, lo espiritual y la riqueza expresiva de la lengua.</p>
+            </article>
+          </div>
+        </section>
+
         <section class="benko-tour__language-section" aria-labelledby="lengua-enfoque">
           <div class="benko-tour__language-section-head">
             <span class="benko-tour__eyebrow">Qué se trabaja</span>
@@ -586,9 +752,9 @@
           </div>
         </section>
 
-        <section class="benko-tour__language-section" aria-labelledby="lengua-ruta">
+        <section class="benko-tour__language-section" id="yurumbi" aria-labelledby="lengua-ruta">
           <div class="benko-tour__language-section-head">
-            <span class="benko-tour__eyebrow">Ruta sugerida</span>
+            <span class="benko-tour__eyebrow">Yurumbí</span>
             <h2 id="lengua-ruta">Así puede presentarse la experiencia formativa</h2>
             <p>
               Dejé una estructura base lista para vender el curso desde hoy. Luego podemos afinar duración,
@@ -620,9 +786,9 @@
           </div>
         </section>
 
-        <section class="benko-tour__language-section" aria-labelledby="lengua-modalidades">
+        <section class="benko-tour__language-section" id="arrelike" aria-labelledby="lengua-modalidades">
           <div class="benko-tour__language-section-head">
-            <span class="benko-tour__eyebrow">Modalidades</span>
+            <span class="benko-tour__eyebrow">Arrelike</span>
             <h2 id="lengua-modalidades">Tres formas claras de venderlo desde la web</h2>
             <p>
               Como todavía no me diste precios cerrados, dejé una estructura comercial honesta: nombre,
