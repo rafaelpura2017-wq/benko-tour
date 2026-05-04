@@ -1339,6 +1339,7 @@ window.authFirebase = {
   obtenerDatos: obtenerDatosUsuario,
   actualizarDatos: actualizarDatosUsuario,
   estaLogueado: usuarioLogueado,
+  obtenerUsuarioActual: obtenerUsuarioActual,
   usuarioActual: obtenerUsuarioActual,
   migrarReservas: migrarReservasTemporales,
   guardarReservaTemp: guardarReservaTemporal,
