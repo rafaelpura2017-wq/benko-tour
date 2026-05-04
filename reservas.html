@@ -514,6 +514,15 @@
         });
       }
 
+      function escapeHtml(value) {
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
       function buildTravelersSummary(reserva) {
         const parts = [];
 
@@ -692,6 +701,7 @@
           // ====== PASO 1: GUARDAR EN FIREBASE ======
           let estadoGuardado = 'error';
           let resultadoGuardado = null;
+          let detalleError = '';
           
           if (typeof window.authFirebase !== 'undefined') {
             try {
@@ -710,10 +720,21 @@
                   estadoGuardado = 'temporary';
                 }
                 console.log('✓ Reserva guardada con estructura reforzada');
+              } else {
+                detalleError = resultadoGuardado?.error || 'La base de datos rechazó el guardado de la reserva.';
+                if (resultadoGuardado?.errorCode) {
+                  detalleError += ` Código: ${resultadoGuardado.errorCode}.`;
+                }
               }
             } catch (error) {
               console.error('Error al guardar en Firebase:', error);
+              detalleError = error?.message || 'Se produjo un error inesperado al guardar la reserva.';
+              if (error?.code) {
+                detalleError += ` Código: ${error.code}.`;
+              }
             }
+          } else {
+            detalleError = 'No se cargó el módulo de Firebase en esta página.';
           }
 
           // Mostrar mensaje de estado
@@ -735,7 +756,10 @@
             statusMsg.style.cssText = 'background: #fff3e0; border-left: 3px solid #ff9800; padding: 16px; border-radius: 8px; margin: 16px 0;';
             statusMsg.innerHTML = `
               <strong style="color: #e65100;">⚠ No pudimos completar el guardado</strong><br>
-              <span style="color: #666;">Revisa tu conexión e intenta nuevamente para registrar la reserva en la base de datos.</span>
+              <span style="color: #666;">Revisa el detalle real del error y vuelve a intentarlo.</span><br>
+              <span style="color: #7a5a45; display: block; margin-top: 8px; line-height: 1.5;">
+                Detalle: ${escapeHtml(detalleError || 'No recibimos más información desde Firebase.')}
+              </span>
             `;
           }
           reservationForm.appendChild(statusMsg);
