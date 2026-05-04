@@ -296,39 +296,204 @@
       line-height: 1.7;
     }
 
-    .benko-tour__language-vocab {
+    .benko-tour__language-dictionary {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .benko-tour__language-dictionary-toolbar {
+      display: grid;
+      gap: 14px;
+      padding: 22px;
+      border-radius: 26px;
+      background:
+        linear-gradient(135deg, rgba(94, 49, 28, 0.96), rgba(121, 63, 32, 0.94)),
+        radial-gradient(circle at right top, rgba(255, 186, 86, 0.18), transparent 32%);
+      border: 1px solid rgba(80, 60, 34, 0.08);
+      box-shadow: 0 18px 36px rgba(38, 26, 18, 0.14);
+      color: #fff6e8;
+    }
+
+    .benko-tour__language-search {
+      position: relative;
+      display: block;
+    }
+
+    .benko-tour__language-search input {
+      width: 100%;
+      padding: 18px 60px 18px 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 216, 153, 0.14);
+      background: rgba(255, 246, 231, 0.12);
+      color: #fff8ef;
+      font: inherit;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .benko-tour__language-search input::placeholder {
+      color: rgba(255, 240, 216, 0.58);
+    }
+
+    .benko-tour__language-search input:focus {
+      border-color: rgba(255, 189, 85, 0.42);
+      background: rgba(255, 246, 231, 0.18);
+      box-shadow: 0 0 0 4px rgba(255, 189, 85, 0.12);
+    }
+
+    .benko-tour__language-search-icon {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      color: rgba(255, 237, 210, 0.72);
+      pointer-events: none;
+    }
+
+    .benko-tour__language-filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .benko-tour__language-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .benko-tour__language-filter {
+      min-width: 48px;
+      padding: 11px 14px;
+      border: none;
+      border-radius: 14px;
+      background: rgba(255, 183, 66, 0.92);
+      color: #4f2918;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 10px 18px rgba(26, 14, 8, 0.16);
+      transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease;
+    }
+
+    .benko-tour__language-filter:hover,
+    .benko-tour__language-filter:focus-visible {
+      transform: translateY(-1px);
+      background: #ffc75c;
+      outline: none;
+    }
+
+    .benko-tour__language-filter.is-active {
+      background: #fff3db;
+      color: var(--brand-dark);
+    }
+
+    .benko-tour__language-dictionary-meta {
+      margin: 0;
+      color: rgba(255, 241, 221, 0.8);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .benko-tour__language-dictionary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 16px;
     }
 
-    .benko-tour__language-vocab-card {
+    .benko-tour__language-dictionary-card {
+      display: grid;
+      gap: 12px;
       padding: 20px;
       border-radius: 24px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(246, 239, 226, 0.88));
+      background:
+        linear-gradient(180deg, rgba(166, 92, 46, 0.98), rgba(146, 79, 39, 0.98)),
+        radial-gradient(circle at right top, rgba(255, 200, 110, 0.18), transparent 28%);
       border: 1px solid rgba(80, 60, 34, 0.08);
+      box-shadow: 0 18px 34px rgba(38, 26, 18, 0.12);
+      color: #fff7eb;
     }
 
-    .benko-tour__language-vocab-card strong {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--brand-dark);
-      font-size: 1.1rem;
+    .benko-tour__language-dictionary-card[hidden] {
+      display: none;
     }
 
-    .benko-tour__language-vocab-card span {
-      display: block;
-      margin-bottom: 10px;
-      color: var(--accent);
+    .benko-tour__language-dictionary-card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .benko-tour__language-dictionary-type,
+    .benko-tour__language-dictionary-letter,
+    .benko-tour__language-dictionary-tags span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
       font-weight: 800;
-      font-size: 0.94rem;
+      letter-spacing: 0.03em;
     }
 
-    .benko-tour__language-vocab-card p {
+    .benko-tour__language-dictionary-type {
+      background: rgba(255, 191, 82, 0.98);
+      color: #69361b;
+    }
+
+    .benko-tour__language-dictionary-letter {
+      min-width: 42px;
+      background: rgba(255, 245, 227, 0.12);
+      color: rgba(255, 242, 220, 0.92);
+      border: 1px solid rgba(255, 245, 227, 0.18);
+    }
+
+    .benko-tour__language-dictionary-card strong {
+      display: block;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .benko-tour__language-dictionary-translation {
+      display: block;
+      color: #fff2cf;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .benko-tour__language-dictionary-card p {
       margin: 0;
-      color: var(--muted);
+      color: rgba(255, 247, 235, 0.92);
       line-height: 1.65;
       font-size: 0.95rem;
+    }
+
+    .benko-tour__language-dictionary-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .benko-tour__language-dictionary-tags span {
+      background: rgba(92, 43, 22, 0.62);
+      color: #fff7eb;
+    }
+
+    .benko-tour__language-dictionary-empty {
+      padding: 22px;
+      border-radius: 24px;
+      border: 1px dashed rgba(80, 60, 34, 0.18);
+      background: rgba(255, 252, 247, 0.72);
+      color: var(--muted);
+      line-height: 1.7;
     }
 
     .benko-tour__language-item {
@@ -500,7 +665,7 @@
       .benko-tour__language-cta,
       .benko-tour__language-subnav,
       .benko-tour__language-grid,
-      .benko-tour__language-vocab,
+      .benko-tour__language-dictionary-grid,
       .benko-tour__language-path,
       .benko-tour__language-offers {
         grid-template-columns: 1fr;
@@ -508,6 +673,11 @@
 
       .benko-tour__language-highlights {
         grid-template-columns: 1fr;
+      }
+
+      .benko-tour__language-filter-row {
+        align-items: flex-start;
+        flex-direction: column;
       }
 
       .benko-tour__language-photo-card {
@@ -694,37 +864,216 @@
             <p>Juntos somos más. Esta clase de frase es perfecta para héroes, banners, llamadas de acción y bloques de identidad.</p>
           </div>
 
-          <div class="benko-tour__language-vocab">
-            <article class="benko-tour__language-vocab-card">
-              <strong>Kuchá</strong>
-              <span>Escuchar</span>
-              <p>Una palabra fuerte para abrir la experiencia desde la escucha, la oralidad y la conversación.</p>
-            </article>
-            <article class="benko-tour__language-vocab-card">
-              <strong>Kelé</strong>
-              <span>Querer</span>
-              <p>Ideal para mensajes de comunidad, cuidado, relación con el territorio y vínculos afectivos.</p>
-            </article>
-            <article class="benko-tour__language-vocab-card">
-              <strong>Abalenga</strong>
-              <span>Sol</span>
-              <p>Sirve muy bien para identidad visual, frases poéticas y secciones con atmósfera territorial.</p>
-            </article>
-            <article class="benko-tour__language-vocab-card">
-              <strong>Anabakurú</strong>
-              <span>Ancestros</span>
-              <p>Una entrada poderosa para conectar la lengua con memoria, linaje y herencia cultural.</p>
-            </article>
-            <article class="benko-tour__language-vocab-card">
-              <strong>Baranganga</strong>
-              <span>Secreto</span>
-              <p>Funciona bien para piezas narrativas, storytelling, curiosidades o cápsulas de aprendizaje.</p>
-            </article>
-            <article class="benko-tour__language-vocab-card">
-              <strong>Bilongo</strong>
-              <span>Encanto</span>
-              <p>Perfecta para hablar del poder simbólico, lo espiritual y la riqueza expresiva de la lengua.</p>
-            </article>
+          <div class="benko-tour__language-dictionary">
+            <div class="benko-tour__language-dictionary-toolbar">
+              <label class="benko-tour__language-search" for="lengua-dictionary-search">
+                <input
+                  id="lengua-dictionary-search"
+                  type="search"
+                  placeholder="Busca una palabra palenquera o su significado en español"
+                  autocomplete="off"
+                >
+                <span class="benko-tour__language-search-icon" aria-hidden="true">⌕</span>
+              </label>
+
+              <div class="benko-tour__language-filter-row">
+                <div class="benko-tour__language-filters" aria-label="Filtrar por letra inicial">
+                  <button class="benko-tour__language-filter is-active" type="button" data-letter="all" aria-pressed="true">Todas</button>
+                  <button class="benko-tour__language-filter" type="button" data-letter="a" aria-pressed="false">A</button>
+                  <button class="benko-tour__language-filter" type="button" data-letter="b" aria-pressed="false">B</button>
+                  <button class="benko-tour__language-filter" type="button" data-letter="c" aria-pressed="false">C</button>
+                </div>
+                <p class="benko-tour__language-dictionary-meta" id="lengua-dictionary-meta">
+                  10 palabras reales del Excel para comenzar este primer diccionario web.
+                </p>
+              </div>
+            </div>
+
+            <div class="benko-tour__language-dictionary-grid" id="lengua-dictionary-grid">
+              <article
+                class="benko-tour__language-dictionary-card"
+                data-letter="a"
+                data-lookup="abalenga estrella sol lucero astro sun sustantivo"
+              >
+                <div class="benko-tour__language-dictionary-card-top">
+                  <span class="benko-tour__language-dictionary-type">Sustantivo</span>
+                  <span class="benko-tour__language-dictionary-letter">A</span>
+                </div>
+                <strong>Abalenga</strong>
+                <span class="benko-tour__language-dictionary-translation">Estrella / Sol</span>
+                <p>Astro luminoso visible en la noche.</p>
+                <div class="benko-tour__language-dictionary-tags">
+                  <span>Lucero</span>
+                  <span>Sun</span>
+                </div>
+              </article>
+
+              <article
+                class="benko-tour__language-dictionary-card"
+                data-letter="a"
+                data-lookup="abbolia lanzar arrojar echar verbo infinitivo fuerza"
+              >
+                <div class="benko-tour__language-dictionary-card-top">
+                  <span class="benko-tour__language-dictionary-type">Verbo infinitivo</span>
+                  <span class="benko-tour__language-dictionary-letter">A</span>
+                </div>
+                <strong>Abboliá</strong>
+                <span class="benko-tour__language-dictionary-translation">Lanzar</span>
+                <p>Impulsar algo con fuerza hacia un lugar.</p>
+                <div class="benko-tour__language-dictionary-tags">
+                  <span>Arrojar</span>
+                  <span>Echar</span>
+                </div>
+              </article>
+
+              <article
+                class="benko-tour__language-dictionary-card"
+                data-letter="a"
+                data-lookup="abla decir hablar expresar verbo infinitivo voz"
+              >
+                <div class="benko-tour__language-dictionary-card-top">
+                  <span class="benko-tour__language-dictionary-type">Verbo infinitivo</span>
+                  <span class="benko-tour__language-dictionary-letter">A</span>
+                </div>
+                <strong>Ablá</strong>
+                <span class="benko-tour__language-dictionary-translation">Decir / Hablar</span>
+                <p>Expresar pensamientos o información de forma verbal.</p>
+                <div class="benko-tour__language-dictionary-tags">
+                  <span>Expresar</span>
+                  <span>Oralidad</span>
+                </div>
+              </article>
+
+              <article
+                class="benko-tour__language-dictionary-card"
+                data-letter="a"
+                data-lookup="anabakuru ancestros grupo de mayores guardia cimarrona sabios mayores sustantivo colectivo"
+              >
+                <div class="benko-tour__language-dictionary-card-top">
+                  <span class="benko-tour__language-dictionary-type">Sustantivo colectivo</span>
+                  <span class="benko-tour__language-dictionary-letter">A</span>
+                </div>
+                <strong>Anabakurú</strong>
+                <span class="benko-tour__language-dictionary-translation">Grupo de mayores / Ancestros</span>
+                <p>Agrupación de personas mayores o guardianes ancestrales.</p>
+                <div class="benko-tour__language-dictionary-tags">
+                  <span>Guardia cimarrona</span>
+                  <span>Ancestors</span>
+                </div>
+              </article>
+
+              <article
+                class="benko-tour__language-dictionary-card"
+                data-letter="b"
+                data-lookup="balondron mondongo cocina tradicional sopa tripe stew"
+              >
+                <div class="benko-tour__language-dictionary-card-top">
+                  <span class="benko-tour__language-dictionary-type">Cocina tradicional</span>
+                  <span class="benko-tour__language-dictionary-letter">B</span>
+                </div>
+                <strong>Balondron</strong>
+                <span class="benko-tour__language-dictionary-translation">Mondongo</span>
+                <p>Nombre usado en la hoja trilingüe para una preparación ligada a la cocina del territorio.</p>
+                <div class="benko-tour__language-dictionary-tags">
+                  <span>Gastronomía</span>
+                  <span>Tripe stew</span>
+                </div>
+              </article>
+
+              <article
+                class="benko-tour__language-dictionary-card"
+                data-letter="b"
+                data-lookup="baranganga secreto informacion reservada sustantivo memoria"
+              >
+                <div class="benko-tour__language-dictionary-card-top">
+                  <span class="benko-tour__language-dictionary-type">Sustantivo</span>
+                  <span class="benko-tour__language-dictionary-letter">B</span>
+                </div>
+                <strong>Baranganga</strong>
+                <span class="benko-tour__language-dictionary-translation">Secreto</span>
+                <p>Información reservada o que no se cuenta abiertamente.</p>
+                <div class="benko-tour__language-dictionary-tags">
+                  <span>Memoria</span>
+                  <span>Secret</span>
+                </div>
+              </article>
+
+              <article
+                class="benko-tour__language-dictionary-card"
+                data-letter="b"
+                data-lookup="bilongo brujeria encanto hechiceria magia sustantivo"
+              >
+                <div class="benko-tour__language-dictionary-card-top">
+                  <span class="benko-tour__language-dictionary-type">Sustantivo</span>
+                  <span class="benko-tour__language-dictionary-letter">B</span>
+                </div>
+                <strong>Bilongo</strong>
+                <span class="benko-tour__language-dictionary-translation">Brujería / Encanto</span>
+                <p>Práctica mágica o encantamiento dentro del universo simbólico de la lengua.</p>
+                <div class="benko-tour__language-dictionary-tags">
+                  <span>Hechicería</span>
+                  <span>Magia</span>
+                </div>
+              </article>
+
+              <article
+                class="benko-tour__language-dictionary-card"
+                data-letter="b"
+                data-lookup="brotokolo problema dificultad conflicto problem"
+              >
+                <div class="benko-tour__language-dictionary-card-top">
+                  <span class="benko-tour__language-dictionary-type">Uso cotidiano</span>
+                  <span class="benko-tour__language-dictionary-letter">B</span>
+                </div>
+                <strong>Brotokolo</strong>
+                <span class="benko-tour__language-dictionary-translation">Problema</span>
+                <p>Palabra breve para nombrar una dificultad, un asunto o un conflicto por resolver.</p>
+                <div class="benko-tour__language-dictionary-tags">
+                  <span>Problem</span>
+                  <span>Vida diaria</span>
+                </div>
+              </article>
+
+              <article
+                class="benko-tour__language-dictionary-card"
+                data-letter="b"
+                data-lookup="buyerenge canto tradicional musica oralidad tradicion song"
+              >
+                <div class="benko-tour__language-dictionary-card-top">
+                  <span class="benko-tour__language-dictionary-type">Música tradicional</span>
+                  <span class="benko-tour__language-dictionary-letter">B</span>
+                </div>
+                <strong>Buyerenge</strong>
+                <span class="benko-tour__language-dictionary-translation">Canto tradicional</span>
+                <p>Entrada que conecta el diccionario con la música, la transmisión oral y la memoria colectiva.</p>
+                <div class="benko-tour__language-dictionary-tags">
+                  <span>Oralidad</span>
+                  <span>Traditional song</span>
+                </div>
+              </article>
+
+              <article
+                class="benko-tour__language-dictionary-card"
+                data-letter="c"
+                data-lookup="cherrecherre maiz corn cocina alimento semilla"
+              >
+                <div class="benko-tour__language-dictionary-card-top">
+                  <span class="benko-tour__language-dictionary-type">Alimento base</span>
+                  <span class="benko-tour__language-dictionary-letter">C</span>
+                </div>
+                <strong>Cherrecherre</strong>
+                <span class="benko-tour__language-dictionary-translation">Maíz</span>
+                <p>Ingrediente clave para hablar de cocina, territorio y memoria alimentaria desde la lengua.</p>
+                <div class="benko-tour__language-dictionary-tags">
+                  <span>Corn</span>
+                  <span>Semilla</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="benko-tour__language-dictionary-empty" id="lengua-dictionary-empty" hidden>
+              No encontramos coincidencias con esa búsqueda todavía. Prueba con otra palabra o cambia la letra.
+            </div>
           </div>
         </section>
 
@@ -932,5 +1281,68 @@
       WhatsApp
     </a>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchInput = document.getElementById('lengua-dictionary-search');
+      const filterButtons = Array.from(document.querySelectorAll('.benko-tour__language-filter'));
+      const cards = Array.from(document.querySelectorAll('.benko-tour__language-dictionary-card'));
+      const meta = document.getElementById('lengua-dictionary-meta');
+      const empty = document.getElementById('lengua-dictionary-empty');
+
+      if (!searchInput || !filterButtons.length || !cards.length || !meta || !empty) {
+        return;
+      }
+
+      let activeLetter = 'all';
+
+      function normalizeText(value) {
+        return String(value || '')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+      }
+
+      function renderDictionary() {
+        const query = normalizeText(searchInput.value);
+        let visible = 0;
+
+        cards.forEach(function(card) {
+          const matchesLetter = activeLetter === 'all' || card.dataset.letter === activeLetter;
+          const lookup = normalizeText(card.dataset.lookup || card.textContent);
+          const matchesQuery = !query || lookup.includes(query);
+          const shouldShow = matchesLetter && matchesQuery;
+
+          card.hidden = !shouldShow;
+
+          if (shouldShow) {
+            visible += 1;
+          }
+        });
+
+        filterButtons.forEach(function(button) {
+          const isActive = button.dataset.letter === activeLetter;
+          button.classList.toggle('is-active', isActive);
+          button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+
+        empty.hidden = visible !== 0;
+        meta.textContent = visible === 1
+          ? '1 palabra visible en esta primera muestra del diccionario.'
+          : visible + ' palabras visibles en esta primera muestra del diccionario.';
+      }
+
+      searchInput.addEventListener('input', renderDictionary);
+
+      filterButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+          activeLetter = button.dataset.letter || 'all';
+          renderDictionary();
+        });
+      });
+
+      renderDictionary();
+    });
+  </script>
 </body>
 </html>
