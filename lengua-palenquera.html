@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="Aprende lengua palenquera con Benko Tour a través de una propuesta formativa con contexto cultural, oralidad, práctica guiada y formatos para viajeros, grupos e instituciones."
+  >
+  <meta name="theme-color" content="#20392b">
+  <meta property="og:title" content="Lengua palenquera | Benko Tour">
+  <meta
+    property="og:description"
+    content="Una nueva línea formativa de Benko Tour para acercarse a la lengua palenquera desde la memoria, la oralidad y la práctica viva."
+  >
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://benkotour.wordpress.com/lengua-palenquera">
+  <link rel="canonical" href="https://benkotour.wordpress.com/lengua-palenquera">
+  <link rel="icon" type="image/jpeg" href="./assets/images/brand/favicon-benko.jpg">
+  <title>Lengua palenquera | Benko Tour</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./config.js"></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": "Lengua palenquera con Benko Tour",
+      "description": "Programa introductorio y formativo para aprender lengua palenquera con enfoque en oralidad, contexto cultural y práctica guiada.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Benko Tour",
+        "url": "https://benkotour.wordpress.com/"
+      }
+    }
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="./firebase-config.js"></script>
+  <script src="./script.js" defer></script>
+  <style>
+    .benko-tour__language-page {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 26px;
+      margin-top: 18px;
+    }
+
+    .benko-tour__language-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .benko-tour__language-card,
+    .benko-tour__language-visual,
+    .benko-tour__language-section,
+    .benko-tour__language-offer,
+    .benko-tour__language-cta {
+      position: relative;
+      overflow: hidden;
+      border-radius: 30px;
+      border: 1px solid rgba(72, 48, 28, 0.08);
+      box-shadow: 0 24px 50px rgba(38, 26, 18, 0.1);
+    }
+
+    .benko-tour__language-card,
+    .benko-tour__language-section,
+    .benko-tour__language-offer,
+    .benko-tour__language-cta {
+      background: rgba(255, 252, 247, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .benko-tour__language-card {
+      padding: clamp(28px, 4vw, 42px);
+      background:
+        radial-gradient(circle at top left, rgba(239, 176, 58, 0.22), transparent 28%),
+        radial-gradient(circle at right center, rgba(36, 150, 192, 0.16), transparent 24%),
+        rgba(255, 251, 246, 0.95);
+    }
+
+    .benko-tour__language-card::after,
+    .benko-tour__language-cta::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.08;
+      background: url("./assets/images/brand/patron-marca.jpg") center/280px auto repeat;
+    }
+
+    .benko-tour__language-card > *,
+    .benko-tour__language-cta > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .benko-tour__language-title {
+      margin: 16px 0 12px;
+      max-width: 11ch;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      line-height: 0.92;
+      letter-spacing: -0.05em;
+    }
+
+    .benko-tour__language-copy {
+      margin: 0;
+      max-width: 60ch;
+      color: var(--muted);
+      font-size: 1.06rem;
+      line-height: 1.8;
+    }
+
+    .benko-tour__language-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    .benko-tour__language-highlights {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .benko-tour__language-highlight {
+      padding: 16px 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(80, 60, 34, 0.08);
+    }
+
+    .benko-tour__language-highlight strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--brand-dark);
+      font-size: 1rem;
+    }
+
+    .benko-tour__language-highlight span {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .benko-tour__language-visual {
+      min-height: 100%;
+      background:
+        linear-gradient(180deg, rgba(8, 20, 32, 0.08), rgba(8, 20, 32, 0.7)),
+        url("./assets/images/experience/palenque-mural-fattume.png") center/cover no-repeat;
+      display: grid;
+      align-content: end;
+      padding: 22px;
+      color: #fff8ef;
+    }
+
+    .benko-tour__language-visual-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .benko-tour__language-photo-card {
+      width: min(62%, 260px);
+      margin-left: auto;
+      overflow: hidden;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 20px 44px rgba(8, 15, 22, 0.28);
+    }
+
+    .benko-tour__language-photo-card img {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+    }
+
+    .benko-tour__language-visual-copy {
+      padding: 22px;
+      border-radius: 24px;
+      background: rgba(7, 18, 23, 0.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .benko-tour__language-visual-copy strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.15rem;
+    }
+
+    .benko-tour__language-visual-copy p {
+      margin: 0;
+      color: rgba(255, 248, 239, 0.86);
+      line-height: 1.7;
+    }
+
+    .benko-tour__language-section {
+      padding: 28px;
+    }
+
+    .benko-tour__language-section-head {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .benko-tour__language-section-head h2 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      line-height: 1.02;
+    }
+
+    .benko-tour__language-section-head p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 68ch;
+    }
+
+    .benko-tour__language-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .benko-tour__language-item {
+      padding: 20px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(246, 239, 226, 0.88));
+      border: 1px solid rgba(80, 60, 34, 0.08);
+    }
+
+    .benko-tour__language-item strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.06rem;
+      color: var(--brand-dark);
+    }
+
+    .benko-tour__language-item p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.95rem;
+    }
+
+    .benko-tour__language-path {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .benko-tour__language-step {
+      padding: 22px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(19, 99, 108, 0.08), rgba(239, 176, 58, 0.08));
+      border: 1px solid rgba(19, 99, 108, 0.1);
+    }
+
+    .benko-tour__language-step span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      margin-bottom: 14px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--coral));
+      color: #201814;
+      font-weight: 800;
+    }
+
+    .benko-tour__language-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .benko-tour__language-step p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.95rem;
+    }
+
+    .benko-tour__language-offers {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .benko-tour__language-offer {
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .benko-tour__language-offer--featured {
+      background:
+        linear-gradient(180deg, rgba(26, 63, 53, 0.96), rgba(12, 38, 31, 0.96)),
+        rgba(22, 42, 36, 0.96);
+      color: #fff8ef;
+    }
+
+    .benko-tour__language-offer--featured .benko-tour__card-tag,
+    .benko-tour__language-offer--featured strong,
+    .benko-tour__language-offer--featured li {
+      color: #fff8ef;
+    }
+
+    .benko-tour__language-offer--featured p {
+      color: rgba(255, 248, 239, 0.82);
+    }
+
+    .benko-tour__language-offer h3 {
+      margin: 0;
+      font-size: 1.35rem;
+    }
+
+    .benko-tour__language-offer p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .benko-tour__language-offer ul {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding-left: 18px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .benko-tour__language-price {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--brand-dark);
+    }
+
+    .benko-tour__language-offer--featured .benko-tour__language-price {
+      color: #ffe18b;
+    }
+
+    .benko-tour__language-cta {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+      gap: 24px;
+      padding: 28px;
+      background:
+        radial-gradient(circle at top right, rgba(239, 176, 58, 0.2), transparent 24%),
+        radial-gradient(circle at bottom left, rgba(36, 150, 192, 0.14), transparent 20%),
+        rgba(255, 251, 246, 0.96);
+    }
+
+    .benko-tour__language-cta h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.9rem, 3vw, 2.8rem);
+      line-height: 1.02;
+    }
+
+    .benko-tour__language-cta p {
+      margin: 0;
+      max-width: 58ch;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .benko-tour__language-note {
+      display: grid;
+      gap: 12px;
+      align-content: center;
+      padding: 22px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid rgba(80, 60, 34, 0.08);
+    }
+
+    .benko-tour__language-note strong {
+      font-size: 1rem;
+      color: var(--brand-dark);
+    }
+
+    .benko-tour__language-note span {
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    @media (max-width: 1120px) {
+      .benko-tour__language-hero,
+      .benko-tour__language-cta,
+      .benko-tour__language-grid,
+      .benko-tour__language-path,
+      .benko-tour__language-offers {
+        grid-template-columns: 1fr;
+      }
+
+      .benko-tour__language-highlights {
+        grid-template-columns: 1fr;
+      }
+
+      .benko-tour__language-photo-card {
+        width: min(52%, 240px);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .benko-tour__language-card,
+      .benko-tour__language-section,
+      .benko-tour__language-offer,
+      .benko-tour__language-cta {
+        border-radius: 24px;
+      }
+
+      .benko-tour__language-card,
+      .benko-tour__language-section,
+      .benko-tour__language-cta {
+        padding: 22px;
+      }
+
+      .benko-tour__language-title {
+        max-width: none;
+      }
+
+      .benko-tour__language-visual {
+        min-height: 420px;
+      }
+
+      .benko-tour__language-photo-card {
+        width: min(68%, 240px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="benko-tour">
+    <div class="benko-tour__shell">
+      <header class="benko-tour__header">
+        <div class="benko-tour__topbar">
+          <a class="benko-tour__topbar-brand" href="./index.html" aria-label="Benko Tour, ir al inicio">
+            <img
+              src="./assets/images/brand/logo-sello.jpg"
+              alt=""
+              loading="eager"
+              decoding="async"
+            >
+            <span>Benko Tour</span>
+          </a>
+          <nav class="benko-tour__menu" aria-label="Secciones principales">
+            <a href="./experiencia.html" target="_blank" rel="noopener noreferrer">Experiencia</a>
+            <a href="./nosotros.html" target="_blank" rel="noopener noreferrer">Nosotros</a>
+            <a href="./lengua-palenquera.html">Lengua palenquera</a>
+            <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
+            <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
+          </nav>
+          <div class="benko-tour__user-menu" id="user-menu" style="display: none; align-items: center; gap: 10px;">
+            <span class="benko-tour__user-name" id="user-name-display" style="color: var(--brand-dark); font-weight: 600; font-size: 0.9rem;"></span>
+            <a href="./perfil.html" class="benko-tour__login" style="background: linear-gradient(135deg, var(--brand) 0%, #e0a030 100%); color: white; font-size: 0.8rem; padding: 8px 12px;">👤 Perfil</a>
+            <button id="logout-btn" class="benko-tour__ghost" style="padding: 6px 12px; font-size: 0.8rem; border-color: rgba(255,255,255,0.3); color: #fff;">🚪</button>
+          </div>
+          <a class="benko-tour__login" href="./acceso.html#acceso" id="login-link">Iniciar sesión</a>
+          <button class="benko-tour__hamburger" aria-label="Abrir menú" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+
+        <nav class="benko-tour__mobile-menu" aria-label="Menú móvil desplegable" hidden>
+          <div class="benko-tour__mobile-menu-inner">
+            <a href="./experiencia.html" target="_blank" rel="noopener noreferrer">Experiencia</a>
+            <a href="./nosotros.html" target="_blank" rel="noopener noreferrer">Nosotros</a>
+            <a href="./lengua-palenquera.html">Lengua palenquera</a>
+            <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
+            <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
+            <a href="./acceso.html#acceso">Iniciar sesión</a>
+          </div>
+        </nav>
+      </header>
+
+      <main class="benko-tour__language-page">
+        <section class="benko-tour__language-hero" aria-label="Curso de lengua palenquera">
+          <article class="benko-tour__language-card">
+            <span class="benko-tour__pill">Nueva línea formativa</span>
+            <h1 class="benko-tour__language-title">Aprende lengua palenquera desde la raíz viva del territorio</h1>
+            <p class="benko-tour__language-copy">
+              Esta propuesta no vende un curso frío ni una lista de palabras sueltas. Abre una puerta para escuchar,
+              comprender y practicar la lengua palenquera con más contexto, memoria y cercanía cultural.
+            </p>
+
+            <div class="benko-tour__language-actions">
+              <a
+                class="benko-tour__button"
+                href="https://wa.me/573245065560?text=Hola%20Benko%20Tour,%20quiero%20informaci%C3%B3n%20sobre%20el%20curso%20de%20lengua%20palenquera."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Quiero el programa por WhatsApp
+              </a>
+              <a
+                class="benko-tour__ghost benko-tour__ghost--dark"
+                href="mailto:benkotour@gmail.com?subject=Informaci%C3%B3n%20curso%20de%20lengua%20palenquera"
+              >
+                Solicitar propuesta por correo
+              </a>
+            </div>
+
+            <div class="benko-tour__language-highlights" aria-label="Enfoques del programa">
+              <div class="benko-tour__language-highlight">
+                <strong>Modalidad flexible</strong>
+                <span>Sesiones virtuales, presenciales o híbridas según el grupo y el objetivo.</span>
+              </div>
+              <div class="benko-tour__language-highlight">
+                <strong>Enfoque cultural</strong>
+                <span>La lengua se presenta junto con oralidad, memoria y contexto del territorio.</span>
+              </div>
+              <div class="benko-tour__language-highlight">
+                <strong>Ideal para grupos</strong>
+                <span>Colegios, universidades, viajeros curiosos, equipos creativos e instituciones.</span>
+              </div>
+            </div>
+          </article>
+
+          <aside class="benko-tour__language-visual">
+            <div class="benko-tour__language-visual-stack">
+              <figure class="benko-tour__language-photo-card">
+                <img
+                  src="./assets/images/experience/IMG_6685.JPG"
+                  alt="Guía local de Benko Tour durante una experiencia cultural en San Basilio de Palenque"
+                  loading="lazy"
+                  decoding="async"
+                >
+              </figure>
+              <div class="benko-tour__language-visual-copy">
+                <span class="benko-tour__card-tag">Más que vocabulario</span>
+                <strong>Una experiencia de escucha, identidad y conversación</strong>
+                <p>
+                  El curso puede funcionar como introducción cultural, complemento académico o puerta de entrada
+                  para quienes quieren relacionarse mejor con Palenque y su patrimonio vivo.
+                </p>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <section class="benko-tour__language-section" aria-labelledby="lengua-enfoque">
+          <div class="benko-tour__language-section-head">
+            <span class="benko-tour__eyebrow">Qué se trabaja</span>
+            <h2 id="lengua-enfoque">Un aprendizaje que respira territorio</h2>
+            <p>
+              La propuesta se adapta al nivel del grupo, pero esta es la columna vertebral para venderla con claridad
+              desde ya: pronunciación, comprensión, expresiones cotidianas, memoria cultural y práctica guiada.
+            </p>
+          </div>
+
+          <div class="benko-tour__language-grid">
+            <article class="benko-tour__language-item">
+              <strong>Sonoridad y pronunciación</strong>
+              <p>Primer contacto con el ritmo, la escucha y la forma en que la lengua se siente al hablarse.</p>
+            </article>
+            <article class="benko-tour__language-item">
+              <strong>Expresiones cotidianas</strong>
+              <p>Saludo, presentación personal, intercambio simple y vocabulario útil para comenzar a participar.</p>
+            </article>
+            <article class="benko-tour__language-item">
+              <strong>Contexto cultural</strong>
+              <p>La lengua no se separa del territorio: se enseña conectada con historia, comunidad y memoria.</p>
+            </article>
+            <article class="benko-tour__language-item">
+              <strong>Práctica guiada</strong>
+              <p>Espacios de repetición, escucha y conversación para que el grupo no se quede solo en teoría.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="benko-tour__language-section" aria-labelledby="lengua-ruta">
+          <div class="benko-tour__language-section-head">
+            <span class="benko-tour__eyebrow">Ruta sugerida</span>
+            <h2 id="lengua-ruta">Así puede presentarse la experiencia formativa</h2>
+            <p>
+              Dejé una estructura base lista para vender el curso desde hoy. Luego podemos afinar duración,
+              precios finales o niveles según cómo quieras posicionarlo.
+            </p>
+          </div>
+
+          <div class="benko-tour__language-path">
+            <article class="benko-tour__language-step">
+              <span>01</span>
+              <strong>Diagnóstico del grupo</strong>
+              <p>Se define si la experiencia será introductoria, intermedia o enfocada en un público específico.</p>
+            </article>
+            <article class="benko-tour__language-step">
+              <span>02</span>
+              <strong>Primeras bases de lengua</strong>
+              <p>Escucha, vocabulario esencial, estructuras simples y acompañamiento para romper el hielo.</p>
+            </article>
+            <article class="benko-tour__language-step">
+              <span>03</span>
+              <strong>Puente con memoria y cultura</strong>
+              <p>La clase se conecta con prácticas, identidad y formas vivas del territorio para no quedarse superficial.</p>
+            </article>
+            <article class="benko-tour__language-step">
+              <span>04</span>
+              <strong>Aplicación y continuidad</strong>
+              <p>Se recomienda siguiente nivel, sesión de grupo o articulación con una visita real a Palenque.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="benko-tour__language-section" aria-labelledby="lengua-modalidades">
+          <div class="benko-tour__language-section-head">
+            <span class="benko-tour__eyebrow">Modalidades</span>
+            <h2 id="lengua-modalidades">Tres formas claras de venderlo desde la web</h2>
+            <p>
+              Como todavía no me diste precios cerrados, dejé una estructura comercial honesta: nombre,
+              enfoque, beneficios y cierre por propuesta personalizada.
+            </p>
+          </div>
+
+          <div class="benko-tour__language-offers">
+            <article class="benko-tour__language-offer">
+              <span class="benko-tour__card-tag">Individual</span>
+              <h3>Ruta semilla</h3>
+              <p>Para personas curiosas, viajeros, creadores o profesionales que quieren un primer acercamiento serio.</p>
+              <div class="benko-tour__language-price">Propuesta a medida</div>
+              <ul>
+                <li>Base introductoria de lengua y oralidad.</li>
+                <li>Ideal para iniciar desde cero sin presión.</li>
+                <li>Formato virtual o presencial según agenda.</li>
+              </ul>
+              <a
+                class="benko-tour__ghost benko-tour__ghost--dark"
+                href="https://wa.me/573245065560?text=Hola%20Benko%20Tour,%20quiero%20una%20propuesta%20para%20la%20Ruta%20Semilla%20de%20lengua%20palenquera."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Cotizar esta opción
+              </a>
+            </article>
+
+            <article class="benko-tour__language-offer benko-tour__language-offer--featured">
+              <span class="benko-tour__card-tag">Recomendada</span>
+              <h3>Proceso formativo</h3>
+              <p>Una ruta más completa para quienes sí quieren constancia, práctica guiada y una experiencia con más profundidad.</p>
+              <div class="benko-tour__language-price">Proceso guiado</div>
+              <ul>
+                <li>Mejor para grupos pequeños o personas comprometidas.</li>
+                <li>Se puede combinar con historia, oralidad y territorio.</li>
+                <li>Funciona muy bien como nueva oferta bandera.</li>
+              </ul>
+              <a
+                class="benko-tour__button"
+                href="https://wa.me/573245065560?text=Hola%20Benko%20Tour,%20quiero%20informaci%C3%B3n%20del%20Proceso%20Formativo%20de%20lengua%20palenquera."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Quiero esta propuesta
+              </a>
+            </article>
+
+            <article class="benko-tour__language-offer">
+              <span class="benko-tour__card-tag">Instituciones</span>
+              <h3>Programa para grupos</h3>
+              <p>Pensado para colegios, universidades, agencias, equipos culturales o marcas que quieren una experiencia con relato.</p>
+              <div class="benko-tour__language-price">Cotización institucional</div>
+              <ul>
+                <li>Formato adaptado al tamaño y perfil del grupo.</li>
+                <li>Buen punto de entrada para alianzas y ventas B2B.</li>
+                <li>Posibilidad de conectar con tour o experiencia cultural.</li>
+              </ul>
+              <a
+                class="benko-tour__ghost benko-tour__ghost--dark"
+                href="https://wa.me/573245065560?text=Hola%20Benko%20Tour,%20quiero%20cotizar%20un%20programa%20de%20lengua%20palenquera%20para%20mi%20grupo%20o%20instituci%C3%B3n."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Hablar de grupos
+              </a>
+            </article>
+          </div>
+        </section>
+
+        <section class="benko-tour__language-cta" aria-labelledby="lengua-cierre">
+          <div>
+            <span class="benko-tour__eyebrow">Cierre comercial</span>
+            <h2 id="lengua-cierre">Puedes venderlo solo o combinarlo con la experiencia en Palenque</h2>
+            <p>
+              Esta página ya te deja una narrativa comercial lista: la lengua como puerta de entrada al territorio.
+              Después podemos conectarla con reservas, pagos, formulario propio o una agenda por niveles.
+            </p>
+            <div class="benko-tour__language-actions">
+              <a
+                class="benko-tour__button"
+                href="https://wa.me/573245065560?text=Hola%20Benko%20Tour,%20quiero%20vender%20o%20reservar%20el%20curso%20de%20lengua%20palenquera."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Empezar a vender este curso
+              </a>
+              <a class="benko-tour__ghost" href="./reservas.html" target="_blank" rel="noopener noreferrer">
+                Ver reservas del tour
+              </a>
+            </div>
+          </div>
+
+          <aside class="benko-tour__language-note">
+            <strong>Lo dejé listo para crecer</strong>
+            <span>
+              Si más adelante quieres, el siguiente nivel puede ser agregar precios reales, formulario propio,
+              pagos online y una sección de testimonios solo para esta línea formativa.
+            </span>
+          </aside>
+        </section>
+      </main>
+
+      <footer class="benko-tour__footer">
+        <div class="benko-tour__footer-brand">
+          <img
+            class="benko-tour__footer-logo"
+            src="./assets/images/brand/logo-horizontal.jpg"
+            alt="Logo horizontal de Benko Tour"
+            loading="lazy"
+            decoding="async"
+          >
+          <p>
+            Turismo cultural, formación y experiencias vivas con identidad propia desde San Basilio de Palenque.
+          </p>
+        </div>
+        <div class="benko-tour__footer-links">
+          <a href="./index.html">Inicio</a>
+          <a href="./lengua-palenquera.html">Lengua palenquera</a>
+          <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
+        </div>
+      </footer>
+    </div>
+
+    <a
+      class="benko-tour__whatsapp"
+      href="https://wa.me/573245065560?text=Hola%20Benko%20Tour,%20quiero%20informaci%C3%B3n%20sobre%20el%20curso%20de%20lengua%20palenquera."
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Escribir a Benko Tour por WhatsApp"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20.52 3.48A11.88 11.88 0 0 0 12.06 0C5.47 0 .1 5.34.1 11.92c0 2.1.55 4.16 1.6 5.98L0 24l6.3-1.64a11.92 11.92 0 0 0 5.75 1.47h.01c6.58 0 11.94-5.35 11.94-11.93 0-3.18-1.24-6.17-3.48-8.42Zm-8.46 18.33h-.01a9.92 9.92 0 0 1-5.05-1.38l-.36-.21-3.74.98 1-3.65-.24-.38A9.9 9.9 0 0 1 2.15 11.92c0-5.47 4.45-9.92 9.92-9.92 2.65 0 5.14 1.03 7.01 2.9a9.85 9.85 0 0 1 2.9 7.01c0 5.47-4.45 9.92-9.92 9.92Zm5.44-7.43c-.3-.15-1.78-.88-2.05-.98-.27-.1-.47-.15-.66.15-.2.3-.76.98-.94 1.18-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.78-1.67-2.08-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.66-1.6-.91-2.2-.24-.57-.48-.49-.66-.5h-.56c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.89.12.58-.09 1.78-.73 2.03-1.43.25-.7.25-1.31.17-1.43-.07-.12-.27-.2-.56-.35Z"></path>
+      </svg>
+      WhatsApp
+    </a>
+  </div>
+</body>
+</html>
