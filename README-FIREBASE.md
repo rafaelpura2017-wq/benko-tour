@@ -57,21 +57,105 @@ const firebaseConfig = {
 ## Paso 6: Configurar Reglas de Seguridad (Importante)
 
 1. Ve a **Firestore Database** → **Reglas**
-2. Reemplaza las reglas con estas:
+2. Usa las reglas del archivo [firestore.rules](./firestore.rules)
+3. Si prefieres copiar y pegar directo en Firebase, usa este bloque:
 
 ```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Permitir que usuarios autenticados lean/escriban sus propios datos
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function stringBetween(value, min, max) {
+      return value is string && value.size() >= min && value.size() <= max;
+    }
+
+    function stringMax(value, max) {
+      return value is string && value.size() <= max;
+    }
+
+    function nonNegativeInt(value, max) {
+      return value is int && value >= 0 && value <= max;
+    }
+
+    function nonNegativeNumber(value, max) {
+      return (value is int || value is float) && value >= 0 && value <= max;
+    }
+
+    function oneOf(value, options) {
+      return options.hasAny([value]);
+    }
+
+    function validReservationMaps() {
+      return request.resource.data.cliente is map
+        && request.resource.data.resumen is map
+        && request.resource.data.seguimiento is map
+        && request.resource.data.actividad is map;
+    }
+
+    function validReservationRequest(reservationId) {
+      return request.resource.data.keys().hasAll([
+          'id', 'schemaVersion', 'tipo', 'origen', 'canal', 'referencia', 'estado',
+          'nombre', 'email', 'telefono', 'ciudad', 'fecha', 'paquete', 'paqueteNombre',
+          'idioma', 'recogida', 'comentarios', 'adultos', 'ninos', 'bebes', 'personas',
+          'precioAdulto', 'precioNino', 'precioTotal', 'moneda', 'fechaCreacion',
+          'persistencia', 'seguimiento', 'actividad', 'cliente', 'resumen', 'fechaActualizacion'
+        ])
+        && request.resource.data.id == reservationId
+        && request.resource.data.referencia == reservationId
+        && request.resource.data.schemaVersion is int
+        && request.resource.data.schemaVersion >= 2
+        && request.resource.data.tipo == 'reserva-tour'
+        && stringBetween(request.resource.data.origen, 3, 60)
+        && stringBetween(request.resource.data.canal, 3, 30)
+        && oneOf(request.resource.data.estado, ['pendiente', 'recibida', 'confirmada', 'pagada', 'cancelada'])
+        && stringBetween(request.resource.data.nombre, 3, 120)
+        && stringMax(request.resource.data.email, 160)
+        && stringBetween(request.resource.data.telefono, 10, 30)
+        && stringMax(request.resource.data.ciudad, 80)
+        && stringBetween(request.resource.data.fecha, 8, 40)
+        && oneOf(request.resource.data.paquete, ['comunitaria', 'principal', 'premium'])
+        && stringBetween(request.resource.data.paqueteNombre, 3, 120)
+        && stringBetween(request.resource.data.idioma, 2, 40)
+        && stringBetween(request.resource.data.recogida, 3, 160)
+        && stringMax(request.resource.data.comentarios, 500)
+        && nonNegativeInt(request.resource.data.adultos, 20)
+        && nonNegativeInt(request.resource.data.ninos, 10)
+        && nonNegativeInt(request.resource.data.bebes, 5)
+        && request.resource.data.personas is int
+        && request.resource.data.personas >= 1
+        && request.resource.data.personas <= 35
+        && request.resource.data.personas == request.resource.data.adultos + request.resource.data.ninos + request.resource.data.bebes
+        && nonNegativeNumber(request.resource.data.precioAdulto, 10000000)
+        && nonNegativeNumber(request.resource.data.precioNino, 5000000)
+        && nonNegativeNumber(request.resource.data.precioTotal, 50000000)
+        && request.resource.data.moneda == 'COP'
+        && request.resource.data.fechaCreacion is timestamp
+        && request.resource.data.fechaActualizacion is timestamp
+        && oneOf(request.resource.data.persistencia, ['database-public', 'database-account'])
+        && validReservationMaps();
+    }
+
     match /usuarios/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if isOwner(userId);
+    }
+
+    match /solicitudes_reserva/{reservationId} {
+      allow create: if validReservationRequest(reservationId);
+      allow read, update, delete: if false;
     }
   }
 }
 ```
 
-3. Publica las reglas
+4. Publica las reglas
+5. Si más adelante quieres un nivel todavía más fuerte contra spam, mueve la creación pública de reservas a una **Cloud Function** o a tu propio backend y deja que el cliente nunca escriba directo en `solicitudes_reserva`.
 
 ## Paso 7: Probar la Configuración
 
@@ -215,6 +299,7 @@ await window.authFirebase.guardarCarrito([
 ### Error: "permission-denied"
 - Las reglas de Firestore no permiten escritura
 - Usa las reglas del Paso 6
+- Si la colección `solicitudes_reserva` no aparece, normalmente el problema es que las reglas aún no permiten `create`
 
 ### Usuarios no se guardan en Firestore
 - Verifica que Firestore Database esté creada

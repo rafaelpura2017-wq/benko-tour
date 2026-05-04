@@ -1,0 +1,179 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function stringBetween(value, min, max) {
+      return value is string && value.size() >= min && value.size() <= max;
+    }
+
+    function stringMax(value, max) {
+      return value is string && value.size() <= max;
+    }
+
+    function nonNegativeInt(value, max) {
+      return value is int && value >= 0 && value <= max;
+    }
+
+    function nonNegativeNumber(value, max) {
+      return (value is int || value is float) && value >= 0 && value <= max;
+    }
+
+    function oneOf(value, options) {
+      return options.hasAny([value]);
+    }
+
+    function validReservationMaps() {
+      return request.resource.data.cliente is map
+        && request.resource.data.cliente.keys().hasAll(['uid', 'nombre', 'email', 'telefono', 'ciudad'])
+        && request.resource.data.cliente.keys().hasOnly(['uid', 'nombre', 'email', 'telefono', 'ciudad'])
+        && stringMax(request.resource.data.cliente.uid, 128)
+        && stringMax(request.resource.data.cliente.nombre, 120)
+        && stringMax(request.resource.data.cliente.email, 160)
+        && stringMax(request.resource.data.cliente.telefono, 30)
+        && stringMax(request.resource.data.cliente.ciudad, 80)
+        && request.resource.data.resumen is map
+        && request.resource.data.resumen.keys().hasAll(['paquete', 'paqueteNombre', 'fecha', 'idioma', 'recogida', 'viajeros', 'total'])
+        && request.resource.data.resumen.keys().hasOnly(['paquete', 'paqueteNombre', 'fecha', 'idioma', 'recogida', 'viajeros', 'total'])
+        && stringBetween(request.resource.data.resumen.paquete, 3, 40)
+        && stringBetween(request.resource.data.resumen.paqueteNombre, 3, 120)
+        && stringBetween(request.resource.data.resumen.fecha, 8, 40)
+        && stringBetween(request.resource.data.resumen.idioma, 2, 40)
+        && stringBetween(request.resource.data.resumen.recogida, 3, 160)
+        && nonNegativeInt(request.resource.data.resumen.viajeros, 35)
+        && nonNegativeNumber(request.resource.data.resumen.total, 50000000)
+        && request.resource.data.seguimiento is map
+        && request.resource.data.seguimiento.keys().hasAll(['origen', 'canal', 'ruta', 'estadoInterno'])
+        && request.resource.data.seguimiento.keys().hasOnly(['origen', 'canal', 'ruta', 'estadoInterno'])
+        && stringBetween(request.resource.data.seguimiento.origen, 3, 60)
+        && stringBetween(request.resource.data.seguimiento.canal, 3, 30)
+        && stringBetween(request.resource.data.seguimiento.ruta, 1, 120)
+        && oneOf(request.resource.data.seguimiento.estadoInterno, ['recibida', 'revisada', 'confirmada', 'pagada', 'cancelada'])
+        && request.resource.data.actividad is map
+        && request.resource.data.actividad.keys().hasAll(['enviadaDesde', 'cuentaUid', 'cuentaEmailVerificada'])
+        && request.resource.data.actividad.keys().hasOnly(['enviadaDesde', 'cuentaUid', 'cuentaEmailVerificada'])
+        && stringBetween(request.resource.data.actividad.enviadaDesde, 3, 60)
+        && stringMax(request.resource.data.actividad.cuentaUid, 128)
+        && request.resource.data.actividad.cuentaEmailVerificada is bool;
+    }
+
+    function validReservationRequest(reservationId) {
+      return request.resource.data.keys().hasAll([
+          'id',
+          'schemaVersion',
+          'tipo',
+          'origen',
+          'canal',
+          'referencia',
+          'estado',
+          'nombre',
+          'email',
+          'telefono',
+          'ciudad',
+          'fecha',
+          'paquete',
+          'paqueteNombre',
+          'idioma',
+          'recogida',
+          'comentarios',
+          'adultos',
+          'ninos',
+          'bebes',
+          'personas',
+          'precioAdulto',
+          'precioNino',
+          'precioTotal',
+          'moneda',
+          'fechaCreacion',
+          'persistencia',
+          'seguimiento',
+          'actividad',
+          'cliente',
+          'resumen',
+          'fechaActualizacion'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'id',
+          'schemaVersion',
+          'tipo',
+          'origen',
+          'canal',
+          'referencia',
+          'estado',
+          'nombre',
+          'email',
+          'telefono',
+          'ciudad',
+          'fecha',
+          'paquete',
+          'paqueteNombre',
+          'idioma',
+          'recogida',
+          'comentarios',
+          'adultos',
+          'ninos',
+          'bebes',
+          'personas',
+          'precioAdulto',
+          'precioNino',
+          'precioTotal',
+          'moneda',
+          'fechaCreacion',
+          'persistencia',
+          'seguimiento',
+          'actividad',
+          'cliente',
+          'resumen',
+          'fechaActualizacion'
+        ])
+        && request.resource.data.id == reservationId
+        && request.resource.data.referencia == reservationId
+        && request.resource.data.schemaVersion is int
+        && request.resource.data.schemaVersion >= 2
+        && request.resource.data.tipo == 'reserva-tour'
+        && stringBetween(request.resource.data.origen, 3, 60)
+        && stringBetween(request.resource.data.canal, 3, 30)
+        && oneOf(request.resource.data.estado, ['pendiente', 'recibida', 'confirmada', 'pagada', 'cancelada'])
+        && stringBetween(request.resource.data.nombre, 3, 120)
+        && stringMax(request.resource.data.email, 160)
+        && stringBetween(request.resource.data.telefono, 10, 30)
+        && stringMax(request.resource.data.ciudad, 80)
+        && stringBetween(request.resource.data.fecha, 8, 40)
+        && oneOf(request.resource.data.paquete, ['comunitaria', 'principal', 'premium'])
+        && stringBetween(request.resource.data.paqueteNombre, 3, 120)
+        && stringBetween(request.resource.data.idioma, 2, 40)
+        && stringBetween(request.resource.data.recogida, 3, 160)
+        && stringMax(request.resource.data.comentarios, 500)
+        && nonNegativeInt(request.resource.data.adultos, 20)
+        && nonNegativeInt(request.resource.data.ninos, 10)
+        && nonNegativeInt(request.resource.data.bebes, 5)
+        && request.resource.data.personas is int
+        && request.resource.data.personas >= 1
+        && request.resource.data.personas <= 35
+        && request.resource.data.personas == request.resource.data.adultos + request.resource.data.ninos + request.resource.data.bebes
+        && nonNegativeNumber(request.resource.data.precioAdulto, 10000000)
+        && nonNegativeNumber(request.resource.data.precioNino, 5000000)
+        && nonNegativeNumber(request.resource.data.precioTotal, 50000000)
+        && request.resource.data.moneda == 'COP'
+        && request.resource.data.fechaCreacion is timestamp
+        && request.resource.data.fechaActualizacion is timestamp
+        && oneOf(request.resource.data.persistencia, ['database-public', 'database-account'])
+        && validReservationMaps();
+    }
+
+    match /usuarios/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /solicitudes_reserva/{reservationId} {
+      allow create: if validReservationRequest(reservationId);
+      allow read, update, delete: if false;
+    }
+  }
+}

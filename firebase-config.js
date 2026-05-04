@@ -75,6 +75,62 @@ function sanitizeText(value) {
   return String(value || '').trim();
 }
 
+function getActiveUser() {
+  const runtimeUser = currentUser || auth?.currentUser || null;
+
+  if (runtimeUser && currentUser?.uid !== runtimeUser.uid) {
+    currentUser = runtimeUser;
+  }
+
+  return runtimeUser;
+}
+
+function esperarAutenticacion(timeoutMs = 2500) {
+  const runtimeUser = getActiveUser();
+
+  if (runtimeUser || !auth || typeof auth.onAuthStateChanged !== 'function') {
+    return Promise.resolve(runtimeUser);
+  }
+
+  return new Promise((resolve) => {
+    let settled = false;
+    let unsubscribe = null;
+
+    const finish = (user) => {
+      if (settled) {
+        return;
+      }
+
+      settled = true;
+
+      if (unsubscribe) {
+        unsubscribe();
+      }
+
+      if (user) {
+        currentUser = user;
+      }
+
+      resolve(user || getActiveUser());
+    };
+
+    const timer = setTimeout(() => {
+      finish(getActiveUser());
+    }, timeoutMs);
+
+    unsubscribe = auth.onAuthStateChanged(
+      (user) => {
+        clearTimeout(timer);
+        finish(user);
+      },
+      () => {
+        clearTimeout(timer);
+        finish(getActiveUser());
+      }
+    );
+  });
+}
+
 function validatePhoneNumber(value) {
   const phone = sanitizeText(value);
   const digits = phone.replace(/\D/g, '');
@@ -575,16 +631,18 @@ function buildUserMergePayload(data = {}, user = null, overrides = {}) {
   };
 }
 
-async function ensureCurrentUserDocument() {
-  if (!currentUser) {
+async function ensureCurrentUserDocument(user = null) {
+  const activeUser = user || getActiveUser();
+
+  if (!activeUser) {
     return null;
   }
 
-  const userRef = db.collection(COLLECTION_KEYS.users).doc(currentUser.uid);
+  const userRef = db.collection(COLLECTION_KEYS.users).doc(activeUser.uid);
   const snapshot = await userRef.get();
 
   if (!snapshot.exists) {
-    await userRef.set(buildUserDocument(currentUser, currentUser.email || '', {}), { merge: true });
+    await userRef.set(buildUserDocument(activeUser, activeUser.email || '', {}), { merge: true });
   }
 
   return userRef;
@@ -592,9 +650,10 @@ async function ensureCurrentUserDocument() {
 
 async function guardarReservaUsuario(reserva, options = {}) {
   const allowGuestFallback = options.allowGuestFallback !== false;
-  const normalizedReservation = normalizeReservationRecord(reserva, currentUser);
+  const activeUser = options.user || getActiveUser();
+  const normalizedReservation = normalizeReservationRecord(reserva, activeUser);
 
-  if (!currentUser) {
+  if (!activeUser) {
     if (allowGuestFallback) {
       guardarReservaTemporal(normalizedReservation);
       return {
@@ -613,8 +672,8 @@ async function guardarReservaUsuario(reserva, options = {}) {
   }
 
   try {
-    const userRef = await ensureCurrentUserDocument();
-    const currentData = await obtenerDatosUsuario();
+    const userRef = await ensureCurrentUserDocument(activeUser);
+    const currentData = await obtenerDatosUsuario(activeUser);
     const alreadyExists = Array.isArray(currentData?.reservas)
       ? currentData.reservas.some((item) => item.id === normalizedReservation.id)
       : false;
@@ -655,7 +714,8 @@ async function guardarReservaUsuario(reserva, options = {}) {
 
 async function guardarReservaCompleta(reserva, options = {}) {
   const allowGuestFallback = options.allowGuestFallback !== false;
-  const normalizedReservation = normalizeReservationRecord(reserva, currentUser);
+  const activeUser = options.user || await esperarAutenticacion();
+  const normalizedReservation = normalizeReservationRecord(reserva, activeUser);
   const result = {
     success: false,
     reserva: normalizedReservation,
@@ -669,7 +729,7 @@ async function guardarReservaCompleta(reserva, options = {}) {
   };
 
   try {
-    const reservationRequest = buildReservationRequestDocument(normalizedReservation, currentUser);
+    const reservationRequest = buildReservationRequestDocument(normalizedReservation, activeUser);
 
     await db.collection(COLLECTION_KEYS.reservationRequests).doc(normalizedReservation.id).set({
       ...reservationRequest,
@@ -684,8 +744,11 @@ async function guardarReservaCompleta(reserva, options = {}) {
     result.errorCode = publicError.code || '';
   }
 
-  if (currentUser) {
-    const accountResult = await guardarReservaUsuario(normalizedReservation, { allowGuestFallback: false });
+  if (activeUser) {
+    const accountResult = await guardarReservaUsuario(normalizedReservation, {
+      allowGuestFallback: false,
+      user: activeUser
+    });
 
     if (accountResult.success) {
       result.storage.account = true;
@@ -1085,24 +1148,26 @@ async function eliminarCuentaActual() {
 /**
  * Obtener datos del usuario actual
  */
-async function obtenerDatosUsuario() {
-  if (!currentUser) return null;
+async function obtenerDatosUsuario(user = null) {
+  const activeUser = user || getActiveUser();
+
+  if (!activeUser) return null;
   
   try {
-    await currentUser.reload();
-    const userRef = db.collection(COLLECTION_KEYS.users).doc(currentUser.uid);
+    await activeUser.reload();
+    const userRef = db.collection(COLLECTION_KEYS.users).doc(activeUser.uid);
     const doc = await userRef.get();
 
     if (!doc.exists) {
-      const payload = buildUserDocument(currentUser, currentUser.email || '', {});
+      const payload = buildUserDocument(activeUser, activeUser.email || '', {});
       await userRef.set(payload, { merge: true });
       const createdDoc = await userRef.get();
-      return normalizeUserData(createdDoc.data(), currentUser);
+      return normalizeUserData(createdDoc.data(), activeUser);
     }
 
-    const normalized = normalizeUserData(doc.data(), currentUser);
+    const normalized = normalizeUserData(doc.data(), activeUser);
 
-    await userRef.set(buildUserMergePayload(normalized, currentUser, {
+    await userRef.set(buildUserMergePayload(normalized, activeUser, {
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
     }), { merge: true });
 
@@ -1200,14 +1265,14 @@ function traducirErrorFirebase(codigo) {
  * Verificar si hay sesión activa
  */
 function usuarioLogueado() {
-  return currentUser !== null;
+  return getActiveUser() !== null;
 }
 
 /**
  * Obtener el usuario actual
  */
 function obtenerUsuarioActual() {
-  return currentUser;
+  return getActiveUser();
 }
 
 /**
@@ -1304,14 +1369,19 @@ function guardarReservaTemporal(reserva) {
  * Migrar reservas temporales al usuario logueado
  */
 async function migrarReservasTemporales() {
-  if (!currentUser) return;
+  const activeUser = getActiveUser();
+
+  if (!activeUser) return;
   
   const reservasTemp = JSON.parse(localStorage.getItem(TEMP_STORAGE_KEYS.reservations) || '[]');
   if (reservasTemp.length === 0) return;
   
   try {
     for (const reservaTemporal of reservasTemp) {
-      const resultado = await guardarReservaUsuario(reservaTemporal, { allowGuestFallback: false });
+      const resultado = await guardarReservaUsuario(reservaTemporal, {
+        allowGuestFallback: false,
+        user: activeUser
+      });
 
       if (!resultado.success) {
         throw new Error(resultado.error || 'No pudimos migrar una de las reservas temporales.');
@@ -1339,6 +1409,7 @@ window.authFirebase = {
   obtenerDatos: obtenerDatosUsuario,
   actualizarDatos: actualizarDatosUsuario,
   estaLogueado: usuarioLogueado,
+  esperarAuth: esperarAutenticacion,
   obtenerUsuarioActual: obtenerUsuarioActual,
   usuarioActual: obtenerUsuarioActual,
   migrarReservas: migrarReservasTemporales,

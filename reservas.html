@@ -705,10 +705,18 @@
           
           if (typeof window.authFirebase !== 'undefined') {
             try {
+              let activeAuthUser = window.authFirebase.obtenerUsuarioActual?.() || null;
+
+              if (!activeAuthUser && typeof window.authFirebase.esperarAuth === 'function') {
+                activeAuthUser = await window.authFirebase.esperarAuth();
+              }
+
               resultadoGuardado = await window.authFirebase.guardarReserva({
                 ...reserva,
                 origen: 'web-reservas',
-                canal: window.authFirebase.obtenerUsuarioActual() ? 'account' : 'guest'
+                canal: activeAuthUser ? 'account' : 'guest'
+              }, {
+                user: activeAuthUser || undefined
               });
 
               if (resultadoGuardado?.success) {
