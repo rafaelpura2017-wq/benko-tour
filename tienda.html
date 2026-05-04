@@ -338,11 +338,10 @@
         if (!user) return; // Only save if logged in
 
         try {
-          await window.authFirebase.actualizarDatos({
-            carrito: carrito,
-            carritoActualizado: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          console.log('Carrito guardado en Firebase');
+          const resultado = await window.authFirebase.guardarCarrito(carrito);
+          if (resultado?.success) {
+            console.log('Carrito guardado con estructura reforzada');
+          }
         } catch (error) {
           console.error('Error al guardar carrito:', error);
         }

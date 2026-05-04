@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="Resumen de la reserva registrada en Benko Tour con referencia, fecha, paquete y siguientes pasos."
+  >
+  <meta name="theme-color" content="#20392b">
+  <link rel="icon" type="image/jpeg" href="./assets/images/brand/favicon-benko.jpg">
+  <title>Confirmación de reserva | Benko Tour</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="./styles.css">
+  <style>
+    .benko-tour__confirmation-shell {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .benko-tour__confirmation-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(255, 218, 128, 0.2), rgba(255, 255, 255, 0)),
+        url("./assets/images/brand/patron-marca.jpg") center/cover no-repeat;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    .benko-tour__confirmation-main {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 28px;
+      padding: 56px 0 72px;
+    }
+
+    .benko-tour__confirmation-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .benko-tour__confirmation-card,
+    .benko-tour__confirmation-panel,
+    .benko-tour__confirmation-detail,
+    .benko-tour__confirmation-empty {
+      border-radius: 28px;
+      border: 1px solid rgba(70, 45, 25, 0.08);
+      background: rgba(255, 252, 247, 0.92);
+      box-shadow: 0 18px 50px rgba(43, 26, 15, 0.08);
+      backdrop-filter: blur(14px);
+    }
+
+    .benko-tour__confirmation-card {
+      padding: 32px;
+    }
+
+    .benko-tour__confirmation-panel {
+      padding: 28px;
+      background:
+        linear-gradient(180deg, rgba(26, 63, 53, 0.92), rgba(12, 38, 31, 0.96)),
+        url("./assets/images/experience/palenque-mural-fattume.png") center/cover no-repeat;
+      color: #fffaf1;
+      display: grid;
+      gap: 18px;
+      align-content: start;
+      min-height: 100%;
+    }
+
+    .benko-tour__confirmation-panel .benko-tour__card-tag {
+      background: rgba(255, 245, 223, 0.15);
+      color: #fff7e7;
+      border-color: rgba(255, 245, 223, 0.25);
+    }
+
+    .benko-tour__confirmation-title {
+      margin: 14px 0 10px;
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+      max-width: 12ch;
+    }
+
+    .benko-tour__confirmation-copy {
+      margin: 0;
+      color: #6b564b;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 62ch;
+    }
+
+    .benko-tour__confirmation-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(49, 125, 79, 0.1);
+      color: #24553b;
+      font-weight: 700;
+    }
+
+    .benko-tour__confirmation-status::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 8px rgba(36, 85, 59, 0.08);
+    }
+
+    .benko-tour__confirmation-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .benko-tour__confirmation-metric {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 251, 244, 0.76);
+      border: 1px solid rgba(70, 45, 25, 0.08);
+    }
+
+    .benko-tour__confirmation-metric span {
+      display: block;
+      font-size: 0.88rem;
+      color: #6d5a52;
+      margin-bottom: 8px;
+    }
+
+    .benko-tour__confirmation-metric strong {
+      display: block;
+      font-size: 1.22rem;
+      color: #261a12;
+      line-height: 1.35;
+    }
+
+    .benko-tour__confirmation-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .benko-tour__confirmation-detail {
+      padding: 22px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .benko-tour__confirmation-detail span {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #866756;
+      font-weight: 700;
+    }
+
+    .benko-tour__confirmation-detail strong {
+      font-size: 1.05rem;
+      line-height: 1.5;
+      color: #211612;
+    }
+
+    .benko-tour__confirmation-detail p {
+      margin: 0;
+      color: #6d5a52;
+      line-height: 1.65;
+    }
+
+    .benko-tour__confirmation-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .benko-tour__confirmation-empty {
+      padding: 40px 32px;
+      display: none;
+      gap: 16px;
+      max-width: 760px;
+    }
+
+    .benko-tour__confirmation-empty h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      line-height: 0.98;
+    }
+
+    .benko-tour__confirmation-empty p {
+      margin: 0;
+      color: #6d5a52;
+      line-height: 1.75;
+    }
+
+    .benko-tour__confirmation-steps {
+      display: grid;
+      gap: 10px;
+      color: rgba(255, 250, 241, 0.88);
+      line-height: 1.6;
+      padding-left: 18px;
+      margin: 0;
+    }
+
+    @media (max-width: 980px) {
+      .benko-tour__confirmation-hero,
+      .benko-tour__confirmation-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .benko-tour__confirmation-summary {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .benko-tour__confirmation-main {
+        padding: 36px 0 54px;
+      }
+
+      .benko-tour__confirmation-card,
+      .benko-tour__confirmation-panel,
+      .benko-tour__confirmation-detail,
+      .benko-tour__confirmation-empty {
+        border-radius: 22px;
+      }
+
+      .benko-tour__confirmation-card,
+      .benko-tour__confirmation-panel,
+      .benko-tour__confirmation-empty {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="benko-tour">
+    <div class="benko-tour__shell benko-tour__confirmation-shell">
+      <header class="benko-tour__header">
+        <div class="benko-tour__topbar">
+          <a class="benko-tour__topbar-brand" href="./index.html" aria-label="Benko Tour, ir al inicio">
+            <img
+              src="./assets/images/brand/logo-sello.jpg"
+              alt=""
+              loading="eager"
+              decoding="async"
+            >
+            <span>Benko Tour</span>
+          </a>
+          <nav class="benko-tour__menu" aria-label="Navegación principal">
+            <a href="./index.html">Inicio</a>
+            <a href="./reservas.html">Reservas</a>
+            <a href="./experiencia.html" target="_blank" rel="noopener noreferrer">Experiencia</a>
+            <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
+          </nav>
+          <a class="benko-tour__login" href="./acceso.html#acceso">Iniciar sesión</a>
+        </div>
+      </header>
+
+      <main class="benko-tour__confirmation-main">
+        <section class="benko-tour__confirmation-hero" id="confirmation-view">
+          <article class="benko-tour__confirmation-card">
+            <span class="benko-tour__pill">Reserva registrada</span>
+            <h1 class="benko-tour__confirmation-title" id="confirmation-title">Tu reserva quedó registrada satisfactoriamente</h1>
+            <p class="benko-tour__confirmation-copy" id="confirmation-message">
+              Estamos preparando el detalle de tu solicitud para que lo revises y sigas el proceso con calma.
+            </p>
+            <div class="benko-tour__confirmation-status" id="confirmation-status">Procesando resumen</div>
+
+            <div class="benko-tour__confirmation-summary" style="margin-top: 24px;">
+              <div class="benko-tour__confirmation-metric">
+                <span>Referencia</span>
+                <strong id="confirmation-reference">-</strong>
+              </div>
+              <div class="benko-tour__confirmation-metric">
+                <span>Fecha del tour</span>
+                <strong id="confirmation-date">Por confirmar</strong>
+              </div>
+              <div class="benko-tour__confirmation-metric">
+                <span>Paquete</span>
+                <strong id="confirmation-package">Ruta Benko</strong>
+              </div>
+              <div class="benko-tour__confirmation-metric">
+                <span>Total estimado</span>
+                <strong id="confirmation-total">$0 COP</strong>
+              </div>
+            </div>
+
+            <div class="benko-tour__confirmation-actions">
+              <a class="benko-tour__button" id="confirmation-whatsapp" href="./reservas.html">Confirmar por WhatsApp</a>
+              <a class="benko-tour__ghost" href="./reservas.html">Hacer otra reserva</a>
+              <a class="benko-tour__ghost benko-tour__ghost--dark" href="./index.html">Volver al inicio</a>
+            </div>
+          </article>
+
+          <aside class="benko-tour__confirmation-panel">
+            <span class="benko-tour__card-tag">Siguiente paso</span>
+            <h2 class="benko-tour__panel-title" style="margin: 0;">Tu solicitud ya está en la ruta correcta</h2>
+            <p style="margin: 0; color: rgba(255, 250, 241, 0.88); line-height: 1.7;">
+              Desde aquí puedes revisar la información clave y seguir con el canal humano de cierre para terminar de coordinar disponibilidad, pagos y detalles del grupo.
+            </p>
+            <ol class="benko-tour__confirmation-steps">
+              <li>Verifica que la fecha y el paquete estén correctos.</li>
+              <li>Guarda la referencia de la reserva para futuras consultas.</li>
+              <li>Usa el botón de WhatsApp para confirmar detalles con el equipo.</li>
+            </ol>
+          </aside>
+        </section>
+
+        <section class="benko-tour__confirmation-grid" id="confirmation-grid">
+          <article class="benko-tour__confirmation-detail">
+            <span>Viajero</span>
+            <strong id="confirmation-customer-name">-</strong>
+            <p id="confirmation-customer-phone">-</p>
+          </article>
+
+          <article class="benko-tour__confirmation-detail">
+            <span>Grupo</span>
+            <strong id="confirmation-travelers">-</strong>
+            <p id="confirmation-language">Idioma: Español</p>
+          </article>
+
+          <article class="benko-tour__confirmation-detail">
+            <span>Recogida</span>
+            <strong id="confirmation-pickup">Por definir</strong>
+            <p id="confirmation-storage">Guardado en proceso</p>
+          </article>
+
+          <article class="benko-tour__confirmation-detail">
+            <span>Solicitud creada</span>
+            <strong id="confirmation-created-at">-</strong>
+            <p>La revisaremos para validar fecha, cupos y siguientes pasos.</p>
+          </article>
+
+          <article class="benko-tour__confirmation-detail">
+            <span>Notas compartidas</span>
+            <strong id="confirmation-notes-title">Sin notas adicionales</strong>
+            <p id="confirmation-notes">No dejaste comentarios extra en esta solicitud.</p>
+          </article>
+
+          <article class="benko-tour__confirmation-detail">
+            <span>Canal recomendado</span>
+            <strong>WhatsApp Benko Tour</strong>
+            <p>Ideal para confirmar disponibilidad, resolver dudas y coordinar detalles finales del recorrido.</p>
+          </article>
+        </section>
+
+        <section class="benko-tour__confirmation-empty" id="confirmation-empty" aria-live="polite">
+          <span class="benko-tour__pill">Resumen no disponible</span>
+          <h1>No encontramos la información de esta reserva</h1>
+          <p>
+            Puede que la ventana se haya abierto sin terminar el envío o que el resumen ya no esté disponible en este navegador.
+            Puedes volver al formulario, enviar la solicitud otra vez y enseguida verás el comprobante correcto.
+          </p>
+          <div class="benko-tour__confirmation-actions">
+            <a class="benko-tour__button" href="./reservas.html">Volver al formulario</a>
+            <a class="benko-tour__ghost benko-tour__ghost--dark" href="./index.html">Ir al inicio</a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="benko-tour__footer">
+        <div class="benko-tour__footer-brand">
+          <img
+            class="benko-tour__footer-logo"
+            src="./assets/images/brand/logo-horizontal.jpg"
+            alt="Logo horizontal de Benko Tour"
+            loading="lazy"
+            decoding="async"
+          >
+          <p>
+            Turismo cultural con identidad local, reservas claras y un cierre más humano para cada visitante.
+          </p>
+        </div>
+        <div class="benko-tour__footer-links">
+          <a href="./index.html">Inicio</a>
+          <a href="./reservas.html">Reservas</a>
+          <a href="./tienda.html" target="_blank" rel="noopener noreferrer">Tienda</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const STORAGE_KEY = 'benkoTourReservationConfirmation';
+      const params = new URLSearchParams(window.location.search);
+      const requestedRef = params.get('ref') || '';
+      const storedRaw = localStorage.getItem(STORAGE_KEY);
+
+      function formatDateTime(value) {
+        if (!value) {
+          return 'Momento no disponible';
+        }
+
+        const parsed = new Date(value);
+        if (Number.isNaN(parsed.getTime())) {
+          return value;
+        }
+
+        return parsed.toLocaleString('es-CO', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit'
+        });
+      }
+
+      function setText(id, value) {
+        const element = document.getElementById(id);
+        if (element) {
+          element.textContent = value;
+        }
+      }
+
+      let payload = null;
+
+      if (storedRaw) {
+        try {
+          const parsed = JSON.parse(storedRaw);
+          const parsedReference = parsed?.reference || parsed?.id || '';
+
+          if (!requestedRef || !parsedReference || parsedReference === requestedRef) {
+            payload = parsed;
+          }
+        } catch (error) {
+          console.error('No se pudo leer la confirmación guardada', error);
+        }
+      }
+
+      if (!payload) {
+        document.getElementById('confirmation-view').style.display = 'none';
+        document.getElementById('confirmation-grid').style.display = 'none';
+        document.getElementById('confirmation-empty').style.display = 'grid';
+        return;
+      }
+
+      setText('confirmation-title', payload.title || 'Tu reserva quedó registrada satisfactoriamente');
+      setText('confirmation-message', payload.message || 'Tu solicitud ya quedó guardada en Benko Tour.');
+      setText('confirmation-status', payload.storageLabel || 'Solicitud registrada');
+      setText('confirmation-reference', payload.reference || payload.id || 'Sin referencia');
+      setText('confirmation-date', payload.displayDate || 'Fecha por confirmar');
+      setText('confirmation-package', payload.packageName || 'Ruta Benko');
+      setText('confirmation-total', payload.totalLabel || '$0 COP');
+      setText('confirmation-customer-name', payload.customerName || 'Viajero');
+      setText('confirmation-customer-phone', payload.customerPhone || 'Teléfono no disponible');
+      setText('confirmation-travelers', payload.travelerSummary || 'Grupo por confirmar');
+      setText('confirmation-language', `Idioma: ${payload.language || 'Español'}`);
+      setText('confirmation-pickup', payload.pickup || 'Por definir');
+      setText('confirmation-storage', payload.storageLabel || 'Solicitud registrada');
+      setText('confirmation-created-at', formatDateTime(payload.createdAt));
+
+      const notesTitle = document.getElementById('confirmation-notes-title');
+      const notesCopy = document.getElementById('confirmation-notes');
+      if (payload.comments) {
+        notesTitle.textContent = 'Comentarios enviados';
+        notesCopy.textContent = payload.comments;
+      } else {
+        notesTitle.textContent = 'Sin notas adicionales';
+        notesCopy.textContent = 'No dejaste comentarios extra en esta solicitud.';
+      }
+
+      const whatsappLink = document.getElementById('confirmation-whatsapp');
+      if (whatsappLink && payload.whatsappUrl) {
+        whatsappLink.href = payload.whatsappUrl;
+        whatsappLink.target = '_blank';
+        whatsappLink.rel = 'noopener noreferrer';
+      }
+    });
+  </script>
+</body>
+</html>

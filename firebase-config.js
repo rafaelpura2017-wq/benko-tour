@@ -25,6 +25,14 @@ let auth;
 let db;
 let currentUser = null;
 const MEMBER_LEVEL = 'Comunidad Benko';
+const DATA_SCHEMA_VERSION = 2;
+const TEMP_STORAGE_KEYS = {
+  reservations: 'reservasTemp'
+};
+const COLLECTION_KEYS = {
+  users: 'usuarios',
+  reservationRequests: 'solicitudes_reserva'
+};
 const DEFAULT_BENEFITS = [
   'Reserva más rápida',
   'Preferencias guardadas',
@@ -217,10 +225,222 @@ function calculateProfileCompletion(profile = {}) {
   return Math.round((completed / checkpoints.length) * 100);
 }
 
+function safePositiveInteger(value, fallback = 0) {
+  const numeric = Number(value);
+
+  if (!Number.isFinite(numeric) || numeric < 0) {
+    return fallback;
+  }
+
+  return Math.round(numeric);
+}
+
+function safeMoneyValue(value, fallback = 0) {
+  const numeric = Number(value);
+
+  if (!Number.isFinite(numeric) || numeric < 0) {
+    return fallback;
+  }
+
+  return Number(numeric);
+}
+
+function toIsoTimestamp(value) {
+  if (!value) {
+    return '';
+  }
+
+  if (typeof value === 'string') {
+    const parsedString = new Date(value);
+    return Number.isNaN(parsedString.getTime()) ? sanitizeText(value) : parsedString.toISOString();
+  }
+
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.toISOString();
+  }
+
+  if (typeof value.toDate === 'function') {
+    return value.toDate().toISOString();
+  }
+
+  if (typeof value.seconds === 'number') {
+    return new Date(value.seconds * 1000).toISOString();
+  }
+
+  return '';
+}
+
+function createRecordId(prefix = 'BNK') {
+  const left = Date.now().toString(36).toUpperCase();
+  const right = Math.random().toString(36).slice(2, 8).toUpperCase();
+  return `${prefix}-${left}-${right}`;
+}
+
+function normalizeCartItem(raw = {}) {
+  const itemId = sanitizeText(raw.id || raw.sku || raw.productoId) || createRecordId('ITEM');
+  const itemName = sanitizeText(raw.name || raw.nombre || raw.producto) || 'Producto Benko';
+  const itemPrice = safeMoneyValue(raw.price ?? raw.precio);
+  const itemQuantity = Math.max(1, safePositiveInteger(raw.quantity ?? raw.cantidad, 1));
+  const itemCurrency = sanitizeText(raw.currency || raw.moneda) || 'COP';
+
+  return {
+    id: itemId,
+    sku: itemId,
+    name: itemName,
+    price: itemPrice,
+    quantity: itemQuantity,
+    total: itemPrice * itemQuantity,
+    currency: itemCurrency
+  };
+}
+
+function normalizeCartItems(items = []) {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+
+  return items
+    .map((item) => normalizeCartItem(item))
+    .filter((item) => sanitizeText(item.name));
+}
+
+function buildCartSummary(items = []) {
+  const normalizedItems = normalizeCartItems(items);
+
+  return {
+    items: normalizedItems.length,
+    units: normalizedItems.reduce((sum, item) => sum + item.quantity, 0),
+    total: normalizedItems.reduce((sum, item) => sum + item.total, 0),
+    currency: 'COP'
+  };
+}
+
+function normalizeReservationRecord(raw = {}, user = null) {
+  const reservationId = sanitizeText(raw.id || raw.referencia || raw.reference) || createRecordId('RSV');
+  const adults = safePositiveInteger(raw.adultos ?? raw.adults);
+  const children = safePositiveInteger(raw.ninos ?? raw.children);
+  const babies = safePositiveInteger(raw.bebes ?? raw.babies);
+  const travelerFallback = adults + children + babies;
+  const totalTravelers = Math.max(travelerFallback, safePositiveInteger(raw.personas ?? raw.travelers, travelerFallback));
+  const adultPrice = safeMoneyValue(raw.precioAdulto ?? raw.adultPrice);
+  const childPrice = safeMoneyValue(raw.precioNino ?? raw.childPrice, adultPrice > 0 ? adultPrice * 0.5 : 0);
+  const totalPrice = safeMoneyValue(raw.precioTotal ?? raw.total, (adultPrice * adults) + (childPrice * children));
+  const packageCode = sanitizeText(raw.paquete || raw.package) || 'principal';
+  const packageName = sanitizeText(raw.paqueteNombre || raw.packageName) || packageCode;
+  const customerEmail = sanitizeText(raw.email || user?.email || '').toLowerCase();
+  const createdAt = toIsoTimestamp(raw.fechaCreacion || raw.createdAt || raw.fechaGuardado) || new Date().toISOString();
+
+  return {
+    id: reservationId,
+    schemaVersion: DATA_SCHEMA_VERSION,
+    tipo: 'reserva-tour',
+    origen: sanitizeText(raw.origen || raw.origin) || 'web-reservas',
+    canal: sanitizeText(raw.canal || raw.channel) || 'web',
+    referencia: sanitizeText(raw.referencia || raw.reference) || reservationId,
+    estado: sanitizeText(raw.estado || raw.status) || 'pendiente',
+    nombre: sanitizeText(raw.nombre || raw.name),
+    email: customerEmail,
+    telefono: sanitizeText(raw.telefono || raw.phone),
+    ciudad: sanitizeText(raw.ciudad || raw.city),
+    fecha: sanitizeText(raw.fecha || raw.date),
+    paquete: packageCode,
+    paqueteNombre: packageName,
+    idioma: sanitizeText(raw.idioma || raw.language) || 'Español',
+    recogida: sanitizeText(raw.recogida || raw.pickup),
+    comentarios: sanitizeText(raw.comentarios || raw.notes),
+    adultos: adults,
+    ninos: children,
+    bebes: babies,
+    personas: totalTravelers,
+    precioAdulto: adultPrice,
+    precioNino: childPrice,
+    precioTotal: totalPrice,
+    moneda: sanitizeText(raw.moneda || raw.currency) || 'COP',
+    fechaCreacion: createdAt,
+    cliente: {
+      uid: user?.uid || sanitizeText(raw.uid),
+      nombre: sanitizeText(raw.nombre || raw.name),
+      email: customerEmail,
+      telefono: sanitizeText(raw.telefono || raw.phone),
+      ciudad: sanitizeText(raw.ciudad || raw.city)
+    },
+    resumen: {
+      paquete: packageCode,
+      paqueteNombre: packageName,
+      fecha: sanitizeText(raw.fecha || raw.date),
+      idioma: sanitizeText(raw.idioma || raw.language) || 'Español',
+      recogida: sanitizeText(raw.recogida || raw.pickup),
+      viajeros: totalTravelers,
+      total: totalPrice
+    }
+  };
+}
+
+function normalizePurchaseRecord(raw = {}, user = null) {
+  const purchaseId = sanitizeText(raw.id || raw.referencia || raw.reference) || createRecordId('ORD');
+  const items = Array.isArray(raw.items)
+    ? normalizeCartItems(raw.items)
+    : Array.isArray(raw.productos)
+      ? normalizeCartItems(raw.productos)
+      : [];
+  const total = safeMoneyValue(
+    raw.total ?? raw.precioTotal,
+    items.reduce((sum, item) => sum + item.total, 0)
+  );
+  const customerEmail = sanitizeText(raw.email || user?.email || '').toLowerCase();
+  const createdAt = toIsoTimestamp(raw.fechaCreacion || raw.createdAt || raw.fechaGuardado) || new Date().toISOString();
+
+  return {
+    id: purchaseId,
+    schemaVersion: DATA_SCHEMA_VERSION,
+    tipo: 'compra-tienda',
+    origen: sanitizeText(raw.origen || raw.origin) || 'web-tienda',
+    canal: sanitizeText(raw.canal || raw.channel) || 'web',
+    referencia: sanitizeText(raw.referencia || raw.reference) || purchaseId,
+    estado: sanitizeText(raw.estado || raw.status) || 'pendiente',
+    nombre: sanitizeText(raw.nombre || raw.name || raw.producto) || 'Pedido Benko',
+    categoria: sanitizeText(raw.categoria || raw.category) || 'Tienda',
+    ciudad: sanitizeText(raw.ciudad || raw.city),
+    email: customerEmail,
+    items,
+    cantidad: safePositiveInteger(raw.cantidad, items.reduce((sum, item) => sum + item.quantity, 0)),
+    total,
+    moneda: sanitizeText(raw.moneda || raw.currency) || 'COP',
+    fechaCreacion: createdAt,
+    cliente: {
+      uid: user?.uid || sanitizeText(raw.uid),
+      email: customerEmail,
+      ciudad: sanitizeText(raw.ciudad || raw.city)
+    }
+  };
+}
+
+function buildReservationRequestDocument(reserva, user = null) {
+  const normalizedReservation = normalizeReservationRecord(reserva, user);
+
+  return {
+    ...normalizedReservation,
+    schemaVersion: DATA_SCHEMA_VERSION,
+    persistencia: user ? 'database-account' : 'database-public',
+    seguimiento: {
+      origen: sanitizeText(normalizedReservation.origen) || 'web-reservas',
+      canal: sanitizeText(normalizedReservation.canal) || (user ? 'account' : 'guest'),
+      ruta: window.location.pathname || '/reservas.html',
+      estadoInterno: 'recibida'
+    },
+    actividad: {
+      enviadaDesde: 'formulario-reservas',
+      cuentaUid: user?.uid || '',
+      cuentaEmailVerificada: Boolean(user?.emailVerified)
+    }
+  };
+}
+
 function normalizeUserData(raw = {}, user = null) {
   const preferencias = raw.preferencias || {};
-  const reservas = Array.isArray(raw.reservas) ? raw.reservas : [];
-  const compras = Array.isArray(raw.compras) ? raw.compras : [];
+  const reservas = Array.isArray(raw.reservas) ? raw.reservas.map((reserva) => normalizeReservationRecord(reserva, user)) : [];
+  const compras = Array.isArray(raw.compras) ? raw.compras.map((compra) => normalizePurchaseRecord(compra, user)) : [];
+  const carrito = normalizeCartItems(raw.carrito);
   const hasRuntimeVerificationState = typeof user?.emailVerified === 'boolean';
   const emailVerificado = hasRuntimeVerificationState
     ? Boolean(user.emailVerified)
@@ -229,12 +449,18 @@ function normalizeUserData(raw = {}, user = null) {
 
   const normalized = {
     ...raw,
+    schemaVersion: typeof raw.schemaVersion === 'number' ? raw.schemaVersion : DATA_SCHEMA_VERSION,
     nombre: sanitizeText(raw.nombre),
     telefono: sanitizeText(raw.telefono),
     ciudad: sanitizeText(raw.ciudad),
-    email: raw.email || user?.email || '',
+    email: sanitizeText(raw.email || user?.email || '').toLowerCase(),
     reservas,
     compras,
+    carrito,
+    carritoResumen: {
+      ...(raw.carritoResumen || {}),
+      ...buildCartSummary(carrito)
+    },
     recogida: sanitizeText(raw.recogida || preferencias.recogida),
     preferencias: {
       idioma: sanitizeText(preferencias.idioma || raw.idiomaPreferido) || 'Español',
@@ -250,12 +476,17 @@ function normalizeUserData(raw = {}, user = null) {
     },
     beneficios: Array.isArray(raw.beneficios) && raw.beneficios.length ? raw.beneficios : DEFAULT_BENEFITS,
     estadisticas: {
-      reservas: typeof raw.estadisticas?.reservas === 'number' ? raw.estadisticas.reservas : reservas.length,
-      compras: typeof raw.estadisticas?.compras === 'number' ? raw.estadisticas.compras : compras.length
+      reservas: reservas.length,
+      compras: compras.length
     },
     onboarding: {
       bienvenidaVista: Boolean(raw.onboarding?.bienvenidaVista),
       ultimaSeccion: raw.onboarding?.ultimaSeccion || 'acceso'
+    },
+    actividad: {
+      ultimaReservaAt: toIsoTimestamp(raw.actividad?.ultimaReservaAt || raw.ultimaReservaAt),
+      ultimaCompraAt: toIsoTimestamp(raw.actividad?.ultimaCompraAt || raw.ultimaCompraAt),
+      ultimoCarritoAt: toIsoTimestamp(raw.actividad?.ultimoCarritoAt || raw.carritoActualizado)
     }
   };
 
@@ -270,12 +501,15 @@ function normalizeUserData(raw = {}, user = null) {
 
 function buildUserDocument(user, email, datos = {}) {
   const draft = normalizeUserData({
+    schemaVersion: DATA_SCHEMA_VERSION,
     nombre: datos.nombre || datos.name,
     telefono: datos.telefono || datos.phone,
     ciudad: datos.ciudad || datos.city,
     email,
     reservas: [],
     compras: [],
+    carrito: [],
+    carritoResumen: buildCartSummary([]),
     recogida: datos.recogida || datos.pickup || '',
     preferencias: {
       idioma: datos.idioma || datos.language || 'Español',
@@ -296,6 +530,11 @@ function buildUserDocument(user, email, datos = {}) {
     onboarding: {
       bienvenidaVista: false,
       ultimaSeccion: 'acceso'
+    },
+    actividad: {
+      ultimaReservaAt: '',
+      ultimaCompraAt: '',
+      ultimoCarritoAt: ''
     }
   }, user);
 
@@ -305,6 +544,253 @@ function buildUserDocument(user, email, datos = {}) {
     ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp(),
     fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
   };
+}
+
+function buildUserMergePayload(data = {}, user = null, overrides = {}) {
+  const normalized = normalizeUserData(data, user);
+
+  return {
+    schemaVersion: DATA_SCHEMA_VERSION,
+    nombre: normalized.nombre,
+    ciudad: normalized.ciudad,
+    telefono: normalized.telefono,
+    email: normalized.email,
+    recogida: normalized.recogida,
+    preferencias: normalized.preferencias,
+    cuenta: normalized.cuenta,
+    beneficios: normalized.beneficios,
+    estadisticas: {
+      reservas: normalized.reservas.length,
+      compras: normalized.compras.length
+    },
+    progreso: {
+      perfilCompleto: calculateProfileCompletion(normalized)
+    },
+    onboarding: normalized.onboarding,
+    carrito: normalized.carrito,
+    carritoResumen: normalized.carritoResumen,
+    actividad: normalized.actividad,
+    fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp(),
+    ...overrides
+  };
+}
+
+async function ensureCurrentUserDocument() {
+  if (!currentUser) {
+    return null;
+  }
+
+  const userRef = db.collection(COLLECTION_KEYS.users).doc(currentUser.uid);
+  const snapshot = await userRef.get();
+
+  if (!snapshot.exists) {
+    await userRef.set(buildUserDocument(currentUser, currentUser.email || '', {}), { merge: true });
+  }
+
+  return userRef;
+}
+
+async function guardarReservaUsuario(reserva, options = {}) {
+  const allowGuestFallback = options.allowGuestFallback !== false;
+  const normalizedReservation = normalizeReservationRecord(reserva, currentUser);
+
+  if (!currentUser) {
+    if (allowGuestFallback) {
+      guardarReservaTemporal(normalizedReservation);
+      return {
+        success: true,
+        storage: 'temporary',
+        reserva: normalizedReservation,
+        mensaje: 'Reserva guardada temporalmente en este navegador.'
+      };
+    }
+
+    return {
+      success: false,
+      error: 'No hay sesión activa para guardar la reserva.',
+      errorCode: 'client/no-active-session'
+    };
+  }
+
+  try {
+    const userRef = await ensureCurrentUserDocument();
+    const currentData = await obtenerDatosUsuario();
+    const alreadyExists = Array.isArray(currentData?.reservas)
+      ? currentData.reservas.some((item) => item.id === normalizedReservation.id)
+      : false;
+
+    if (alreadyExists) {
+      return {
+        success: true,
+        storage: 'account',
+        reserva: normalizedReservation,
+        mensaje: 'La reserva ya estaba guardada en tu cuenta.'
+      };
+    }
+
+    await userRef.update({
+      schemaVersion: DATA_SCHEMA_VERSION,
+      reservas: firebase.firestore.FieldValue.arrayUnion(normalizedReservation),
+      'estadisticas.reservas': firebase.firestore.FieldValue.increment(1),
+      'actividad.ultimaReservaAt': firebase.firestore.FieldValue.serverTimestamp(),
+      ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp(),
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    return {
+      success: true,
+      storage: 'account',
+      reserva: normalizedReservation,
+      mensaje: 'Reserva guardada correctamente en tu cuenta.'
+    };
+  } catch (error) {
+    console.error('Error al guardar reserva del usuario:', error);
+    return {
+      success: false,
+      error: traducirErrorFirebase(error.code) || error.message,
+      errorCode: error.code
+    };
+  }
+}
+
+async function guardarReservaCompleta(reserva, options = {}) {
+  const allowGuestFallback = options.allowGuestFallback !== false;
+  const normalizedReservation = normalizeReservationRecord(reserva, currentUser);
+  const result = {
+    success: false,
+    reserva: normalizedReservation,
+    storage: {
+      public: false,
+      account: false,
+      temporary: false
+    },
+    error: '',
+    errorCode: ''
+  };
+
+  try {
+    const reservationRequest = buildReservationRequestDocument(normalizedReservation, currentUser);
+
+    await db.collection(COLLECTION_KEYS.reservationRequests).doc(normalizedReservation.id).set({
+      ...reservationRequest,
+      fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    result.storage.public = true;
+  } catch (publicError) {
+    console.error('Error al guardar solicitud pública de reserva:', publicError);
+    result.error = traducirErrorFirebase(publicError.code) || publicError.message || 'No pudimos guardar la solicitud pública.';
+    result.errorCode = publicError.code || '';
+  }
+
+  if (currentUser) {
+    const accountResult = await guardarReservaUsuario(normalizedReservation, { allowGuestFallback: false });
+
+    if (accountResult.success) {
+      result.storage.account = true;
+    } else if (!result.error) {
+      result.error = accountResult.error || 'No pudimos guardar la reserva en tu cuenta.';
+      result.errorCode = accountResult.errorCode || '';
+    }
+  } else if (!result.storage.public && allowGuestFallback) {
+    guardarReservaTemporal(normalizedReservation);
+    result.storage.temporary = true;
+  }
+
+  result.success = result.storage.public || result.storage.account || result.storage.temporary;
+  return result;
+}
+
+async function guardarCompraUsuario(compra) {
+  if (!currentUser) {
+    return {
+      success: false,
+      error: 'No hay sesión activa para guardar la compra.',
+      errorCode: 'client/no-active-session'
+    };
+  }
+
+  try {
+    const normalizedPurchase = normalizePurchaseRecord(compra, currentUser);
+    const userRef = await ensureCurrentUserDocument();
+    const currentData = await obtenerDatosUsuario();
+    const alreadyExists = Array.isArray(currentData?.compras)
+      ? currentData.compras.some((item) => item.id === normalizedPurchase.id)
+      : false;
+
+    if (alreadyExists) {
+      return {
+        success: true,
+        compra: normalizedPurchase,
+        mensaje: 'La compra ya estaba guardada en tu cuenta.'
+      };
+    }
+
+    await userRef.update({
+      schemaVersion: DATA_SCHEMA_VERSION,
+      compras: firebase.firestore.FieldValue.arrayUnion(normalizedPurchase),
+      'estadisticas.compras': firebase.firestore.FieldValue.increment(1),
+      'actividad.ultimaCompraAt': firebase.firestore.FieldValue.serverTimestamp(),
+      ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp(),
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    return {
+      success: true,
+      compra: normalizedPurchase,
+      mensaje: 'Compra guardada correctamente en tu cuenta.'
+    };
+  } catch (error) {
+    console.error('Error al guardar compra del usuario:', error);
+    return {
+      success: false,
+      error: traducirErrorFirebase(error.code) || error.message,
+      errorCode: error.code
+    };
+  }
+}
+
+async function guardarCarritoUsuario(items = []) {
+  if (!currentUser) {
+    return {
+      success: false,
+      error: 'No hay sesión activa para guardar el carrito.',
+      errorCode: 'client/no-active-session'
+    };
+  }
+
+  try {
+    const userRef = await ensureCurrentUserDocument();
+    const normalizedItems = normalizeCartItems(items);
+    const cartSummary = buildCartSummary(normalizedItems);
+
+    await userRef.set({
+      schemaVersion: DATA_SCHEMA_VERSION,
+      carrito: normalizedItems,
+      carritoResumen: cartSummary,
+      ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp(),
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    await userRef.update({
+      'actividad.ultimoCarritoAt': firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    return {
+      success: true,
+      carrito: normalizedItems,
+      resumen: cartSummary,
+      mensaje: 'Carrito guardado correctamente.'
+    };
+  } catch (error) {
+    console.error('Error al guardar carrito del usuario:', error);
+    return {
+      success: false,
+      error: traducirErrorFirebase(error.code) || error.message,
+      errorCode: error.code
+    };
+  }
 }
 
 /**
@@ -345,7 +831,7 @@ async function registrarUsuario(email, password, datos = {}) {
 
     const userCredential = await auth.createUserWithEmailAndPassword(emailCheck.value, password);
     const user = userCredential.user;
-    const userRef = db.collection('usuarios').doc(user.uid);
+    const userRef = db.collection(COLLECTION_KEYS.users).doc(user.uid);
     const payload = buildUserDocument(user, emailCheck.value, {
       ...datos,
       telefono: phoneCheck.value,
@@ -378,12 +864,9 @@ async function registrarUsuario(email, password, datos = {}) {
       }
     }, finalUser);
 
-    await userRef.set({
-      email: emailCheck.value,
-      cuenta: storedData.cuenta,
-      progreso: storedData.progreso,
+    await userRef.set(buildUserMergePayload(storedData, finalUser, {
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    }), { merge: true });
 
     return { 
       success: true, 
@@ -430,7 +913,7 @@ async function iniciarSesion(email, password) {
     const userCredential = await auth.signInWithEmailAndPassword(emailCheck.value, password);
     const user = userCredential.user;
     await user.reload();
-    const userRef = db.collection('usuarios').doc(user.uid);
+    const userRef = db.collection(COLLECTION_KEYS.users).doc(user.uid);
     const doc = await userRef.get();
 
     if (!doc.exists) {
@@ -440,25 +923,17 @@ async function iniciarSesion(email, password) {
     const refreshedDoc = await userRef.get();
     const datosUsuario = normalizeUserData(refreshedDoc.data(), user);
 
-    await userRef.set({
-      email: datosUsuario.email,
-      recogida: datosUsuario.recogida,
-      ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp(),
-      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp(),
-      preferencias: datosUsuario.preferencias,
+    await userRef.set(buildUserMergePayload({
+      ...datosUsuario,
       cuenta: {
         ...datosUsuario.cuenta,
         estado: user.emailVerified ? 'Verificada' : 'Pendiente de verificación',
         emailVerificado: Boolean(user.emailVerified)
-      },
-      progreso: {
-        perfilCompleto: calculateProfileCompletion(datosUsuario)
-      },
-      estadisticas: {
-        reservas: datosUsuario.reservas.length,
-        compras: datosUsuario.compras.length
       }
-    }, { merge: true });
+    }, user, {
+      ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp(),
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }), { merge: true });
 
     return { 
       success: true, 
@@ -538,7 +1013,7 @@ async function reenviarVerificacionCorreo() {
     await currentUser.reload();
 
     if (currentUser.emailVerified) {
-      await db.collection('usuarios').doc(currentUser.uid).set({
+      await db.collection(COLLECTION_KEYS.users).doc(currentUser.uid).set({
         cuenta: {
           emailVerificado: true,
           estado: 'Verificada'
@@ -585,12 +1060,13 @@ async function eliminarCuentaActual() {
     currentUser = null;
 
     try {
-      await db.collection('usuarios').doc(userId).delete();
+      await db.collection(COLLECTION_KEYS.users).doc(userId).delete();
     } catch (firestoreError) {
       console.warn('La cuenta de autenticación se eliminó, pero el documento del usuario no se pudo borrar automáticamente.', firestoreError);
     }
 
-    localStorage.removeItem('reservasTemp');
+    localStorage.removeItem(TEMP_STORAGE_KEYS.reservations);
+    localStorage.removeItem('benkoCart');
 
     return {
       success: true,
@@ -614,7 +1090,7 @@ async function obtenerDatosUsuario() {
   
   try {
     await currentUser.reload();
-    const userRef = db.collection('usuarios').doc(currentUser.uid);
+    const userRef = db.collection(COLLECTION_KEYS.users).doc(currentUser.uid);
     const doc = await userRef.get();
 
     if (!doc.exists) {
@@ -626,15 +1102,9 @@ async function obtenerDatosUsuario() {
 
     const normalized = normalizeUserData(doc.data(), currentUser);
 
-    await userRef.set({
-      email: normalized.email,
-      recogida: normalized.recogida,
-      preferencias: normalized.preferencias,
-      cuenta: normalized.cuenta,
-      progreso: normalized.progreso,
-      estadisticas: normalized.estadisticas,
+    await userRef.set(buildUserMergePayload(normalized, currentUser, {
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    }), { merge: true });
 
     return normalized;
   } catch (error) {
@@ -674,6 +1144,7 @@ async function actualizarDatosUsuario(datos) {
       telefono: shouldValidatePhone ? phoneCheck.value : currentData?.telefono,
       reservas: Array.isArray(datos.reservas) ? datos.reservas : currentData?.reservas,
       compras: Array.isArray(datos.compras) ? datos.compras : currentData?.compras,
+      carrito: Array.isArray(datos.carrito) ? datos.carrito : currentData?.carrito,
       recogida: datos.recogida ?? currentData?.recogida,
       preferencias: {
         ...(currentData?.preferencias || {}),
@@ -682,20 +1153,9 @@ async function actualizarDatosUsuario(datos) {
       }
     }, currentUser);
 
-    await db.collection('usuarios').doc(currentUser.uid).set({
-      nombre: mergedData.nombre,
-      ciudad: mergedData.ciudad,
-      telefono: mergedData.telefono,
-      reservas: mergedData.reservas,
-      compras: mergedData.compras,
-      recogida: mergedData.recogida,
-      preferencias: mergedData.preferencias,
-      estadisticas: mergedData.estadisticas,
-      progreso: {
-        perfilCompleto: calculateProfileCompletion(mergedData)
-      },
+    await db.collection(COLLECTION_KEYS.users).doc(currentUser.uid).set(buildUserMergePayload(mergedData, currentUser, {
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    }), { merge: true });
 
     return { success: true, mensaje: 'Datos actualizados' };
   } catch (error) {
@@ -824,12 +1284,20 @@ function actualizarUIUsuario(user) {
  * (para cuando el usuario no está logueado)
  */
 function guardarReservaTemporal(reserva) {
-  const reservas = JSON.parse(localStorage.getItem('reservasTemp') || '[]');
-  reservas.push({
+  const reservas = JSON.parse(localStorage.getItem(TEMP_STORAGE_KEYS.reservations) || '[]');
+  const normalizedReservation = normalizeReservationRecord({
     ...reserva,
-    fechaGuardado: new Date().toISOString()
+    fechaGuardado: toIsoTimestamp(reserva?.fechaGuardado) || new Date().toISOString(),
+    origen: reserva?.origen || 'web-reservas-temp',
+    canal: reserva?.canal || 'guest'
   });
-  localStorage.setItem('reservasTemp', JSON.stringify(reservas));
+  const existingIds = new Set(reservas.map((item) => item.id));
+
+  if (!existingIds.has(normalizedReservation.id)) {
+    reservas.push(normalizedReservation);
+  }
+
+  localStorage.setItem(TEMP_STORAGE_KEYS.reservations, JSON.stringify(reservas));
 }
 
 /**
@@ -838,23 +1306,19 @@ function guardarReservaTemporal(reserva) {
 async function migrarReservasTemporales() {
   if (!currentUser) return;
   
-  const reservasTemp = JSON.parse(localStorage.getItem('reservasTemp') || '[]');
+  const reservasTemp = JSON.parse(localStorage.getItem(TEMP_STORAGE_KEYS.reservations) || '[]');
   if (reservasTemp.length === 0) return;
   
   try {
-    const userRef = db.collection('usuarios').doc(currentUser.uid);
-    const doc = await userRef.get();
-    const datos = doc.data();
-    
-    const reservasActuales = datos.reservas || [];
-    const nuevasReservas = [...reservasActuales, ...reservasTemp];
-    
-    await userRef.update({
-      reservas: nuevasReservas
-    });
-    
-    // Limpiar localStorage
-    localStorage.removeItem('reservasTemp');
+    for (const reservaTemporal of reservasTemp) {
+      const resultado = await guardarReservaUsuario(reservaTemporal, { allowGuestFallback: false });
+
+      if (!resultado.success) {
+        throw new Error(resultado.error || 'No pudimos migrar una de las reservas temporales.');
+      }
+    }
+
+    localStorage.removeItem(TEMP_STORAGE_KEYS.reservations);
     console.log('Reservas temporales migradas exitosamente');
     
   } catch (error) {
@@ -877,5 +1341,8 @@ window.authFirebase = {
   estaLogueado: usuarioLogueado,
   usuarioActual: obtenerUsuarioActual,
   migrarReservas: migrarReservasTemporales,
-  guardarReservaTemp: guardarReservaTemporal
+  guardarReservaTemp: guardarReservaTemporal,
+  guardarReserva: guardarReservaCompleta,
+  guardarCompra: guardarCompraUsuario,
+  guardarCarrito: guardarCarritoUsuario
 };

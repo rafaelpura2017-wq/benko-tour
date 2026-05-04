@@ -266,7 +266,7 @@
               </div>
             </form>
 
-            <aside class="benko-tour__booking-summary">
+            <aside class="benko-tour__booking-summary" id="booking-summary">
               <span class="benko-tour__card-tag">Resumen en vivo</span>
               <h3>Estimado de la reserva</h3>
               <div class="benko-tour__summary-highlights" aria-label="Beneficios de esta reserva">
@@ -467,7 +467,7 @@
         const emailField = document.querySelector('input[name="email"]');
         const phoneField = document.querySelector('input[name="phone"]');
         const cityField = document.querySelector('input[name="city"]');
-        const pickupField = document.querySelector('select[name="pickup"]');
+        const pickupField = document.querySelector('[name="pickup"]');
 
         if (nameField && datos.nombre) nameField.value = datos.nombre;
         if (emailField && datos.email) emailField.value = datos.email;
@@ -488,17 +488,166 @@
         }
       }
 
-      // Save reservation to Firebase + WhatsApp
+      // Save reservation and open a dedicated confirmation window
       const reservationForm = document.getElementById('booking-form');
       const submitBtn = reservationForm?.querySelector('button[type="submit"]');
+      const RESERVATION_CONFIRMATION_KEY = 'benkoTourReservationConfirmation';
+
+      function formatCurrency(value) {
+        return `$${Number(value || 0).toLocaleString('es-CO')} COP`;
+      }
+
+      function formatDisplayDate(value) {
+        if (!value) {
+          return 'Fecha por confirmar';
+        }
+
+        const parsed = new Date(value);
+        if (Number.isNaN(parsed.getTime())) {
+          return value;
+        }
+
+        return parsed.toLocaleDateString('es-CO', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+      }
+
+      function buildTravelersSummary(reserva) {
+        const parts = [];
+
+        if (Number(reserva.adultos || 0) > 0) {
+          parts.push(`${reserva.adultos} adulto${reserva.adultos > 1 ? 's' : ''}`);
+        }
+
+        if (Number(reserva.ninos || 0) > 0) {
+          parts.push(`${reserva.ninos} niño${reserva.ninos > 1 ? 's' : ''}`);
+        }
+
+        if (Number(reserva.bebes || 0) > 0) {
+          parts.push(`${reserva.bebes} bebé${reserva.bebes > 1 ? 's' : ''}`);
+        }
+
+        return parts.join(' + ') || `${reserva.personas || 0} viajero(s)`;
+      }
+
+      function buildWhatsAppUrl(reserva) {
+        const precioFormateado = Number(reserva.precioTotal || 0).toLocaleString('es-CO');
+        const adultPrice = Number(reserva.precioAdulto || 0);
+        const mensaje = `Hola Benko Tour! Quiero confirmar esta reserva:%0A%0A` +
+          `*Nombre:* ${reserva.nombre || 'Viajero'}%0A` +
+          `*Teléfono:* ${reserva.telefono || 'Sin teléfono'}%0A` +
+          `*Fecha:* ${reserva.fecha || 'Por confirmar'}%0A` +
+          `*Paquete:* ${reserva.paqueteNombre || reserva.paquete || 'Ruta Benko'}%0A%0A` +
+          `*👥 Viajeros:*%0A` +
+          `• ${reserva.adultos || 0} Adulto${Number(reserva.adultos || 0) > 1 ? 's' : ''} ($${adultPrice.toLocaleString('es-CO')} c/u)%0A` +
+          (Number(reserva.ninos || 0) > 0 ? `• ${reserva.ninos} Niño${Number(reserva.ninos || 0) > 1 ? 's' : ''} (50% descuento)%0A` : '') +
+          (Number(reserva.bebes || 0) > 0 ? `• ${reserva.bebes} Bebé${Number(reserva.bebes || 0) > 1 ? 's' : ''} 0-2 años *(GRATIS)*%0A` : '') +
+          `%0A*💰 Total estimado: $${precioFormateado} COP*%0A` +
+          `*Recogida:* ${reserva.recogida || 'Por definir'}%0A` +
+          (reserva.comentarios ? `*Comentarios:* ${reserva.comentarios}%0A` : '');
+
+        return `https://wa.me/573245065560?text=${mensaje}`;
+      }
+
+      function openReservationLoadingWindow() {
+        const popup = window.open('', '_blank');
+
+        if (!popup) {
+          return null;
+        }
+
+        popup.document.write(`
+          <!DOCTYPE html>
+          <html lang="es">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Guardando tu reserva | Benko Tour</title>
+            <style>
+              body {
+                margin: 0;
+                min-height: 100vh;
+                display: grid;
+                place-items: center;
+                background: linear-gradient(180deg, #f4ecdf 0%, #fcfaf7 100%);
+                color: #201814;
+                font-family: "DM Sans", "Segoe UI", sans-serif;
+              }
+              .card {
+                width: min(92vw, 520px);
+                padding: 32px;
+                border-radius: 28px;
+                background: rgba(255, 253, 249, 0.96);
+                box-shadow: 0 20px 50px rgba(38, 26, 18, 0.12);
+                text-align: center;
+              }
+              .spinner {
+                width: 56px;
+                height: 56px;
+                margin: 0 auto 18px;
+                border-radius: 50%;
+                border: 4px solid rgba(157, 76, 31, 0.18);
+                border-top-color: #9d4c1f;
+                animation: spin 0.9s linear infinite;
+              }
+              @keyframes spin {
+                to { transform: rotate(360deg); }
+              }
+              h1 {
+                margin: 0 0 12px;
+                font-size: 1.9rem;
+              }
+              p {
+                margin: 0;
+                color: #6d5a52;
+                line-height: 1.6;
+                font-size: 1rem;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="card">
+              <div class="spinner" aria-hidden="true"></div>
+              <h1>Guardando tu reserva</h1>
+              <p>Estamos registrando tu solicitud y preparando el resumen para que la revises con calma.</p>
+            </div>
+          </body>
+          </html>
+        `);
+        popup.document.close();
+        return popup;
+      }
+
+      function openReservationConfirmation(payload, popup) {
+        localStorage.setItem(RESERVATION_CONFIRMATION_KEY, JSON.stringify(payload));
+        const confirmationUrl = `./confirmacion-reserva.html?ref=${encodeURIComponent(payload.reference || payload.id || '')}`;
+
+        if (popup && !popup.closed) {
+          popup.location.href = confirmationUrl;
+          return;
+        }
+
+        const fallbackWindow = window.open(confirmationUrl, '_blank', 'noopener');
+        if (!fallbackWindow) {
+          window.location.href = confirmationUrl;
+        }
+      }
       
       if (reservationForm) {
         reservationForm.addEventListener('submit', async function(e) {
           // SIEMPRE prevenir envío por defecto - nosotros controlamos el flujo
           e.preventDefault();
+
+          if (!this.reportValidity()) {
+            return;
+          }
+
+          const loadingPopup = openReservationLoadingWindow();
+          reservationForm.querySelector('.js-reservation-inline-status')?.remove();
           
           // Recoger datos del formulario
-          // Obtener valores de viajeros
           const adults = document.getElementById('adults')?.value || 0;
           const children = document.getElementById('children')?.value || 0;
           const toddlers = document.getElementById('toddlers')?.value || 0;
@@ -513,12 +662,13 @@
 
           const reserva = {
             nombre: this.querySelector('[name="name"]')?.value,
-            email: this.querySelector('[name="email"]')?.value,
+            email: this.querySelector('[name="email"]')?.value || '',
             telefono: this.querySelector('[name="phone"]')?.value,
-            ciudad: this.querySelector('[name="city"]')?.value,
+            ciudad: this.querySelector('[name="city"]')?.value || '',
             fecha: this.querySelector('[name="date"]')?.value,
             paquete: this.querySelector('[name="package"]')?.value,
-            paqueteNombre: selectedOption?.text?.split(' - ')[0] || '',
+            paqueteNombre: selectedOption?.dataset?.label || selectedOption?.text || '',
+            idioma: this.querySelector('[name="language"]')?.value || 'Español',
             adultos: parseInt(adults),
             ninos: parseInt(children),
             bebes: parseInt(toddlers), // 0-2 años gratis
@@ -539,79 +689,96 @@
           }
 
           // ====== PASO 1: GUARDAR EN FIREBASE ======
-          let guardadoEnFirebase = false;
+          let estadoGuardado = 'error';
+          let resultadoGuardado = null;
           
           if (typeof window.authFirebase !== 'undefined') {
-            const user = window.authFirebase.obtenerUsuarioActual();
-            
-            if (user) {
-              try {
-                // Obtener reservas actuales
-                const datos = await window.authFirebase.obtenerDatos();
-                const reservas = datos?.reservas || [];
-                
-                // Agregar nueva reserva
-                reservas.push({
-                  ...reserva,
-                  fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                // Guardar en Firebase
-                await window.authFirebase.actualizarDatos({ reservas: reservas });
-                guardadoEnFirebase = true;
-                console.log('✓ Reserva guardada en Firebase');
-                
-              } catch (error) {
-                console.error('Error al guardar en Firebase:', error);
+            try {
+              resultadoGuardado = await window.authFirebase.guardarReserva({
+                ...reserva,
+                origen: 'web-reservas',
+                canal: window.authFirebase.obtenerUsuarioActual() ? 'account' : 'guest'
+              });
+
+              if (resultadoGuardado?.success) {
+                if (resultadoGuardado.storage?.public) {
+                  estadoGuardado = 'database';
+                } else if (resultadoGuardado.storage?.account) {
+                  estadoGuardado = 'account';
+                } else if (resultadoGuardado.storage?.temporary) {
+                  estadoGuardado = 'temporary';
+                }
+                console.log('✓ Reserva guardada con estructura reforzada');
               }
+            } catch (error) {
+              console.error('Error al guardar en Firebase:', error);
             }
           }
 
           // Mostrar mensaje de estado
           const statusMsg = document.createElement('div');
-          if (guardadoEnFirebase) {
+          statusMsg.className = 'js-reservation-inline-status';
+          if (estadoGuardado === 'database' || estadoGuardado === 'account') {
             statusMsg.style.cssText = 'background: #e8f5e9; border-left: 3px solid #4caf50; padding: 16px; border-radius: 8px; margin: 16px 0; animation: fadeIn 0.5s ease;';
             statusMsg.innerHTML = `
-              <strong style="color: #2e7d32; font-size: 1.1rem;">✓ Reserva guardada en tu cuenta</strong><br>
-              <span style="color: #666;">Abriendo WhatsApp para confirmar con Benko Tour...</span>
+              <strong style="color: #2e7d32; font-size: 1.1rem;">✓ Reserva registrada satisfactoriamente</strong><br>
+              <span style="color: #666;">Abrimos una ventana nueva con el resumen de tu solicitud.</span>
+            `;
+          } else if (estadoGuardado === 'temporary') {
+            statusMsg.style.cssText = 'background: #e8f1ff; border-left: 3px solid #2563eb; padding: 16px; border-radius: 8px; margin: 16px 0;';
+            statusMsg.innerHTML = `
+              <strong style="color: #1d4ed8;">✓ Reserva guardada temporalmente</strong><br>
+              <span style="color: #666;">Abrimos una ventana con tu resumen. Si luego inicias sesión, esta reserva puede migrarse a tu cuenta.</span>
             `;
           } else {
             statusMsg.style.cssText = 'background: #fff3e0; border-left: 3px solid #ff9800; padding: 16px; border-radius: 8px; margin: 16px 0;';
             statusMsg.innerHTML = `
-              <strong style="color: #e65100;">⚠ Enviando por WhatsApp</strong><br>
-              <span style="color: #666;">Inicia sesión para guardar reservas en tu cuenta.</span>
+              <strong style="color: #e65100;">⚠ No pudimos completar el guardado</strong><br>
+              <span style="color: #666;">Revisa tu conexión e intenta nuevamente para registrar la reserva en la base de datos.</span>
             `;
           }
           reservationForm.appendChild(statusMsg);
 
-          // ====== PASO 2: ABRIR WHATSAPP ======
-          // Construir mensaje de WhatsApp con detalles de viajeros
-          const precioFormateado = precioTotal.toLocaleString('es-CO');
-          const mensaje = `Hola Benko Tour! Quiero hacer una reserva:%0A%0A` +
-            `*Nombre:* ${reserva.nombre}%0A` +
-            `*Email:* ${reserva.email}%0A` +
-            `*Teléfono:* ${reserva.telefono}%0A` +
-            `*Ciudad:* ${reserva.ciudad}%0A` +
-            `*Fecha:* ${reserva.fecha}%0A` +
-            `*Paquete:* ${reserva.paqueteNombre}%0A%0A` +
-            `*👥 Viajeros:*%0A` +
-            `• ${reserva.adultos} Adulto${reserva.adultos > 1 ? 's' : ''} ($${adultPrice.toLocaleString('es-CO')} c/u)%0A` +
-            (reserva.ninos > 0 ? `• ${reserva.ninos} Niño${reserva.ninos > 1 ? 's' : ''} (50% descuento)%0A` : '') +
-            (reserva.bebes > 0 ? `• ${reserva.bebes} Bebé${reserva.bebes > 1 ? 's' : ''} 0-2 años *(GRATIS)*%0A` : '') +
-            `%0A*💰 Total a pagar: $${precioFormateado} COP*%0A%0A` +
-            `*Punto de recogida:* ${reserva.recogida}%0A` +
-            (reserva.comentarios ? `*Comentarios:* ${reserva.comentarios}%0A` : '');
-          
-          // Abrir WhatsApp después de 1.5 segundos
-          setTimeout(() => {
-            window.open(`https://wa.me/573245065560?text=${mensaje}`, '_blank');
-            
-            // Restaurar botón
-            if (submitBtn) {
-              submitBtn.innerHTML = 'Enviar reserva';
-              submitBtn.disabled = false;
-            }
-          }, 1500);
+          if (submitBtn) {
+            submitBtn.innerHTML = 'Enviar reserva';
+            submitBtn.disabled = false;
+          }
+
+          if (estadoGuardado === 'database' || estadoGuardado === 'account' || estadoGuardado === 'temporary') {
+            const reservaGuardada = resultadoGuardado?.reserva || reserva;
+            const confirmationPayload = {
+              id: reservaGuardada.id || resultadoGuardado?.reserva?.id || '',
+              reference: reservaGuardada.referencia || reservaGuardada.id || '',
+              status: estadoGuardado,
+              title: estadoGuardado === 'temporary'
+                ? 'Tu reserva quedó guardada temporalmente'
+                : 'Tu reserva quedó registrada satisfactoriamente',
+              message: estadoGuardado === 'temporary'
+                ? 'Ya dejamos tu solicitud guardada y lista para revisarla. Cuando inicies sesión podremos vincularla mejor a tu cuenta.'
+                : 'Tu solicitud ya quedó registrada en Benko Tour. Aquí tienes el resumen para revisarlo con calma.',
+              createdAt: new Date().toISOString(),
+              reservationDateRaw: reservaGuardada.fecha || '',
+              displayDate: formatDisplayDate(reservaGuardada.fecha),
+              travelerSummary: buildTravelersSummary(reservaGuardada),
+              totalLabel: formatCurrency(reservaGuardada.precioTotal),
+              packageName: reservaGuardada.paqueteNombre || reservaGuardada.paquete,
+              language: reservaGuardada.idioma || 'Español',
+              customerName: reservaGuardada.nombre || 'Viajero',
+              customerPhone: reservaGuardada.telefono || 'No compartido',
+              pickup: reservaGuardada.recogida || 'Por definir',
+              comments: reservaGuardada.comentarios || '',
+              storageLabel: estadoGuardado === 'database'
+                ? 'Base de datos de reservas'
+                : estadoGuardado === 'account'
+                  ? 'Cuenta del viajero'
+                  : 'Guardado temporal',
+              whatsappUrl: buildWhatsAppUrl(reservaGuardada)
+            };
+
+            openReservationConfirmation(confirmationPayload, loadingPopup);
+          } else if (loadingPopup && !loadingPopup.closed) {
+            loadingPopup.close();
+          }
         });
       }
 

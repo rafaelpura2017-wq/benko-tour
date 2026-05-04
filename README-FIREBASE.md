@@ -89,18 +89,72 @@ Cuando un usuario se registra, se guarda en Firestore:
 ```
 colección: usuarios
   documento: {uid-del-usuario}
+    ├── schemaVersion: 2
     ├── nombre: "Juan Pérez"
     ├── email: "juan@email.com"
     ├── telefono: "+57 300 123 4567"
     ├── ciudad: "Bogotá"
+    ├── recogida: "Bocagrande"
     ├── fechaRegistro: timestamp
     ├── ultimoAcceso: timestamp
-    ├── reservas: []
+    ├── fechaActualizacion: timestamp
+    ├── reservas: [
+    │   {
+    │     id: "RSV-...",
+    │     tipo: "reserva-tour",
+    │     estado: "pendiente",
+    │     paquete: "principal",
+    │     paqueteNombre: "Ruta principal",
+    │     fecha: "2026-05-10",
+    │     personas: 4,
+    │     precioTotal: 1280000,
+    │     cliente: {
+    │       uid: "...",
+    │       nombre: "Juan Pérez",
+    │       email: "juan@email.com"
+    │     }
+    │   }
+    │ ]
+    ├── compras: []
+    ├── carrito: [
+    │   {
+    │     id: "tambor-alegre",
+    │     name: "Tambor alegre artesanal",
+    │     price: 395000,
+    │     quantity: 1,
+    │     total: 395000
+    │   }
+    │ ]
+    ├── carritoResumen: {
+    │   items: 1,
+    │   units: 1,
+    │   total: 395000,
+    │   currency: "COP"
+    │ }
+    ├── estadisticas: {
+    │   reservas: 1,
+    │   compras: 0
+    │ }
+    ├── cuenta: {
+    │   codigoMiembro: "BENKO-ABC123",
+    │   estado: "Pendiente de verificación",
+    │   nivel: "Comunidad Benko",
+    │   emailVerificado: false
+    │ }
+    ├── progreso: {
+    │   perfilCompleto: 83
+    │ }
     └── preferencias: {
         idioma: "español",
         recogida: "Bocagrande"
     }
 ```
+
+Notas importantes:
+- `reservas` ya no se reemplaza completo cada vez: ahora se agregan registros estructurados para evitar perder datos.
+- `carrito` se guarda como snapshot limpio con resumen de totales.
+- `schemaVersion` ayuda a migrar el modelo de datos sin romper cuentas anteriores.
+- `estadisticas`, `progreso` y `cuenta` se recalculan para mantener la cuenta coherente.
 
 ## Funciones Disponibles
 
@@ -130,6 +184,22 @@ if (window.authFirebase.estaLogueado()) {
 await window.authFirebase.actualizarDatos({
   ciudad: "Barranquilla"
 });
+
+// Guardar una reserva de forma robusta
+await window.authFirebase.guardarReserva({
+  nombre: "Juan",
+  telefono: "+57 300...",
+  fecha: "2026-05-10",
+  paquete: "principal",
+  paqueteNombre: "Ruta principal",
+  personas: 4,
+  precioTotal: 1280000
+});
+
+// Guardar el carrito del usuario
+await window.authFirebase.guardarCarrito([
+  { id: "tambor-alegre", name: "Tambor alegre artesanal", price: 395000, quantity: 1 }
+]);
 ```
 
 ## Troubleshooting
