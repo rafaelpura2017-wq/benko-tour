@@ -155,7 +155,7 @@
           </div>
 
           <div class="benko-tour__booking-layout">
-            <form class="benko-tour__booking-form" id="booking-form">
+            <form class="benko-tour__booking-form" id="booking-form" data-custom-submit-flow="confirmation">
               <div class="benko-tour__field-grid">
                 <label class="benko-tour__field">
                   <span>Nombre completo</span>
@@ -639,6 +639,7 @@
         reservationForm.addEventListener('submit', async function(e) {
           // SIEMPRE prevenir envío por defecto - nosotros controlamos el flujo
           e.preventDefault();
+          e.stopImmediatePropagation();
 
           if (!this.reportValidity()) {
             return;
@@ -779,7 +780,7 @@
           } else if (loadingPopup && !loadingPopup.closed) {
             loadingPopup.close();
           }
-        });
+        }, true);
       }
 
       // ===== MENÚ MÓVIL SIDEBAR =====

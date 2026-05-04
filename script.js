@@ -1007,7 +1007,7 @@ if (dateInput) {
   dateInput.min = new Date().toISOString().split("T")[0];
 }
 
-if (bookingForm) {
+if (bookingForm && !bookingForm.hasAttribute("data-custom-submit-flow")) {
   bookingForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     await handleReservationSubmit("auto");
