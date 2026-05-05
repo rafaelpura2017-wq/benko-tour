@@ -144,6 +144,21 @@
               <a class="benko-tour__button" href="#reservas">Ir al formulario</a>
               <a class="benko-tour__ghost" href="./index.html#opiniones" target="_blank" rel="noopener noreferrer">Ver opiniones</a>
             </div>
+
+            <div class="benko-tour__reservation-confidence" aria-label="Señales de confianza para reservar">
+              <div class="benko-tour__reservation-confidence-item">
+                <strong>Respuesta humana</strong>
+                <span>Tu solicitud la revisa el equipo local antes de confirmarla.</span>
+              </div>
+              <div class="benko-tour__reservation-confidence-item">
+                <strong>Sin pago obligatorio</strong>
+                <span>Puedes reservar primero y decidir el pago después si lo prefieres.</span>
+              </div>
+              <div class="benko-tour__reservation-confidence-item">
+                <strong>Datos más claros</strong>
+                <span>Pedimos solo lo necesario para validar disponibilidad y coordinar mejor.</span>
+              </div>
+            </div>
           </div>
 
           <aside class="benko-tour__hero-panel" aria-label="Lo que incluye la reserva">
@@ -159,6 +174,30 @@
               <li>Canales de salida listos para cerrar la venta</li>
               <li>Pago preparado para Wompi o Mercado Pago</li>
             </ul>
+
+            <div class="benko-tour__reservation-process" aria-label="Qué pasa después de reservar">
+              <div class="benko-tour__reservation-process-item">
+                <span>01</span>
+                <div>
+                  <strong>Envías tu solicitud</strong>
+                  <p>Nos compartes fecha, grupo y punto de recogida.</p>
+                </div>
+              </div>
+              <div class="benko-tour__reservation-process-item">
+                <span>02</span>
+                <div>
+                  <strong>Validamos disponibilidad</strong>
+                  <p>Revisamos cupos, idioma y logística real del día.</p>
+                </div>
+              </div>
+              <div class="benko-tour__reservation-process-item">
+                <span>03</span>
+                <div>
+                  <strong>Confirmas tu cierre</strong>
+                  <p>Sigues por WhatsApp, correo o pago online según te convenga.</p>
+                </div>
+              </div>
+            </div>
           </aside>
         </section>
 
@@ -176,6 +215,14 @@
           <div class="benko-tour__booking-layout">
             <form class="benko-tour__booking-form" id="booking-form" data-custom-submit-flow="confirmation">
               <div class="benko-tour__field-grid">
+                <div class="benko-tour__booking-divider benko-tour__field--full">
+                  <span class="benko-tour__booking-divider-step">Paso 1</span>
+                  <div>
+                    <strong>Datos de contacto del viajero</strong>
+                    <p>Esto nos ayuda a responderte mejor, guardar la reserva y coordinar tu salida sin confusiones.</p>
+                  </div>
+                </div>
+
                 <label class="benko-tour__field">
                   <span>Nombre completo</span>
                   <input type="text" name="name" placeholder="Tu nombre" required>
@@ -187,9 +234,27 @@
                 </label>
 
                 <label class="benko-tour__field">
+                  <span>Email</span>
+                  <input type="email" name="email" placeholder="tunombre@email.com">
+                </label>
+
+                <label class="benko-tour__field">
+                  <span>Ciudad</span>
+                  <input type="text" name="city" placeholder="Ciudad de origen o residencia">
+                </label>
+
+                <label class="benko-tour__field">
                   <span>Fecha del tour</span>
                   <input type="date" name="date" required>
                 </label>
+
+                <div class="benko-tour__booking-divider benko-tour__field--full">
+                  <span class="benko-tour__booking-divider-step">Paso 2</span>
+                  <div>
+                    <strong>Configura tu experiencia</strong>
+                    <p>Elige tamaño del grupo, ruta, idioma y recogida para calcular un estimado más real.</p>
+                  </div>
+                </div>
 
                 <div class="benko-tour__field benko-tour__field--full">
                   <div class="benko-tour__field-heading">
@@ -264,6 +329,14 @@
                   <input type="text" name="pickup" placeholder="Hotel, barrio o punto de encuentro" required>
                 </label>
 
+                <div class="benko-tour__booking-divider benko-tour__field--full">
+                  <span class="benko-tour__booking-divider-step">Paso 3</span>
+                  <div>
+                    <strong>Notas y contexto útil</strong>
+                    <p>Aquí puedes avisarnos si viajas con niños, si el grupo tiene un enfoque especial o si necesitas algo puntual.</p>
+                  </div>
+                </div>
+
                 <label class="benko-tour__field benko-tour__field--full">
                   <span>Notas adicionales</span>
                   <textarea name="notes" rows="4" placeholder="Ejemplo: viaja un niño, dieta vegetariana, grupo empresarial, etc."></textarea>
@@ -280,8 +353,14 @@
                 </button>
               </div>
 
+              <div class="benko-tour__booking-microcopy" aria-label="Confianza y privacidad de la reserva">
+                <span>Confirmación manual del equipo</span>
+                <span>Tus datos se usan solo para gestionar esta reserva</span>
+                <span>Puedes pedir cierre por WhatsApp antes de pagar</span>
+              </div>
+
               <div class="benko-tour__status" id="booking-status" aria-live="polite">
-                Completa tus datos para enviar la reserva por el canal configurado.
+                Completa tus datos para enviar la reserva con mejor contexto. Si inicias sesión, también quedará guardada en tu historial.
               </div>
             </form>
 
@@ -293,9 +372,40 @@
                 <span class="benko-tour__summary-highlight">Respuesta por WhatsApp</span>
                 <span class="benko-tour__summary-highlight">Pago opcional</span>
               </div>
+
+              <div class="benko-tour__summary-trust">
+                <div class="benko-tour__summary-trust-item">
+                  <strong>Reserva directa</strong>
+                  <span>Sin intermediarios ni pasos confusos.</span>
+                </div>
+                <div class="benko-tour__summary-trust-item">
+                  <strong>Revisión real</strong>
+                  <span>La validación final la hace el equipo de Benko Tour.</span>
+                </div>
+              </div>
+
               <div class="benko-tour__estimate" aria-live="polite">
                 <strong id="estimate-total">$640.000 COP</strong>
                 <span id="estimate-caption">2 viajeros en Ruta Principal</span>
+              </div>
+
+              <div class="benko-tour__summary-details" aria-label="Detalle rápido de la reserva">
+                <div class="benko-tour__summary-detail">
+                  <span class="benko-tour__summary-detail-label">Fecha</span>
+                  <strong class="benko-tour__summary-detail-value" id="summary-date">Por confirmar</strong>
+                </div>
+                <div class="benko-tour__summary-detail">
+                  <span class="benko-tour__summary-detail-label">Idioma</span>
+                  <strong class="benko-tour__summary-detail-value" id="summary-language">Español</strong>
+                </div>
+                <div class="benko-tour__summary-detail">
+                  <span class="benko-tour__summary-detail-label">Recogida</span>
+                  <strong class="benko-tour__summary-detail-value" id="summary-pickup">Por definir</strong>
+                </div>
+                <div class="benko-tour__summary-detail">
+                  <span class="benko-tour__summary-detail-label">Grupo</span>
+                  <strong class="benko-tour__summary-detail-value" id="summary-travelers">2 adultos</strong>
+                </div>
               </div>
 
               <div class="benko-tour__service-list">
@@ -310,6 +420,10 @@
                 <div class="benko-tour__service-row">
                   <strong>Reserva sugerida</strong>
                   <span>48 horas antes o más para grupos</span>
+                </div>
+                <div class="benko-tour__service-row">
+                  <strong>Canal de soporte</strong>
+                  <span>WhatsApp directo para dudas antes del pago</span>
                 </div>
               </div>
 
@@ -328,9 +442,13 @@
                 <p class="benko-tour__payment-note">Si prefieres una validación humana primero, usa también el botón de WhatsApp del formulario.</p>
               </div>
 
-              <p class="benko-tour__note">
-                Si ya guardaste tus datos en la sesión del sitio, esta reserva se completa más rápido cuando vuelves.
-              </p>
+              <div class="benko-tour__booking-assurance">
+                <strong>Más confianza para el viajero</strong>
+                <p>
+                  Si ya guardaste tus datos en la sesión del sitio, esta reserva se completa más rápido cuando vuelves.
+                  Y si todavía no quieres pagar, puedes dejar primero la solicitud y cerrar después con el equipo.
+                </p>
+              </div>
             </aside>
           </div>
         </section>
@@ -380,12 +498,36 @@
       const toddlersInput = document.getElementById('toddlers');
       const travelersInput = document.getElementById('travelers');
       const packageSelect = document.getElementById('package-select');
+      const languageSelect = document.querySelector('[name="language"]');
+      const dateInput = document.querySelector('[name="date"]');
+      const pickupInput = document.querySelector('[name="pickup"]');
       const estimateTotal = document.getElementById('estimate-total');
       const estimateCaption = document.getElementById('estimate-caption');
+      const summaryDate = document.getElementById('summary-date');
+      const summaryLanguage = document.getElementById('summary-language');
+      const summaryPickup = document.getElementById('summary-pickup');
+      const summaryTravelers = document.getElementById('summary-travelers');
 
       // Tarifa para niños (50% del precio de adulto)
       // Bebés (0-2 años) son gratis
       const CHILD_DISCOUNT = 0.5;
+
+      function formatSummaryDate(value) {
+        if (!value) {
+          return 'Por confirmar';
+        }
+
+        const parsed = new Date(value + 'T00:00:00');
+        if (Number.isNaN(parsed.getTime())) {
+          return value;
+        }
+
+        return parsed.toLocaleDateString('es-CO', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+      }
 
       // Función para actualizar el campo hidden de travelers (todos incluidos)
       function updateTravelers() {
@@ -420,6 +562,34 @@
         estimateCaption.textContent = `${captionParts.join(' + ')} en ${packageName}`;
       }
 
+      function updateSummarySnapshot() {
+        const adults = parseInt(adultsInput.value) || 0;
+        const children = parseInt(childrenInput.value) || 0;
+        const toddlers = parseInt(toddlersInput.value) || 0;
+        const parts = [];
+
+        if (adults > 0) parts.push(`${adults} adulto${adults > 1 ? 's' : ''}`);
+        if (children > 0) parts.push(`${children} niño${children > 1 ? 's' : ''}`);
+        if (toddlers > 0) parts.push(`${toddlers} bebé${toddlers > 1 ? 's' : ''}`);
+
+        if (summaryTravelers) {
+          summaryTravelers.textContent = parts.join(' + ') || 'Sin viajeros';
+        }
+
+        if (summaryDate) {
+          summaryDate.textContent = formatSummaryDate(dateInput?.value);
+        }
+
+        if (summaryLanguage) {
+          summaryLanguage.textContent = languageSelect?.value || 'Español';
+        }
+
+        if (summaryPickup) {
+          const pickupValue = (pickupInput?.value || '').trim();
+          summaryPickup.textContent = pickupValue || 'Por definir';
+        }
+      }
+
       // Manejar clicks en botones de contador
       document.querySelectorAll('.benko-tour__counter-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -440,14 +610,28 @@
 
           updateTravelers();
           updateEstimate();
+          updateSummarySnapshot();
         });
       });
 
       // Actualizar cuando cambie el paquete
-      packageSelect.addEventListener('change', updateEstimate);
+      packageSelect.addEventListener('change', function() {
+        updateEstimate();
+        updateSummarySnapshot();
+      });
+
+      [languageSelect, dateInput, pickupInput].forEach(function(field) {
+        field?.addEventListener('input', updateSummarySnapshot);
+        field?.addEventListener('change', updateSummarySnapshot);
+      });
+
+      if (dateInput) {
+        dateInput.min = new Date().toISOString().split('T')[0];
+      }
 
       // Calcular inicial
       updateEstimate();
+      updateSummarySnapshot();
     });
 
     // ===== FIREBASE INTEGRATION =====
@@ -497,6 +681,10 @@
         if (phoneField && datos.telefono) phoneField.value = datos.telefono;
         if (cityField && datos.ciudad) cityField.value = datos.ciudad;
         if (pickupField && datos.recogida) pickupField.value = datos.recogida;
+
+        [emailField, cityField, pickupField].forEach(function(field) {
+          field?.dispatchEvent(new Event('input', { bubbles: true }));
+        });
 
         // Show notification that data was loaded
         const bookingSummary = document.getElementById('booking-summary');

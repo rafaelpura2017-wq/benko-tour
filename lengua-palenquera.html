@@ -337,7 +337,7 @@
 
     .benko-tour__language-dictionary-stats {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
     }
 
@@ -408,6 +408,79 @@
       justify-content: space-between;
     }
 
+    .benko-tour__language-filter-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .benko-tour__language-theme-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .benko-tour__language-theme-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .benko-tour__language-theme-filter {
+      display: inline-grid;
+      gap: 2px;
+      min-width: 136px;
+      padding: 12px 15px;
+      border: 1px solid rgba(255, 214, 138, 0.14);
+      border-radius: 18px;
+      background: rgba(255, 244, 222, 0.12);
+      color: rgba(255, 244, 222, 0.92);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .benko-tour__language-theme-filter:hover,
+    .benko-tour__language-theme-filter:focus-visible {
+      transform: translateY(-1px);
+      background: rgba(255, 199, 92, 0.2);
+      border-color: rgba(255, 199, 92, 0.4);
+      box-shadow: 0 12px 22px rgba(20, 10, 4, 0.14);
+      outline: none;
+    }
+
+    .benko-tour__language-theme-filter.is-active {
+      background: linear-gradient(135deg, rgba(255, 190, 82, 0.98), rgba(242, 122, 89, 0.94));
+      border-color: rgba(255, 190, 82, 0.96);
+      color: #2f140b;
+      box-shadow: 0 16px 26px rgba(210, 104, 68, 0.22);
+    }
+
+    .benko-tour__language-theme-filter strong {
+      display: block;
+      font-size: 0.95rem;
+      line-height: 1.1;
+    }
+
+    .benko-tour__language-theme-filter span {
+      font-size: 0.78rem;
+      line-height: 1.35;
+      opacity: 0.82;
+    }
+
+    .benko-tour__language-pronunciation-note {
+      max-width: 34ch;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255, 246, 231, 0.12);
+      border: 1px solid rgba(255, 214, 138, 0.12);
+      color: rgba(255, 240, 216, 0.84);
+      line-height: 1.55;
+      font-size: 0.9rem;
+    }
+
     .benko-tour__language-filters {
       display: flex;
       flex-wrap: wrap;
@@ -461,17 +534,49 @@
     }
 
     .benko-tour__language-dictionary-card {
+      --dictionary-accent: #d15e38;
+      --dictionary-accent-soft: rgba(239, 176, 58, 0.16);
+      position: relative;
       display: grid;
-      gap: 12px;
+      gap: 14px;
       padding: 22px;
       border-radius: 26px;
+      overflow: hidden;
       background:
-        radial-gradient(circle at right top, rgba(239, 176, 58, 0.16), transparent 22%),
+        radial-gradient(circle at right top, var(--dictionary-accent-soft), transparent 24%),
         linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(249, 241, 228, 0.96));
       border: 1px solid rgba(104, 66, 39, 0.1);
       box-shadow: 0 18px 34px rgba(38, 26, 18, 0.12);
       color: var(--text);
       transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+
+    .benko-tour__language-dictionary-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 6px;
+      background: linear-gradient(90deg, var(--dictionary-accent), rgba(255, 190, 82, 0.92));
+    }
+
+    .benko-tour__language-dictionary-card[data-theme="vida-diaria"] {
+      --dictionary-accent: #d15e38;
+      --dictionary-accent-soft: rgba(239, 176, 58, 0.16);
+    }
+
+    .benko-tour__language-dictionary-card[data-theme="musica"] {
+      --dictionary-accent: #0f7f8b;
+      --dictionary-accent-soft: rgba(36, 150, 192, 0.16);
+    }
+
+    .benko-tour__language-dictionary-card[data-theme="cocina"] {
+      --dictionary-accent: #d2822b;
+      --dictionary-accent-soft: rgba(255, 188, 82, 0.18);
+    }
+
+    .benko-tour__language-dictionary-card[data-theme="memoria"] {
+      --dictionary-accent: #7c5130;
+      --dictionary-accent-soft: rgba(124, 81, 48, 0.12);
     }
 
     .benko-tour__language-dictionary-card:hover,
@@ -489,9 +594,17 @@
       display: flex;
       justify-content: space-between;
       gap: 12px;
+      align-items: flex-start;
+    }
+
+    .benko-tour__language-dictionary-card-eyebrow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
       align-items: center;
     }
 
+    .benko-tour__language-dictionary-theme,
     .benko-tour__language-dictionary-type,
     .benko-tour__language-dictionary-letter,
     .benko-tour__language-dictionary-tags span {
@@ -506,9 +619,18 @@
       letter-spacing: 0.03em;
     }
 
+    .benko-tour__language-dictionary-theme {
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--dictionary-accent);
+      border: 1px solid rgba(91, 50, 30, 0.08);
+    }
+
     .benko-tour__language-dictionary-type {
-      background: rgba(255, 191, 82, 0.98);
-      color: #69361b;
+      background: rgba(91, 50, 30, 0.06);
+      color: var(--brand-dark);
+      max-width: 100%;
+      white-space: normal;
+      text-align: left;
     }
 
     .benko-tour__language-dictionary-letter {
@@ -518,10 +640,15 @@
       border: 1px solid rgba(91, 50, 30, 0.12);
     }
 
+    .benko-tour__language-dictionary-body {
+      display: grid;
+      gap: 10px;
+    }
+
     .benko-tour__language-dictionary-card strong {
       display: block;
       font-size: clamp(1.4rem, 3vw, 2rem);
-      line-height: 1;
+      line-height: 0.98;
       letter-spacing: -0.04em;
       color: #4a2314;
     }
@@ -550,6 +677,29 @@
       background: rgba(91, 50, 30, 0.08);
       color: var(--brand-dark);
       border: 1px solid rgba(91, 50, 30, 0.08);
+    }
+
+    .benko-tour__language-dictionary-footer {
+      display: grid;
+      gap: 12px;
+      margin-top: auto;
+    }
+
+    .benko-tour__language-dictionary-source {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .benko-tour__language-dictionary-source strong {
+      font-size: inherit;
+      line-height: inherit;
+      letter-spacing: 0;
+      color: var(--brand-dark);
     }
 
     .benko-tour__language-dictionary-empty {
@@ -763,18 +913,26 @@
         grid-template-columns: 1fr;
       }
 
-      .benko-tour__language-dictionary-head,
-      .benko-tour__language-dictionary-stats {
+      .benko-tour__language-dictionary-head {
         grid-template-columns: 1fr;
+      }
+
+      .benko-tour__language-dictionary-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .benko-tour__language-highlights {
         grid-template-columns: 1fr;
       }
 
+      .benko-tour__language-theme-row,
       .benko-tour__language-filter-row {
         align-items: flex-start;
         flex-direction: column;
+      }
+
+      .benko-tour__language-pronunciation-note {
+        max-width: none;
       }
 
       .benko-tour__language-photo-card {
@@ -814,6 +972,20 @@
 
       .benko-tour__language-dictionary-stat {
         padding: 14px;
+      }
+
+      .benko-tour__language-dictionary-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .benko-tour__language-theme-filter {
+        min-width: 0;
+        width: 100%;
+      }
+
+      .benko-tour__language-theme-filters,
+      .benko-tour__language-filters {
+        width: 100%;
       }
 
       .benko-tour__language-dictionary-loadmore {
@@ -995,7 +1167,11 @@
                     <span>Resultados visibles</span>
                   </article>
                   <article class="benko-tour__language-dictionary-stat">
-                    <strong id="lengua-dictionary-active">Todas</strong>
+                    <strong id="lengua-dictionary-active-theme">Todos</strong>
+                    <span>Tema activo</span>
+                  </article>
+                  <article class="benko-tour__language-dictionary-stat">
+                    <strong id="lengua-dictionary-active-letter">Todas</strong>
                     <span>Letra activa</span>
                   </article>
                 </div>
@@ -1011,11 +1187,20 @@
                 <span class="benko-tour__language-search-icon" aria-hidden="true">⌕</span>
               </label>
 
-              <div class="benko-tour__language-filter-row">
-                <div class="benko-tour__language-filters" id="lengua-dictionary-filters" aria-label="Filtrar por letra inicial"></div>
-                <p class="benko-tour__language-dictionary-meta" id="lengua-dictionary-meta">
-                  Estamos preparando el diccionario completo para esta página.
-                </p>
+              <div class="benko-tour__language-filter-stack">
+                <div class="benko-tour__language-theme-row">
+                  <div class="benko-tour__language-theme-filters" id="lengua-dictionary-themes" aria-label="Filtrar por tema"></div>
+                  <div class="benko-tour__language-pronunciation-note" id="lengua-dictionary-pronunciation">
+                    Pronunciación y audio: próxima fase del diccionario.
+                  </div>
+                </div>
+
+                <div class="benko-tour__language-filter-row">
+                  <div class="benko-tour__language-filters" id="lengua-dictionary-filters" aria-label="Filtrar por letra inicial"></div>
+                  <p class="benko-tour__language-dictionary-meta" id="lengua-dictionary-meta">
+                    Estamos preparando el diccionario completo para esta página.
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -1244,20 +1429,43 @@
       const dictionaryPayload = window.benkoPalenqueraDictionary || {};
       const dictionaryEntries = Array.isArray(dictionaryPayload.entries) ? dictionaryPayload.entries : [];
       const dictionaryLetters = Array.isArray(dictionaryPayload.letters) ? dictionaryPayload.letters : [];
+      const dictionaryThemeOrder = Array.isArray(dictionaryPayload.themeOrder)
+        ? dictionaryPayload.themeOrder
+        : ['vida-diaria', 'musica', 'cocina', 'memoria'];
+      const dictionaryThemeMeta = dictionaryPayload.themeMeta || {};
+      const dictionaryThemeCounts = dictionaryPayload.themeCounts || {};
+      const pronunciationMeta = dictionaryPayload.pronunciation || null;
       const searchInput = document.getElementById('lengua-dictionary-search');
+      const themeHost = document.getElementById('lengua-dictionary-themes');
       const filtersHost = document.getElementById('lengua-dictionary-filters');
       const grid = document.getElementById('lengua-dictionary-grid');
       const meta = document.getElementById('lengua-dictionary-meta');
       const empty = document.getElementById('lengua-dictionary-empty');
       const loadMoreButton = document.getElementById('lengua-dictionary-loadmore');
+      const pronunciationNote = document.getElementById('lengua-dictionary-pronunciation');
       const totalMetric = document.getElementById('lengua-dictionary-total');
       const visibleMetric = document.getElementById('lengua-dictionary-visible');
-      const activeMetric = document.getElementById('lengua-dictionary-active');
+      const activeThemeMetric = document.getElementById('lengua-dictionary-active-theme');
+      const activeLetterMetric = document.getElementById('lengua-dictionary-active-letter');
 
-      if (!searchInput || !filtersHost || !grid || !meta || !empty || !loadMoreButton || !totalMetric || !visibleMetric || !activeMetric) {
+      if (
+        !searchInput ||
+        !themeHost ||
+        !filtersHost ||
+        !grid ||
+        !meta ||
+        !empty ||
+        !loadMoreButton ||
+        !pronunciationNote ||
+        !totalMetric ||
+        !visibleMetric ||
+        !activeThemeMetric ||
+        !activeLetterMetric
+      ) {
         return;
       }
 
+      let activeTheme = 'all';
       let activeLetter = 'all';
       let visibleLimit = 24;
       const pageSize = 24;
@@ -1267,6 +1475,44 @@
           .toLowerCase()
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '');
+      }
+
+      function getThemeLabel(themeId) {
+        return dictionaryThemeMeta[themeId] && dictionaryThemeMeta[themeId].label
+          ? dictionaryThemeMeta[themeId].label
+          : 'Vida diaria';
+      }
+
+      function getThemeDescription(themeId) {
+        return dictionaryThemeMeta[themeId] && dictionaryThemeMeta[themeId].description
+          ? dictionaryThemeMeta[themeId].description
+          : 'Palabras de uso cotidiano para conversar mejor dentro del territorio.';
+      }
+
+      function createThemeButton(themeId) {
+        const count = themeId === 'all'
+          ? dictionaryEntries.length
+          : Number(dictionaryThemeCounts[themeId] || 0);
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'benko-tour__language-theme-filter';
+        button.dataset.theme = themeId;
+
+        const title = document.createElement('strong');
+        title.textContent = themeId === 'all' ? 'Todos los temas' : getThemeLabel(themeId);
+
+        const subtitle = document.createElement('span');
+        subtitle.textContent = themeId === 'all'
+          ? count + ' palabras para explorar'
+          : count + ' palabras en esta ruta';
+
+        button.append(title, subtitle);
+        button.addEventListener('click', function() {
+          activeTheme = themeId;
+          visibleLimit = pageSize;
+          renderDictionary();
+        });
+        return button;
       }
 
       function createFilterButton(letter, label) {
@@ -1283,7 +1529,18 @@
         return button;
       }
 
-      function renderFilters() {
+      function renderThemeFilters() {
+        const fragment = document.createDocumentFragment();
+        fragment.appendChild(createThemeButton('all'));
+
+        dictionaryThemeOrder.forEach(function(themeId) {
+          fragment.appendChild(createThemeButton(themeId));
+        });
+
+        themeHost.replaceChildren(fragment);
+      }
+
+      function renderLetterFilters() {
         const fragment = document.createDocumentFragment();
         fragment.appendChild(createFilterButton('all', 'Todas'));
 
@@ -1297,9 +1554,17 @@
       function buildCard(entry) {
         const article = document.createElement('article');
         article.className = 'benko-tour__language-dictionary-card';
+        article.dataset.theme = entry.theme || 'vida-diaria';
 
         const top = document.createElement('div');
         top.className = 'benko-tour__language-dictionary-card-top';
+
+        const eyebrow = document.createElement('div');
+        eyebrow.className = 'benko-tour__language-dictionary-card-eyebrow';
+
+        const theme = document.createElement('span');
+        theme.className = 'benko-tour__language-dictionary-theme';
+        theme.textContent = entry.themeLabel || getThemeLabel(entry.theme || 'vida-diaria');
 
         const type = document.createElement('span');
         type.className = 'benko-tour__language-dictionary-type';
@@ -1309,7 +1574,11 @@
         letter.className = 'benko-tour__language-dictionary-letter';
         letter.textContent = entry.letter || '#';
 
-        top.append(type, letter);
+        eyebrow.append(theme, type);
+        top.append(eyebrow, letter);
+
+        const body = document.createElement('div');
+        body.className = 'benko-tour__language-dictionary-body';
 
         const term = document.createElement('strong');
         term.textContent = entry.term || 'Sin término';
@@ -1321,21 +1590,39 @@
         const description = document.createElement('p');
         description.textContent = entry.description || 'Sin descripción disponible.';
 
+        body.append(term, translation, description);
+
+        const footer = document.createElement('div');
+        footer.className = 'benko-tour__language-dictionary-footer';
+
         const tags = document.createElement('div');
         tags.className = 'benko-tour__language-dictionary-tags';
 
-        (entry.tags || []).slice(0, 5).forEach(function(tag) {
+        (entry.tags || []).slice(0, 4).forEach(function(tag) {
           const chip = document.createElement('span');
           chip.textContent = tag;
           tags.appendChild(chip);
         });
 
-        article.append(top, term, translation, description);
-
         if (tags.childElementCount) {
-          article.appendChild(tags);
+          footer.appendChild(tags);
         }
 
+        if (Array.isArray(entry.sources) && entry.sources.length) {
+          const source = document.createElement('div');
+          source.className = 'benko-tour__language-dictionary-source';
+
+          const sourceLabel = document.createElement('strong');
+          sourceLabel.textContent = 'Fuente base';
+
+          const sourceText = document.createElement('span');
+          sourceText.textContent = entry.sources.slice(0, 2).join(' · ');
+
+          source.append(sourceLabel, sourceText);
+          footer.appendChild(source);
+        }
+
+        article.append(top, body, footer);
         return article;
       }
 
@@ -1343,16 +1630,19 @@
         const query = normalizeText(searchInput.value);
 
         return dictionaryEntries.filter(function(entry) {
+          const matchesTheme = activeTheme === 'all' || (entry.theme || 'vida-diaria') === activeTheme;
           const matchesLetter = activeLetter === 'all' || String(entry.letter || '').toLowerCase() === activeLetter;
           const searchIndex = entry.search || normalizeText([
             entry.term,
+            entry.theme,
+            entry.themeLabel,
             entry.category,
             entry.translation,
             entry.description,
             ...(entry.tags || [])
           ].join(' '));
           const matchesQuery = !query || searchIndex.includes(query);
-          return matchesLetter && matchesQuery;
+          return matchesTheme && matchesLetter && matchesQuery;
         });
       }
 
@@ -1365,6 +1655,12 @@
           grid.appendChild(buildCard(entry));
         });
 
+        Array.from(themeHost.querySelectorAll('.benko-tour__language-theme-filter')).forEach(function(button) {
+          const isActive = button.dataset.theme === activeTheme;
+          button.classList.toggle('is-active', isActive);
+          button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+
         Array.from(filtersHost.querySelectorAll('.benko-tour__language-filter')).forEach(function(button) {
           const isActive = button.dataset.letter === activeLetter;
           button.classList.toggle('is-active', isActive);
@@ -1373,13 +1669,16 @@
 
         totalMetric.textContent = String(dictionaryEntries.length);
         visibleMetric.textContent = String(filteredEntries.length);
-        activeMetric.textContent = activeLetter === 'all' ? 'Todas' : activeLetter.toUpperCase();
+        activeThemeMetric.textContent = activeTheme === 'all' ? 'Todos' : getThemeLabel(activeTheme);
+        activeLetterMetric.textContent = activeLetter === 'all' ? 'Todas' : activeLetter.toUpperCase();
 
         grid.hidden = filteredEntries.length === 0;
         empty.hidden = filteredEntries.length !== 0;
 
         if (!filteredEntries.length) {
-          meta.textContent = 'No hubo coincidencias con la búsqueda actual dentro del diccionario base.';
+          meta.textContent = 'No hubo coincidencias con la búsqueda actual dentro de esta ruta del diccionario.';
+        } else if (activeTheme !== 'all' && !searchInput.value.trim() && activeLetter === 'all') {
+          meta.textContent = getThemeDescription(activeTheme);
         } else if (filteredEntries.length === dictionaryEntries.length && visibleEntries.length === filteredEntries.length) {
           meta.textContent = 'Base completa cargada desde el Excel del diccionario, adaptada para navegarla mejor en la web.';
         } else {
@@ -1410,18 +1709,20 @@
         loadMoreButton.hidden = true;
         totalMetric.textContent = '0';
         visibleMetric.textContent = '0';
-        activeMetric.textContent = 'Todas';
+        activeThemeMetric.textContent = 'Todos';
+        activeLetterMetric.textContent = 'Todas';
         return;
       }
 
-      renderFilters();
-      renderDictionary();
-
-      const firstFilter = filtersHost.querySelector('[data-letter="all"]');
-      if (firstFilter) {
-        firstFilter.classList.add('is-active');
-        firstFilter.setAttribute('aria-pressed', 'true');
+      if (pronunciationMeta && pronunciationMeta.label) {
+        pronunciationNote.textContent = pronunciationMeta.description
+          ? pronunciationMeta.label + '. ' + pronunciationMeta.description
+          : pronunciationMeta.label;
       }
+
+      renderThemeFilters();
+      renderLetterFilters();
+      renderDictionary();
     });
   </script>
 </body>
