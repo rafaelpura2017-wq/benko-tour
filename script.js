@@ -400,8 +400,7 @@ function setupCatalogCartPanel() {
     return;
   }
 
-  const storedState = loadStoredValue(STORAGE_KEYS.cartPanelOpen, false);
-  setCatalogCartPanelOpenState(Boolean(storedState), { skipStorage: true });
+  setCatalogCartPanelOpenState(false, { skipStorage: true });
 
   catalogCartToggle.addEventListener("click", () => {
     const isOpen = catalogCartPanel.classList.contains("is-open");
