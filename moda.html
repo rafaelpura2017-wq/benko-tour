@@ -178,39 +178,41 @@
             </div>
           </div>
 
-          <div class="benko-tour__catalog-toolbar">
-            <div class="benko-tour__catalog-filters">
-              <button class="benko-tour__filter-btn benko-tour__filter-btn--active" data-filter="todos">Todos</button>
-              <button class="benko-tour__filter-btn" data-filter="turbantes">Turbantes</button>
-              <button class="benko-tour__filter-btn" data-filter="molas">Molas</button>
-              <button class="benko-tour__filter-btn" data-filter="textil">Textil</button>
-              <button class="benko-tour__filter-btn" data-filter="joyeria">Joyería</button>
-              <button class="benko-tour__filter-btn" data-filter="fotos">Fotos</button>
-            </div>
-            <p class="benko-tour__catalog-result" data-catalog-result>20 experiencias visibles en moda</p>
-          </div>
-          <p class="benko-tour__catalog-empty" data-catalog-empty hidden>No encontramos resultados en esta categoría. Prueba otro filtro para seguir explorando la colección.</p>
+          <div class="benko-tour__catalog-layout">
+            <div class="benko-tour__catalog-main">
+              <div class="benko-tour__catalog-toolbar">
+                <div class="benko-tour__catalog-filters">
+                  <button class="benko-tour__filter-btn benko-tour__filter-btn--active" data-filter="todos">Todos</button>
+                  <button class="benko-tour__filter-btn" data-filter="turbantes">Turbantes</button>
+                  <button class="benko-tour__filter-btn" data-filter="molas">Molas</button>
+                  <button class="benko-tour__filter-btn" data-filter="textil">Textil</button>
+                  <button class="benko-tour__filter-btn" data-filter="joyeria">Joyería</button>
+                  <button class="benko-tour__filter-btn" data-filter="fotos">Fotos</button>
+                </div>
+                <p class="benko-tour__catalog-result" data-catalog-result>20 experiencias visibles en moda</p>
+              </div>
+              <p class="benko-tour__catalog-empty" data-catalog-empty hidden>No encontramos resultados en esta categoría. Prueba otro filtro para seguir explorando la colección.</p>
 
-          <!-- Grid de Experiencias de Moda -->
-          <div class="benko-tour__catalog-grid">
-            <!-- EXPERIENCIA 1 - TURBANTES -->
-            <article class="benko-tour__catalog-card" data-category="turbantes">
-              <div class="benko-tour__catalog-media">
-                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-01.jpg" alt="Turbante corona de reina" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
-                <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Taller</span>
-              </div>
-              <div class="benko-tour__catalog-content">
-                <h3>Corona de Reina: Turbante Afro</h3>
-                <p class="benko-tour__catalog-desc">Aprende a crear el icónico turbante alto que simboliza fuerza y dignidad, usado por las mujeres palenqueras desde tiempos ancestrales.</p>
-                <div class="benko-tour__catalog-price">$95.000 COP</div>
-                <ul class="benko-tour__catalog-features">
-                  <li>1.5 horas prácticas</li>
-                  <li>Tela africana incluida</li>
-                  <li>Turbante de regalo</li>
-                </ul>
-                <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
-              </div>
-            </article>
+              <!-- Grid de Experiencias de Moda -->
+              <div class="benko-tour__catalog-grid">
+                <!-- EXPERIENCIA 1 - TURBANTES -->
+                <article class="benko-tour__catalog-card" data-category="turbantes">
+                  <div class="benko-tour__catalog-media">
+                    <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-01.jpg" alt="Turbante corona de reina" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
+                    <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Taller</span>
+                  </div>
+                  <div class="benko-tour__catalog-content">
+                    <h3>Corona de Reina: Turbante Afro</h3>
+                    <p class="benko-tour__catalog-desc">Aprende a crear el icónico turbante alto que simboliza fuerza y dignidad, usado por las mujeres palenqueras desde tiempos ancestrales.</p>
+                    <div class="benko-tour__catalog-price">$95.000 COP</div>
+                    <ul class="benko-tour__catalog-features">
+                      <li>1.5 horas prácticas</li>
+                      <li>Tela africana incluida</li>
+                      <li>Turbante de regalo</li>
+                    </ul>
+                    <button class="benko-tour__button benko-tour__button--sm">Agregar al carrito</button>
+                  </div>
+                </article>
 
             <!-- EXPERIENCIA 2 - TURBANTES -->
             <article class="benko-tour__catalog-card" data-category="turbantes">
@@ -573,7 +575,73 @@
               </div>
             </article>
           </div>
-        </section>
+        </div>
+
+        <aside class="benko-tour__cart-card benko-tour__cart-card--catalog is-collapsed" id="carrito" data-cart-panel>
+          <button class="benko-tour__cart-toggle" type="button" data-cart-toggle aria-expanded="false" aria-controls="catalog-cart-panel-body" aria-label="Abrir carrito">
+            <span class="benko-tour__cart-toggle-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <circle cx="9" cy="20" r="1.6"></circle>
+                <circle cx="18" cy="20" r="1.6"></circle>
+                <path d="M2.5 4h2.6l2.3 10.2h10.4l2.3-7.2H8"></path>
+              </svg>
+            </span>
+            <span class="benko-tour__cart-toggle-copy">
+              <strong>Carrito</strong>
+              <small>Toca para ver tu compra</small>
+            </span>
+            <span class="benko-tour__cart-toggle-count" data-cart-toggle-count>0</span>
+            <span class="benko-tour__cart-toggle-action" data-cart-toggle-action>Abrir</span>
+          </button>
+
+          <div class="benko-tour__cart-panel-body" id="catalog-cart-panel-body" data-cart-panel-body hidden>
+          <div class="benko-tour__cart-head">
+            <div>
+              <span class="benko-tour__card-tag">Carrito</span>
+              <h3>Tu selección de moda</h3>
+            </div>
+            <strong id="cart-count" aria-live="polite">0</strong>
+          </div>
+
+          <p class="benko-tour__cart-copy">
+            Agrega experiencias, talleres o sesiones desde esta sección y revisa aquí mismo tu compra antes de pagar o escribir al equipo.
+          </p>
+
+          <div class="benko-tour__cart-benefits">
+            <span>Guardado en este navegador</span>
+            <span>Total en tiempo real</span>
+            <span>Compra desde cualquier categoría</span>
+          </div>
+
+          <div class="benko-tour__cart-list" id="cart-items" aria-live="polite">
+            <p class="benko-tour__cart-empty">Todavía no has agregado productos.</p>
+          </div>
+
+          <label class="benko-tour__field">
+            <span>Ciudad para envío o entrega</span>
+            <input id="cart-city" type="text" placeholder="Ejemplo: Cartagena, Bogotá, Medellín">
+          </label>
+
+          <div class="benko-tour__cart-total">
+            <span>Total</span>
+            <strong id="cart-total">$0 COP</strong>
+          </div>
+
+          <div class="benko-tour__form-actions benko-tour__form-actions--stack">
+            <button class="benko-tour__button" id="cart-pay-wompi" type="button">Pagar pedido con Wompi</button>
+            <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-pay-mercadopago" type="button">Pagar pedido con Mercado Pago</button>
+            <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-checkout" type="button">Comprar por WhatsApp</button>
+            <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-email" type="button">Pedir por correo</button>
+            <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-clear" type="button">Vaciar carrito</button>
+          </div>
+
+          <div class="benko-tour__status" id="cart-status" aria-live="polite">
+            Agrega productos y luego finaliza el pedido con pago real o por mensaje.
+          </div>
+          </div>
+        </aside>
+      </div>
+    </section>
       </main>
       </div>
 

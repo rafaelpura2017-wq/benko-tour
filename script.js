@@ -70,6 +70,11 @@ const cartPayMercadoPagoButton = document.querySelector("#cart-pay-mercadopago")
 const cartClearButton = document.querySelector("#cart-clear");
 const cartStatus = document.querySelector("#cart-status");
 const cartCityInput = document.querySelector("#cart-city");
+const catalogCartPanel = document.querySelector("[data-cart-panel]");
+const catalogCartToggle = document.querySelector("[data-cart-toggle]");
+const catalogCartPanelBody = document.querySelector("[data-cart-panel-body]");
+const catalogCartToggleCount = document.querySelector("[data-cart-toggle-count]");
+const catalogCartToggleAction = document.querySelector("[data-cart-toggle-action]");
 const dateInput = bookingForm ? bookingForm.querySelector('input[name="date"]') : null;
 const topLoginLink = document.querySelector(".benko-tour__login");
 const accessTabsContainer = document.querySelector(".benko-tour__access-tabs");
@@ -98,7 +103,8 @@ const STORAGE_KEYS = {
   users: "benko-tour-users",
   session: "benko-tour-session",
   reviews: "benko-tour-reviews",
-  cart: "benkoCart"
+  cart: "benkoCart",
+  cartPanelOpen: "benkoCartPanelOpen"
 };
 const defaultReviews = [
   {
@@ -362,6 +368,51 @@ function saveCartState() {
   const items = Array.from(cart.values());
   saveStoredValue(STORAGE_KEYS.cart, items);
   void syncCartWithAccount(items);
+}
+
+function setCatalogCartPanelOpenState(isOpen, options = {}) {
+  if (!catalogCartPanel || !catalogCartToggle) {
+    return;
+  }
+
+  const shouldOpen = Boolean(isOpen);
+
+  catalogCartPanel.classList.toggle("is-open", shouldOpen);
+  catalogCartPanel.classList.toggle("is-collapsed", !shouldOpen);
+  catalogCartToggle.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+  catalogCartToggle.setAttribute("aria-label", shouldOpen ? "Ocultar carrito" : "Abrir carrito");
+
+  if (catalogCartPanelBody) {
+    catalogCartPanelBody.hidden = !shouldOpen;
+  }
+
+  if (catalogCartToggleAction) {
+    catalogCartToggleAction.textContent = shouldOpen ? "Ocultar" : "Abrir";
+  }
+
+  if (!options.skipStorage) {
+    saveStoredValue(STORAGE_KEYS.cartPanelOpen, shouldOpen);
+  }
+}
+
+function setupCatalogCartPanel() {
+  if (!catalogCartPanel || !catalogCartToggle) {
+    return;
+  }
+
+  const storedState = loadStoredValue(STORAGE_KEYS.cartPanelOpen, false);
+  setCatalogCartPanelOpenState(Boolean(storedState), { skipStorage: true });
+
+  catalogCartToggle.addEventListener("click", () => {
+    const isOpen = catalogCartPanel.classList.contains("is-open");
+    setCatalogCartPanelOpenState(!isOpen);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && catalogCartPanel.classList.contains("is-open")) {
+      setCatalogCartPanelOpenState(false);
+    }
+  });
 }
 
 function getSortedReviews() {
@@ -1081,6 +1132,10 @@ function renderCart() {
   cartCountElement.textContent = String(count);
   cartTotalElement.textContent = `${formatCOP(total)} COP`;
 
+  if (catalogCartToggleCount) {
+    catalogCartToggleCount.textContent = String(count);
+  }
+
   if (!items.length) {
     cartItemsContainer.innerHTML = `
       <div class="benko-tour__cart-empty-card">
@@ -1169,6 +1224,57 @@ function markCatalogMediaPlaceholder(media, image) {
   }
 }
 
+function getCatalogImageCandidates(source) {
+  const baseSource = String(source || "").split("?")[0];
+
+  if (!baseSource) {
+    return [];
+  }
+
+  const candidates = new Set([baseSource]);
+  const extensionMatch = baseSource.match(/\.([a-z0-9]+)$/i);
+  const extension = extensionMatch ? extensionMatch[1].toLowerCase() : "";
+
+  if (extension === "jpg" || extension === "jpeg") {
+    candidates.add(`${baseSource}.png`);
+    candidates.add(`${baseSource}.webp`);
+    candidates.add(baseSource.replace(/\.(jpg|jpeg)$/i, ".png"));
+    candidates.add(baseSource.replace(/\.(jpg|jpeg)$/i, ".webp"));
+    candidates.add(baseSource.replace(/\.(jpg|jpeg)$/i, ".jpeg"));
+    candidates.add(baseSource.replace(/\.(jpg|jpeg)$/i, ".JPG"));
+    candidates.add(baseSource.replace(/\.(jpg|jpeg)$/i, ".JPEG"));
+    candidates.add(baseSource.replace(/\.(jpg|jpeg)$/i, ".PNG"));
+    candidates.add(baseSource.replace(/\.(jpg|jpeg)$/i, ".WEBP"));
+  } else if (extension === "png") {
+    candidates.add(baseSource.replace(/\.png$/i, ".jpg"));
+    candidates.add(baseSource.replace(/\.png$/i, ".jpeg"));
+    candidates.add(baseSource.replace(/\.png$/i, ".webp"));
+  } else if (extension === "webp") {
+    candidates.add(baseSource.replace(/\.webp$/i, ".jpg"));
+    candidates.add(baseSource.replace(/\.webp$/i, ".jpeg"));
+    candidates.add(baseSource.replace(/\.webp$/i, ".png"));
+  }
+
+  return Array.from(candidates).filter(Boolean);
+}
+
+function tryNextCatalogImageSource(media, image) {
+  const rawCandidates = image.dataset.catalogCandidates || "[]";
+  const candidates = JSON.parse(rawCandidates);
+  const currentIndex = Number(image.dataset.catalogCandidateIndex || 0);
+  const nextIndex = currentIndex + 1;
+
+  if (nextIndex >= candidates.length) {
+    markCatalogMediaPlaceholder(media, image);
+    return;
+  }
+
+  image.dataset.catalogCandidateIndex = String(nextIndex);
+  image.hidden = false;
+  image.removeAttribute("aria-hidden");
+  image.src = candidates[nextIndex];
+}
+
 function setupCatalogPlaceholders() {
   document.querySelectorAll(".benko-tour__catalog-media").forEach((media) => {
     const image = media.querySelector(".benko-tour__catalog-image");
@@ -1191,6 +1297,8 @@ function setupCatalogPlaceholders() {
     };
 
     image.dataset.catalogReady = "true";
+    image.dataset.catalogCandidates = JSON.stringify(getCatalogImageCandidates(image.getAttribute("src") || ""));
+    image.dataset.catalogCandidateIndex = "0";
     syncMeta();
 
     image.addEventListener("load", () => {
@@ -1201,7 +1309,7 @@ function setupCatalogPlaceholders() {
     });
 
     image.addEventListener("error", () => {
-      markCatalogMediaPlaceholder(media, image);
+      tryNextCatalogImageSource(media, image);
     });
 
     if (!image.getAttribute("src")) {
@@ -1248,7 +1356,8 @@ function setupCatalogFilters() {
       let visibleCount = 0;
 
       cards.forEach((card) => {
-        const matches = filterValue === "todos" || card.dataset.category === filterValue;
+        const categories = String(card.dataset.category || "").split(/\s+/).filter(Boolean);
+        const matches = filterValue === "todos" || categories.includes(filterValue);
         card.hidden = !matches;
 
         if (matches) {
@@ -1346,7 +1455,9 @@ function setupCatalogCartButtons() {
     button.classList.add("js-add-to-cart");
     button.textContent = "Agregar al carrito";
 
-    button.addEventListener("click", () => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+
       const addedProduct = addProductToCart(product);
 
       if (!addedProduct) {
@@ -1788,6 +1899,7 @@ startReviewRotation();
 startExperienceRotation();
 setActiveAccessTab(activeAccessTab);
 renderCart();
+setupCatalogCartPanel();
 setupCatalogPlaceholders();
 setupCatalogFilters();
 setupCatalogCartButtons();

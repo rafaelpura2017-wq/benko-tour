@@ -149,7 +149,9 @@
             <p class="benko-tour__section-copy">Lengua, historia, naturaleza y bienestar con una presentación más clara, visual y lista para crecer con tus propias imágenes.</p>
           </div>
 
-          <div class="benko-tour__catalog-grid">
+          <div class="benko-tour__catalog-layout">
+            <div class="benko-tour__catalog-main">
+              <div class="benko-tour__catalog-grid">
             <article class="benko-tour__catalog-card" data-category="lengua">
               <div class="benko-tour__catalog-media">
                 <img class="benko-tour__catalog-image" src="./assets/images/catalog/otros/otros-01.jpg" alt="Introducción al palenquero" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
@@ -165,7 +167,7 @@
                   <li>Frases cotidianas</li>
                   <li>Material de apoyo</li>
                 </ul>
-                <a href="./reservas.html?experiencia=idioma" class="benko-tour__button benko-tour__button--sm">Reservar experiencia</a>
+                <a href="./reservas.html?experiencia=idioma" class="benko-tour__button benko-tour__button--sm">Agregar al carrito</a>
               </div>
             </article>
 
@@ -184,7 +186,7 @@
                   <li>Visitas a monumentos</li>
                   <li>Historias de libertad</li>
                 </ul>
-                <a href="./reservas.html?experiencia=historia" class="benko-tour__button benko-tour__button--sm">Reservar experiencia</a>
+                <a href="./reservas.html?experiencia=historia" class="benko-tour__button benko-tour__button--sm">Agregar al carrito</a>
               </div>
             </article>
 
@@ -203,7 +205,7 @@
                   <li>Avistamiento de aves</li>
                   <li>Refrigerio incluido</li>
                 </ul>
-                <a href="./reservas.html?experiencia=ecologia" class="benko-tour__button benko-tour__button--sm">Reservar experiencia</a>
+                <a href="./reservas.html?experiencia=ecologia" class="benko-tour__button benko-tour__button--sm">Agregar al carrito</a>
               </div>
             </article>
 
@@ -222,7 +224,7 @@
                   <li>Masaje terapéutico</li>
                   <li>Ambiente tradicional</li>
                 </ul>
-                <a href="./reservas.html?experiencia=masaje" class="benko-tour__button benko-tour__button--sm">Reservar experiencia</a>
+                <a href="./reservas.html?experiencia=masaje" class="benko-tour__button benko-tour__button--sm">Agregar al carrito</a>
               </div>
             </article>
 
@@ -241,7 +243,7 @@
                   <li>Debate posterior</li>
                   <li>Snacks tradicionales</li>
                 </ul>
-                <a href="./reservas.html?experiencia=cine" class="benko-tour__button benko-tour__button--sm">Reservar experiencia</a>
+                <a href="./reservas.html?experiencia=cine" class="benko-tour__button benko-tour__button--sm">Agregar al carrito</a>
               </div>
             </article>
 
@@ -260,9 +262,75 @@
                   <li>Para toda la familia</li>
                   <li>Premios sorpresa</li>
                 </ul>
-                <a href="./reservas.html?experiencia=juegos" class="benko-tour__button benko-tour__button--sm">Reservar experiencia</a>
+                <a href="./reservas.html?experiencia=juegos" class="benko-tour__button benko-tour__button--sm">Agregar al carrito</a>
               </div>
             </article>
+              </div>
+            </div>
+
+            <aside class="benko-tour__cart-card benko-tour__cart-card--catalog is-collapsed" id="carrito" data-cart-panel>
+              <button class="benko-tour__cart-toggle" type="button" data-cart-toggle aria-expanded="false" aria-controls="catalog-cart-panel-body" aria-label="Abrir carrito">
+                <span class="benko-tour__cart-toggle-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                    <circle cx="9" cy="20" r="1.6"></circle>
+                    <circle cx="18" cy="20" r="1.6"></circle>
+                    <path d="M2.5 4h2.6l2.3 10.2h10.4l2.3-7.2H8"></path>
+                  </svg>
+                </span>
+                <span class="benko-tour__cart-toggle-copy">
+                  <strong>Carrito</strong>
+                  <small>Toca para ver tu compra</small>
+                </span>
+                <span class="benko-tour__cart-toggle-count" data-cart-toggle-count>0</span>
+                <span class="benko-tour__cart-toggle-action" data-cart-toggle-action>Abrir</span>
+              </button>
+
+              <div class="benko-tour__cart-panel-body" id="catalog-cart-panel-body" data-cart-panel-body hidden>
+              <div class="benko-tour__cart-head">
+                <div>
+                  <span class="benko-tour__card-tag">Carrito</span>
+                  <h3>Tu selección cultural</h3>
+                </div>
+                <strong id="cart-count" aria-live="polite">0</strong>
+              </div>
+
+              <p class="benko-tour__cart-copy">
+                Agrega experiencias de lengua, historia, naturaleza o bienestar y revisa aquí el resumen completo.
+              </p>
+
+              <div class="benko-tour__cart-benefits">
+                <span>Guardado en este navegador</span>
+                <span>Total en tiempo real</span>
+                <span>Compra desde cualquier categoría</span>
+              </div>
+
+              <div class="benko-tour__cart-list" id="cart-items" aria-live="polite">
+                <p class="benko-tour__cart-empty">Todavía no has agregado productos.</p>
+              </div>
+
+              <label class="benko-tour__field">
+                <span>Ciudad para envío o entrega</span>
+                <input id="cart-city" type="text" placeholder="Ejemplo: Cartagena, Bogotá, Medellín">
+              </label>
+
+              <div class="benko-tour__cart-total">
+                <span>Total</span>
+                <strong id="cart-total">$0 COP</strong>
+              </div>
+
+              <div class="benko-tour__form-actions benko-tour__form-actions--stack">
+                <button class="benko-tour__button" id="cart-pay-wompi" type="button">Pagar pedido con Wompi</button>
+                <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-pay-mercadopago" type="button">Pagar pedido con Mercado Pago</button>
+                <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-checkout" type="button">Comprar por WhatsApp</button>
+                <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-email" type="button">Pedir por correo</button>
+                <button class="benko-tour__ghost benko-tour__ghost--dark" id="cart-clear" type="button">Vaciar carrito</button>
+              </div>
+
+              <div class="benko-tour__status" id="cart-status" aria-live="polite">
+                Agrega productos y luego finaliza el pedido con pago real o por mensaje.
+              </div>
+              </div>
+            </aside>
           </div>
         </section>
       </main>
