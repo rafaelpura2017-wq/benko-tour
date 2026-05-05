@@ -3597,6 +3597,9 @@ body {
   top: 104px;
   align-self: start;
   scroll-margin-top: 104px;
+  background: linear-gradient(180deg, rgba(255, 252, 247, 0.99) 0%, rgba(255, 247, 236, 0.98) 100%);
+  border-color: rgba(80, 60, 34, 0.1);
+  box-shadow: 0 24px 42px rgba(38, 26, 18, 0.1);
 }
 
 .benko-tour__cart-head {
@@ -3607,21 +3610,49 @@ body {
 }
 
 .benko-tour__cart-head strong {
-  min-width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 10px;
+  border-radius: 999px;
   display: grid;
   place-items: center;
-  background: var(--emerald);
+  background: linear-gradient(135deg, var(--emerald) 0%, #2d8d7d 100%);
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
+  box-shadow: 0 12px 24px rgba(23, 79, 71, 0.22);
+}
+
+.benko-tour__cart-copy {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+.benko-tour__cart-benefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0 0;
+}
+
+.benko-tour__cart-benefits span {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  color: var(--brand-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
 .benko-tour__cart-list {
-  margin: 16px 0;
+  margin: 18px 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .benko-tour__cart-empty {
@@ -3629,47 +3660,109 @@ body {
   color: var(--muted);
 }
 
+.benko-tour__cart-empty-card {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px dashed rgba(80, 60, 34, 0.14);
+}
+
+.benko-tour__cart-empty-card strong {
+  color: var(--brand-dark);
+  font-size: 1rem;
+}
+
 .benko-tour__cart-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 10px;
-  padding: 12px 16px;
-  border-radius: 12px;
-  background: rgba(23, 79, 71, 0.05);
-  border: 1px solid rgba(23, 79, 71, 0.08);
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(80, 60, 34, 0.08);
+  box-shadow: 0 14px 24px rgba(38, 26, 18, 0.05);
 }
 
 .benko-tour__cart-item-head {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 12px;
   width: 100%;
 }
 
+.benko-tour__cart-item-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
 .benko-tour__cart-item-head strong {
   font-size: 0.98rem;
+  line-height: 1.35;
+}
+
+.benko-tour__cart-item-copy span {
+  color: var(--muted);
+  font-size: 0.84rem;
 }
 
 .benko-tour__cart-meta {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   color: var(--muted);
   font-size: 0.92rem;
 }
 
+.benko-tour__cart-meta strong {
+  color: var(--brand-dark);
+  font-size: 1rem;
+}
+
+.benko-tour__cart-quantity {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: rgba(23, 79, 71, 0.08);
+  border: 1px solid rgba(23, 79, 71, 0.12);
+}
+
+.benko-tour__cart-quantity span {
+  min-width: 24px;
+  text-align: center;
+  color: var(--brand-dark);
+  font-weight: 700;
+}
+
+.benko-tour__cart-step {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 0;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: var(--brand-dark);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(38, 26, 18, 0.1);
+}
+
 .benko-tour__cart-remove {
   border: 0;
-  background: transparent;
-  color: var(--brand);
+  background: rgba(239, 122, 93, 0.1);
+  color: #b14d34;
   cursor: pointer;
   font: inherit;
   font-weight: 700;
-  padding: 0;
+  padding: 8px 10px;
+  border-radius: 999px;
 }
 
 .benko-tour__cart-total {
@@ -3683,7 +3776,7 @@ body {
 }
 
 .benko-tour__cart-total strong {
-  font-size: 1.3rem;
+  font-size: 1.45rem;
   color: var(--brand-dark);
 }
 
@@ -3811,6 +3904,11 @@ body {
 
   .benko-tour__cart-card {
     position: static;
+  }
+
+  .benko-tour__cart-meta {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .benko-tour__packages,
@@ -4178,6 +4276,18 @@ body {
   .benko-tour__booking-summary,
   .benko-tour__cart-card {
     padding: 20px 18px;
+  }
+
+  .benko-tour__cart-head {
+    align-items: flex-start;
+  }
+
+  .benko-tour__cart-item-head {
+    flex-direction: column;
+  }
+
+  .benko-tour__cart-remove {
+    align-self: flex-start;
   }
 
   .benko-tour__whatsapp {

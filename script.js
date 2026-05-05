@@ -97,7 +97,8 @@ const cart = new Map();
 const STORAGE_KEYS = {
   users: "benko-tour-users",
   session: "benko-tour-session",
-  reviews: "benko-tour-reviews"
+  reviews: "benko-tour-reviews",
+  cart: "benkoCart"
 };
 const defaultReviews = [
   {
@@ -291,6 +292,76 @@ function setSessionUserId(userId) {
 
 function clearSessionUserId() {
   window.localStorage.removeItem(STORAGE_KEYS.session);
+}
+
+function slugifyValue(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+function sanitizeCartItem(item) {
+  const name = String(item && item.name ? item.name : "").trim();
+  const id = String(item && item.id ? item.id : slugifyValue(name)).trim();
+  const price = Number(item && item.price ? item.price : 0);
+  const quantity = Number(item && item.quantity ? item.quantity : 0);
+
+  if (!id || !name || !Number.isFinite(price) || price <= 0 || !Number.isFinite(quantity) || quantity <= 0) {
+    return null;
+  }
+
+  return {
+    id,
+    name,
+    price,
+    quantity,
+    category: String(item && item.category ? item.category : "").trim(),
+    image: String(item && item.image ? item.image : "").trim()
+  };
+}
+
+function getStoredCartItems() {
+  const storedItems = loadStoredValue(STORAGE_KEYS.cart, []);
+  return Array.isArray(storedItems)
+    ? storedItems.map(sanitizeCartItem).filter(Boolean)
+    : [];
+}
+
+function restoreCartState() {
+  cart.clear();
+  getStoredCartItems().forEach((item) => {
+    cart.set(item.id, item);
+  });
+}
+
+async function syncCartWithAccount(items) {
+  if (typeof window.authFirebase === "undefined" || typeof window.authFirebase.guardarCarrito !== "function") {
+    return;
+  }
+
+  try {
+    const currentUser = typeof window.authFirebase.obtenerUsuarioActual === "function"
+      ? window.authFirebase.obtenerUsuarioActual()
+      : null;
+
+    if (!currentUser) {
+      return;
+    }
+
+    await window.authFirebase.guardarCarrito(items);
+  } catch (error) {
+    console.error("No se pudo sincronizar el carrito con la cuenta.", error);
+  }
+}
+
+function saveCartState() {
+  const items = Array.from(cart.values());
+  saveStoredValue(STORAGE_KEYS.cart, items);
+  void syncCartWithAccount(items);
 }
 
 function getSortedReviews() {
@@ -912,6 +983,64 @@ function getCartItems() {
   return Array.from(cart.values());
 }
 
+function addProductToCart(product) {
+  const normalized = sanitizeCartItem({
+    ...product,
+    quantity: Number(product && product.quantity ? product.quantity : 1)
+  });
+
+  if (!normalized) {
+    return null;
+  }
+
+  const existing = cart.get(normalized.id);
+
+  if (existing) {
+    existing.quantity += normalized.quantity;
+    cart.set(normalized.id, existing);
+  } else {
+    cart.set(normalized.id, normalized);
+  }
+
+  saveCartState();
+  renderCart();
+  return cart.get(normalized.id) || normalized;
+}
+
+function setCartItemQuantity(id, nextQuantity) {
+  const item = cart.get(id);
+
+  if (!item) {
+    return;
+  }
+
+  if (nextQuantity <= 0) {
+    cart.delete(id);
+  } else {
+    item.quantity = nextQuantity;
+    cart.set(id, item);
+  }
+
+  saveCartState();
+  renderCart();
+}
+
+function removeCartItem(id) {
+  if (!cart.has(id)) {
+    return;
+  }
+
+  cart.delete(id);
+  saveCartState();
+  renderCart();
+}
+
+function clearCartState() {
+  cart.clear();
+  saveCartState();
+  renderCart();
+}
+
 function buildCartPayload() {
   const items = getCartItems();
   const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -953,27 +1082,64 @@ function renderCart() {
   cartTotalElement.textContent = `${formatCOP(total)} COP`;
 
   if (!items.length) {
-    cartItemsContainer.innerHTML = '<p class="benko-tour__cart-empty">Todavía no has agregado productos.</p>';
+    cartItemsContainer.innerHTML = `
+      <div class="benko-tour__cart-empty-card">
+        <strong>Tu carrito está listo</strong>
+        <p class="benko-tour__cart-empty">Agrega productos desde gastronomía, música, moda u otras categorías y aquí verás el resumen completo.</p>
+      </div>
+    `;
     return;
   }
 
   cartItemsContainer.innerHTML = items.map((item) => `
     <div class="benko-tour__cart-item">
       <div class="benko-tour__cart-item-head">
-        <strong>${item.name}</strong>
-        <button class="benko-tour__cart-remove" type="button" data-remove-id="${item.id}">Quitar</button>
+        <div class="benko-tour__cart-item-copy">
+          <strong>${item.name}</strong>
+          <span>${formatCOP(item.price)} COP por unidad</span>
+        </div>
+        <button class="benko-tour__cart-remove" type="button" data-remove-id="${item.id}" aria-label="Quitar ${item.name}">Quitar</button>
       </div>
       <div class="benko-tour__cart-meta">
-        <span>Cantidad: ${item.quantity}</span>
-        <span>${formatCOP(item.price * item.quantity)} COP</span>
+        <div class="benko-tour__cart-quantity" aria-label="Cantidad de ${item.name}">
+          <button class="benko-tour__cart-step" type="button" data-cart-decrease="${item.id}" aria-label="Restar una unidad de ${item.name}">−</button>
+          <span>${item.quantity}</span>
+          <button class="benko-tour__cart-step" type="button" data-cart-increase="${item.id}" aria-label="Sumar una unidad de ${item.name}">+</button>
+        </div>
+        <strong>${formatCOP(item.price * item.quantity)} COP</strong>
       </div>
     </div>
   `).join("");
 
   cartItemsContainer.querySelectorAll("[data-remove-id]").forEach((button) => {
     button.addEventListener("click", () => {
-      cart.delete(button.dataset.removeId);
-      renderCart();
+      removeCartItem(button.dataset.removeId);
+    });
+  });
+
+  cartItemsContainer.querySelectorAll("[data-cart-decrease]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const id = button.dataset.cartDecrease || "";
+      const currentItem = cart.get(id);
+
+      if (!currentItem) {
+        return;
+      }
+
+      setCartItemQuantity(id, currentItem.quantity - 1);
+    });
+  });
+
+  cartItemsContainer.querySelectorAll("[data-cart-increase]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const id = button.dataset.cartIncrease || "";
+      const currentItem = cart.get(id);
+
+      if (!currentItem) {
+        return;
+      }
+
+      setCartItemQuantity(id, currentItem.quantity + 1);
     });
   });
 }
@@ -1117,6 +1283,82 @@ function setupCatalogFilters() {
   });
 }
 
+function pulseCartButton(button, message = "Agregado") {
+  if (!button) {
+    return;
+  }
+
+  const previousLabel = button.dataset.defaultLabel || button.textContent || "";
+  button.dataset.defaultLabel = previousLabel;
+  button.textContent = message;
+  button.disabled = true;
+
+  window.setTimeout(() => {
+    button.textContent = previousLabel;
+    button.disabled = false;
+  }, 1400);
+}
+
+function extractCatalogProduct(button) {
+  const card = button.closest(".benko-tour__catalog-card");
+
+  if (!card) {
+    return null;
+  }
+
+  const title = card.querySelector("h3");
+  const price = card.querySelector(".benko-tour__catalog-price");
+  const image = card.querySelector(".benko-tour__catalog-image");
+  const name = title ? title.textContent.trim() : "";
+  const numericPrice = Number(String(price ? price.textContent : "").replace(/[^\d]/g, ""));
+
+  if (!name || !numericPrice) {
+    return null;
+  }
+
+  return {
+    id: button.dataset.id || `${card.dataset.category || "catalogo"}-${slugifyValue(name)}`,
+    name,
+    price: numericPrice,
+    quantity: 1,
+    category: card.dataset.category || "",
+    image: image ? image.getAttribute("src") || "" : ""
+  };
+}
+
+function setupCatalogCartButtons() {
+  document.querySelectorAll(".benko-tour__catalog-card .benko-tour__button--sm").forEach((button) => {
+    if (button.dataset.cartReady === "true") {
+      return;
+    }
+
+    const product = extractCatalogProduct(button);
+
+    if (!product) {
+      return;
+    }
+
+    button.dataset.cartReady = "true";
+    button.dataset.id = product.id;
+    button.dataset.name = product.name;
+    button.dataset.price = String(product.price);
+    button.type = "button";
+    button.classList.add("js-add-to-cart");
+    button.textContent = "Agregar al carrito";
+
+    button.addEventListener("click", () => {
+      const addedProduct = addProductToCart(product);
+
+      if (!addedProduct) {
+        return;
+      }
+
+      setStatus(cartStatus, "success", `${product.name} fue agregado al carrito.`);
+      pulseCartButton(button);
+    });
+  });
+}
+
 packageButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const selected = button.dataset.package;
@@ -1133,25 +1375,20 @@ packageButtons.forEach((button) => {
 
 addToCartButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    const id = button.dataset.id;
-    const name = button.dataset.name;
-    const price = Number(button.dataset.price || 0);
+    const product = sanitizeCartItem({
+      id: button.dataset.id,
+      name: button.dataset.name,
+      price: Number(button.dataset.price || 0),
+      quantity: 1
+    });
 
-    if (!id || !name || !price) {
+    if (!product) {
       return;
     }
 
-    const existing = cart.get(id);
-
-    if (existing) {
-      existing.quantity += 1;
-      cart.set(id, existing);
-    } else {
-      cart.set(id, { id, name, price, quantity: 1 });
-    }
-
-    renderCart();
-    setStatus(cartStatus, "success", `${name} fue agregado al carrito.`);
+    addProductToCart(product);
+    setStatus(cartStatus, "success", `${product.name} fue agregado al carrito.`);
+    pulseCartButton(button);
   });
 });
 
@@ -1316,8 +1553,7 @@ if (cartPayMercadoPagoButton) {
 
 if (cartClearButton) {
   cartClearButton.addEventListener("click", () => {
-    cart.clear();
-    renderCart();
+    clearCartState();
     setStatus(cartStatus, "", "El carrito quedó vacío.");
   });
 }
@@ -1537,6 +1773,15 @@ function initMobileMenu() {
   });
 }
 
+restoreCartState();
+window.addToCart = addProductToCart;
+window.removeFromCart = removeCartItem;
+window.clearCart = clearCartState;
+window.updateCartUI = () => {
+  restoreCartState();
+  renderCart();
+};
+
 renderAccessState();
 renderReviews();
 startReviewRotation();
@@ -1545,4 +1790,5 @@ setActiveAccessTab(activeAccessTab);
 renderCart();
 setupCatalogPlaceholders();
 setupCatalogFilters();
+setupCatalogCartButtons();
 initMobileMenu();
