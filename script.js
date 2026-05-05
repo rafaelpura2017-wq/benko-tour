@@ -456,18 +456,46 @@ function updateRatingButtons(value) {
   });
 }
 
+function formatReviewDate(dateValue) {
+  if (!dateValue) {
+    return "";
+  }
+
+  const parsedDate = new Date(dateValue);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("es-CO", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  }).format(parsedDate);
+}
+
 function createReviewCard(review) {
-  const article = createElement("article", "benko-tour__review-card");
-  const tag = createElement("span", "benko-tour__card-tag", `${review.rating} estrellas`);
-  const stars = createElement("div", "benko-tour__stars", getStarString(review.rating));
-  const quote = createElement("p", "", `“${review.comment}”`);
-  const name = createElement("strong", "", review.name);
+  const article = createElement("article", "benko-tour__review-card benko-tour__review-card--stream");
+  const head = createElement("div", "benko-tour__review-card-head");
+  const identity = createElement("div", "benko-tour__review-card-identity");
+  const name = createElement("strong", "benko-tour__review-card-name", review.name);
+  const location = createElement(
+    "span",
+    "benko-tour__review-card-location",
+    review.city ? `Visitante desde ${review.city}` : "Visitante del recorrido"
+  );
+  const badge = createElement("span", "benko-tour__review-badge", `${review.rating}/5`);
+  const stars = createElement("div", "benko-tour__stars benko-tour__stars--display", getStarString(review.rating));
+  const quote = createElement("p", "benko-tour__review-copy", `“${review.comment}”`);
   const meta = createElement("div", "benko-tour__review-meta");
   const packageMeta = createElement("span", "", review.packageName);
-  const cityMeta = createElement("span", "", review.city || "Sin ciudad");
+  const cityMeta = createElement("span", "", review.city || "Ciudad no indicada");
+  const dateMeta = createElement("span", "", formatReviewDate(review.createdAt) || "Fecha reciente");
 
-  meta.append(packageMeta, cityMeta);
-  article.append(tag, stars, quote, name, meta);
+  identity.append(name, location);
+  head.append(identity, badge);
+  meta.append(packageMeta, cityMeta, dateMeta);
+  article.append(head, stars, quote, meta);
   return article;
 }
 
@@ -507,17 +535,19 @@ function renderReviews() {
   reviewAverage.textContent = averageRating.toFixed(1);
   reviewAverageStars.textContent = getStarString(averageRating);
   reviewAverageStars.setAttribute("aria-label", `Valoración promedio ${averageRating.toFixed(1)} de 5 estrellas`);
-  reviewCount.textContent = `${reviews.length} opinion${reviews.length === 1 ? "" : "es"} compartida${reviews.length === 1 ? "" : "s"}`;
+  reviewCount.textContent = `${reviews.length} voz${reviews.length === 1 ? "" : "es"} publicada${reviews.length === 1 ? "" : "s"}`;
 
   reviewList.replaceChildren();
-  reviews.slice(0, 3).forEach((review) => {
-    reviewList.appendChild(createReviewCard(review));
-  });
 
   if (!reviews.length) {
+    reviewList.append(createElement("p", "benko-tour__note", "Aún no hay opiniones publicadas en este momento."));
     reviewSpotlight.replaceChildren(createElement("p", "benko-tour__note", "Aún no hay opiniones para mostrar."));
     return;
   }
+
+  reviews.slice(0, 5).forEach((review) => {
+    reviewList.appendChild(createReviewCard(review));
+  });
 
   if (spotlightIndex >= reviews.length) {
     spotlightIndex = 0;
