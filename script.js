@@ -978,6 +978,145 @@ function renderCart() {
   });
 }
 
+function markCatalogMediaPlaceholder(media, image) {
+  if (!media) {
+    return;
+  }
+
+  const source = image ? image.getAttribute("src") || "" : "";
+  const fileName = source.split("/").pop().split("?")[0];
+  const altText = image ? String(image.getAttribute("alt") || "").trim() : "";
+
+  if (fileName) {
+    media.dataset.imageSlot = fileName;
+  }
+
+  if (altText) {
+    media.dataset.imageAlt = altText;
+  }
+
+  media.classList.add("is-placeholder");
+
+  if (image) {
+    image.hidden = true;
+    image.setAttribute("aria-hidden", "true");
+  }
+}
+
+function setupCatalogPlaceholders() {
+  document.querySelectorAll(".benko-tour__catalog-media").forEach((media) => {
+    const image = media.querySelector(".benko-tour__catalog-image");
+
+    if (!image || image.dataset.catalogReady === "true") {
+      return;
+    }
+
+    const syncMeta = () => {
+      const source = image.getAttribute("src") || "";
+      const fileName = source.split("/").pop().split("?")[0];
+
+      if (fileName) {
+        media.dataset.imageSlot = fileName;
+      }
+
+      if (image.alt) {
+        media.dataset.imageAlt = image.alt.trim();
+      }
+    };
+
+    image.dataset.catalogReady = "true";
+    syncMeta();
+
+    image.addEventListener("load", () => {
+      image.hidden = false;
+      image.removeAttribute("aria-hidden");
+      media.classList.remove("is-placeholder");
+      syncMeta();
+    });
+
+    image.addEventListener("error", () => {
+      markCatalogMediaPlaceholder(media, image);
+    });
+
+    if (!image.getAttribute("src")) {
+      markCatalogMediaPlaceholder(media, image);
+      return;
+    }
+
+    if (image.complete && image.naturalWidth === 0) {
+      markCatalogMediaPlaceholder(media, image);
+    }
+  });
+}
+
+function setupCatalogFilters() {
+  document.querySelectorAll(".benko-tour__catalog-filters").forEach((filterGroup) => {
+    if (filterGroup.dataset.catalogReady === "true") {
+      return;
+    }
+
+    const section = filterGroup.closest(".benko-tour__section") || document;
+    const grid = section.querySelector(".benko-tour__catalog-grid");
+    const buttons = Array.from(filterGroup.querySelectorAll("[data-filter]"));
+    const cards = grid ? Array.from(grid.querySelectorAll(".benko-tour__catalog-card")) : [];
+    const result = section.querySelector("[data-catalog-result]");
+    const empty = section.querySelector("[data-catalog-empty]");
+
+    if (!grid || !buttons.length || !cards.length) {
+      return;
+    }
+
+    const updateResult = (count, label, showAll) => {
+      if (result) {
+        result.textContent = showAll
+          ? `${count} experiencias visibles`
+          : `${count} experiencias en ${label.toLowerCase()}`;
+      }
+
+      if (empty) {
+        empty.hidden = count !== 0;
+      }
+    };
+
+    const applyFilter = (filterValue, filterLabel) => {
+      let visibleCount = 0;
+
+      cards.forEach((card) => {
+        const matches = filterValue === "todos" || card.dataset.category === filterValue;
+        card.hidden = !matches;
+
+        if (matches) {
+          visibleCount += 1;
+        }
+      });
+
+      updateResult(visibleCount, filterLabel, filterValue === "todos");
+    };
+
+    filterGroup.dataset.catalogReady = "true";
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        buttons.forEach((candidate) => {
+          candidate.classList.toggle("benko-tour__filter-btn--active", candidate === button);
+          candidate.setAttribute("aria-pressed", candidate === button ? "true" : "false");
+        });
+
+        applyFilter(button.dataset.filter || "todos", button.textContent || "Todos");
+      });
+    });
+
+    const activeButton =
+      buttons.find((button) => button.classList.contains("benko-tour__filter-btn--active")) || buttons[0];
+
+    buttons.forEach((button) => {
+      button.setAttribute("aria-pressed", button === activeButton ? "true" : "false");
+    });
+
+    applyFilter(activeButton.dataset.filter || "todos", activeButton.textContent || "Todos");
+  });
+}
+
 packageButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const selected = button.dataset.package;
@@ -1404,4 +1543,6 @@ startReviewRotation();
 startExperienceRotation();
 setActiveAccessTab(activeAccessTab);
 renderCart();
+setupCatalogPlaceholders();
+setupCatalogFilters();
 initMobileMenu();

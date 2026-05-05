@@ -140,7 +140,7 @@
           </aside>
         </section>
 
-        <section class="benko-tour__section" id="catalogo-moda">
+        <section class="benko-tour__section benko-tour__section--catalog-fashion" id="catalogo-moda">
           <div class="benko-tour__section-head">
             <div>
               <span class="benko-tour__eyebrow">Catálogo de Moda</span>
@@ -149,22 +149,54 @@
             <p class="benko-tour__section-copy">Turbantes que cuentan historias, molas bordadas a mano y colores que vibran con el trópico</p>
           </div>
 
-          <!-- Filtros -->
-          <div class="benko-tour__catalog-filters">
-            <button class="benko-tour__filter-btn benko-tour__filter-btn--active" data-filter="todos">Todos</button>
-            <button class="benko-tour__filter-btn" data-filter="turbantes">Turbantes</button>
-            <button class="benko-tour__filter-btn" data-filter="molas">Molas</button>
-            <button class="benko-tour__filter-btn" data-filter="textil">Textil</button>
-            <button class="benko-tour__filter-btn" data-filter="joyeria">Joyería</button>
-            <button class="benko-tour__filter-btn" data-filter="fotos">Fotos</button>
+          <div class="benko-tour__catalog-spotlight">
+            <article class="benko-tour__catalog-upload-card">
+              <span class="benko-tour__card-tag">Fotos reales</span>
+              <h3>Tu carpeta de moda ya está lista</h3>
+              <p>Sube aquí las imágenes de turbantes, molas, joyería y sesiones para que cada tarjeta tome su foto automáticamente.</p>
+              <code>assets/images/catalog/moda/</code>
+              <ul class="benko-tour__catalog-upload-list">
+                <li>Usa nombres desde <strong>moda-01.jpg</strong> hasta <strong>moda-20.jpg</strong>.</li>
+                <li>Si una imagen falta, la tarjeta te mostrará el archivo que debes subir.</li>
+                <li>Recomendado: formato <strong>jpg</strong> o <strong>webp</strong> en proporción <strong>4:3</strong>.</li>
+              </ul>
+            </article>
+
+            <div class="benko-tour__catalog-metric-grid">
+              <article class="benko-tour__catalog-metric-card">
+                <strong>20</strong>
+                <span>experiencias conectadas</span>
+              </article>
+              <article class="benko-tour__catalog-metric-card">
+                <strong>5</strong>
+                <span>líneas para filtrar</span>
+              </article>
+              <article class="benko-tour__catalog-metric-card">
+                <strong>100%</strong>
+                <span>lista para fotos tuyas</span>
+              </article>
+            </div>
           </div>
+
+          <div class="benko-tour__catalog-toolbar">
+            <div class="benko-tour__catalog-filters">
+              <button class="benko-tour__filter-btn benko-tour__filter-btn--active" data-filter="todos">Todos</button>
+              <button class="benko-tour__filter-btn" data-filter="turbantes">Turbantes</button>
+              <button class="benko-tour__filter-btn" data-filter="molas">Molas</button>
+              <button class="benko-tour__filter-btn" data-filter="textil">Textil</button>
+              <button class="benko-tour__filter-btn" data-filter="joyeria">Joyería</button>
+              <button class="benko-tour__filter-btn" data-filter="fotos">Fotos</button>
+            </div>
+            <p class="benko-tour__catalog-result" data-catalog-result>20 experiencias visibles en moda</p>
+          </div>
+          <p class="benko-tour__catalog-empty" data-catalog-empty hidden>No encontramos resultados en esta categoría. Prueba otro filtro para seguir explorando la colección.</p>
 
           <!-- Grid de Experiencias de Moda -->
           <div class="benko-tour__catalog-grid">
             <!-- EXPERIENCIA 1 - TURBANTES -->
             <article class="benko-tour__catalog-card" data-category="turbantes">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Turbante corona de reina" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-01.jpg" alt="Turbante corona de reina" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Taller</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -183,7 +215,7 @@
             <!-- EXPERIENCIA 2 - TURBANTES -->
             <article class="benko-tour__catalog-card" data-category="turbantes">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="5 formas de amarrar" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-02.jpg" alt="5 formas de amarrar" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Intensivo</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -202,7 +234,7 @@
             <!-- EXPERIENCIA 3 - TURBANTES -->
             <article class="benko-tour__catalog-card" data-category="turbantes">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Turbante al atardecer" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-03.jpg" alt="Turbante al atardecer" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Premium</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -221,7 +253,7 @@
             <!-- EXPERIENCIA 4 - TURBANTES -->
             <article class="benko-tour__catalog-card" data-category="turbantes">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Turbantes para hombres" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-04.jpg" alt="Turbantes para hombres" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Unisex</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -240,7 +272,7 @@
             <!-- EXPERIENCIA 5 - MOLAS -->
             <article class="benko-tour__catalog-card" data-category="molas">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Mola desde cero" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-05.jpg" alt="Mola desde cero" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Artesanal</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -259,7 +291,7 @@
             <!-- EXPERIENCIA 6 - MOLAS -->
             <article class="benko-tour__catalog-card" data-category="molas">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Mola express" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-06.jpg" alt="Mola express" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Express</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -278,7 +310,7 @@
             <!-- EXPERIENCIA 7 - MOLAS -->
             <article class="benko-tour__catalog-card" data-category="molas">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Mola avanzada" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-07.jpg" alt="Mola avanzada" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Masterclass</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -297,7 +329,7 @@
             <!-- EXPERIENCIA 8 - TEXTIL -->
             <article class="benko-tour__catalog-card" data-category="textil">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Tejido en telar" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-08.jpg" alt="Tejido en telar" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Tradicional</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -316,7 +348,7 @@
             <!-- EXPERIENCIA 9 - TEXTIL -->
             <article class="benko-tour__catalog-card" data-category="textil">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Bordado flores" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-09.jpg" alt="Bordado flores" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Decorativo</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -335,7 +367,7 @@
             <!-- EXPERIENCIA 10 - TEXTIL -->
             <article class="benko-tour__catalog-card" data-category="textil">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Tintes naturales" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-10.jpg" alt="Tintes naturales" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Natural</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -354,7 +386,7 @@
             <!-- EXPERIENCIA 11 - TEXTIL -->
             <article class="benko-tour__catalog-card" data-category="textil">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Camisa guayabera" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-11.jpg" alt="Camisa guayabera" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Masculino</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -373,7 +405,7 @@
             <!-- EXPERIENCIA 12 - JOYERIA -->
             <article class="benko-tour__catalog-card" data-category="joyeria">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Collar semillas" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-12.jpg" alt="Collar semillas" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Natural</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -392,7 +424,7 @@
             <!-- EXPERIENCIA 13 - JOYERIA -->
             <article class="benko-tour__catalog-card" data-category="joyeria">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Aretes wayuu" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-13.jpg" alt="Aretes wayuu" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Étnico</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -411,7 +443,7 @@
             <!-- EXPERIENCIA 14 - JOYERIA -->
             <article class="benko-tour__catalog-card" data-category="joyeria">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Pulseras macrame" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-14.jpg" alt="Pulseras macrame" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Boho</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -430,7 +462,7 @@
             <!-- EXPERIENCIA 15 - JOYERIA -->
             <article class="benko-tour__catalog-card" data-category="joyeria">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Collar oro caribe" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-15.jpg" alt="Collar oro caribe" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Lujo</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -449,7 +481,7 @@
             <!-- EXPERIENCIA 16 - FOTOS -->
             <article class="benko-tour__catalog-card" data-category="fotos">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Sesion reina africana" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-16.jpg" alt="Sesion reina africana" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Premium</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -468,7 +500,7 @@
             <!-- EXPERIENCIA 17 - FOTOS -->
             <article class="benko-tour__catalog-card" data-category="fotos">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Sesion mola" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-17.jpg" alt="Sesion mola" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Artístico</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -487,7 +519,7 @@
             <!-- EXPERIENCIA 18 - FOTOS -->
             <article class="benko-tour__catalog-card" data-category="fotos">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Sesion callejera" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-18.jpg" alt="Sesion callejera" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--eco">Urbano</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -506,7 +538,7 @@
             <!-- EXPERIENCIA 19 - FOTOS -->
             <article class="benko-tour__catalog-card" data-category="fotos">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Sesion pareja" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-19.jpg" alt="Sesion pareja" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--prem">Romántico</span>
               </div>
               <div class="benko-tour__catalog-content">
@@ -525,7 +557,7 @@
             <!-- EXPERIENCIA 20 - RUTA -->
             <article class="benko-tour__catalog-card" data-category="textil">
               <div class="benko-tour__catalog-media">
-                <img src="./assets/images/products/placeholder-moda.jpg" alt="Ruta artesanos" loading="lazy">
+                <img class="benko-tour__catalog-image" src="./assets/images/catalog/moda/moda-20.jpg" alt="Ruta artesanos" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder')">
                 <span class="benko-tour__catalog-tag benko-tour__catalog-tag--med">Excursión</span>
               </div>
               <div class="benko-tour__catalog-content">
