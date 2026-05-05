@@ -2546,6 +2546,7 @@ body {
 .benko-tour__package-card {
   display: grid;
   gap: 16px;
+  min-width: 0;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -2569,22 +2570,178 @@ body {
   gap: 16px;
 }
 
+.benko-tour__packages--hub .benko-tour__package-card {
+  align-content: start;
+  overflow: hidden;
+}
+
+.benko-tour__package-visual {
+  position: relative;
+  margin: -16px -16px 2px;
+  min-height: 220px;
+  overflow: hidden;
+  border-radius: calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px) 26px 26px;
+  background: linear-gradient(135deg, rgba(244, 216, 172, 0.72), rgba(94, 64, 42, 0.18));
+}
+
+.benko-tour__package-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(30, 18, 10, 0.06) 0%, rgba(30, 18, 10, 0.1) 35%, rgba(30, 18, 10, 0.46) 100%);
+  pointer-events: none;
+}
+
+.benko-tour__package-visual img {
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.45s ease, filter 0.45s ease;
+}
+
+.benko-tour__packages--hub .benko-tour__package-card:hover .benko-tour__package-visual img {
+  transform: scale(1.04);
+  filter: saturate(1.04);
+}
+
+.benko-tour__package-visual figcaption {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 248, 240, 0.88);
+  color: var(--brand-dark);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .benko-tour__package-card--featured {
   background: linear-gradient(180deg, rgba(255, 244, 230, 0.98) 0%, rgba(255, 253, 249, 0.98) 100%);
   border-color: rgba(239, 176, 58, 0.24);
 }
 
+.benko-tour__package-card--immersive {
+  --package-bg: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: clamp(480px, 42vw, 600px);
+  overflow: hidden;
+  isolation: isolate;
+  background: #22170f;
+  border-color: rgba(255, 248, 240, 0.12);
+}
+
+.benko-tour__package-card--immersive::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: var(--package-bg);
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.02);
+  transition: transform 0.45s ease, filter 0.45s ease;
+}
+
+.benko-tour__package-card--immersive::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(23, 15, 10, 0.16) 0%, rgba(23, 15, 10, 0.42) 32%, rgba(23, 15, 10, 0.82) 72%, rgba(17, 10, 7, 0.94) 100%);
+}
+
+.benko-tour__package-card--immersive:hover::before,
+.benko-tour__package-card--immersive:focus-within::before {
+  transform: scale(1.05);
+  filter: saturate(1.05);
+}
+
+.benko-tour__package-card--community {
+  --package-bg: url("./assets/images/experience/IMG_4836.JPG");
+}
+
+.benko-tour__package-card--principal {
+  --package-bg: url("./assets/images/experience/san-basilio-de-palenque-tour-edited-1536x864.jpeg");
+}
+
+.benko-tour__package-card--premium {
+  --package-bg: url("./assets/images/experience/palenque-cartagena-music-1536x1152.jpeg");
+}
+
+.benko-tour__package-card--immersive .benko-tour__card-tag {
+  background: rgba(255, 244, 230, 0.16);
+  border: 1px solid rgba(255, 248, 240, 0.18);
+  color: #fff;
+  backdrop-filter: blur(12px);
+}
+
+.benko-tour__package-card--immersive h3,
+.benko-tour__package-card--immersive .benko-tour__package-price,
+.benko-tour__package-card--immersive .benko-tour__package-price small {
+  color: #fff;
+}
+
+.benko-tour__package-card--immersive .benko-tour__package-copy,
+.benko-tour__package-card--immersive .benko-tour__feature-list li {
+  color: rgba(255, 246, 238, 0.92);
+}
+
+.benko-tour__package-card--immersive .benko-tour__feature-list li::before {
+  background: linear-gradient(135deg, rgba(239, 176, 58, 1), rgba(239, 122, 93, 0.96));
+}
+
+.benko-tour__package-card--immersive .benko-tour__button,
+.benko-tour__package-card--immersive .benko-tour__ghost {
+  margin-top: auto;
+}
+
+.benko-tour__package-card--immersive .benko-tour__ghost--dark {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  backdrop-filter: blur(12px);
+}
+
+.benko-tour__package-card--immersive .benko-tour__ghost--dark:hover,
+.benko-tour__package-card--immersive .benko-tour__ghost--dark:focus-visible {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
 .benko-tour__package-price,
 .benko-tour__product-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
   font-size: 2rem;
   font-weight: 800;
-  line-height: 1;
+  line-height: 1.05;
   color: var(--brand-dark);
 }
 
 .benko-tour__package-price small,
 .benko-tour__product-price {
   font-size: 1rem;
+}
+
+.benko-tour__package-price small {
+  display: inline-flex;
+  align-items: baseline;
+  font-weight: 700;
 }
 
 .benko-tour__split,
@@ -3629,6 +3786,10 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .benko-tour__trust {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .benko-tour__hero,
   .benko-tour__access-layout,
   .benko-tour__feedback-layout,
@@ -3667,6 +3828,22 @@ body {
 }
 
 @media (max-width: 820px) {
+  .benko-tour__package-card--immersive {
+    min-height: 460px;
+  }
+
+  .benko-tour__package-visual,
+  .benko-tour__package-visual img {
+    min-height: 190px;
+  }
+
+  .benko-tour__package-visual figcaption {
+    left: 14px;
+    bottom: 14px;
+    padding: 7px 11px;
+    font-size: 0.78rem;
+  }
+
   .benko-tour__review-card-head {
     flex-direction: column;
     align-items: flex-start;
@@ -3919,6 +4096,10 @@ body {
 }
 
 @media (max-width: 560px) {
+  .benko-tour__package-card--immersive {
+    min-height: 420px;
+  }
+
   .benko-tour__info-media-card--rotating {
     min-height: 280px;
   }
@@ -3970,6 +4151,16 @@ body {
     max-width: 100%;
     font-size: clamp(2.3rem, 12vw, 3.5rem);
     line-height: 0.96;
+  }
+
+  .benko-tour__package-price,
+  .benko-tour__product-price {
+    font-size: 1.7rem;
+    gap: 6px 10px;
+  }
+
+  .benko-tour__package-price small {
+    font-size: 0.95rem;
   }
 
   .benko-tour__actions {
