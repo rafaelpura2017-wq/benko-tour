@@ -298,20 +298,68 @@
 
     .benko-tour__language-dictionary {
       display: grid;
-      gap: 18px;
+      gap: 20px;
     }
 
     .benko-tour__language-dictionary-toolbar {
       display: grid;
-      gap: 14px;
-      padding: 22px;
-      border-radius: 26px;
+      gap: 18px;
+      padding: clamp(22px, 3vw, 30px);
+      border-radius: 28px;
       background:
-        linear-gradient(135deg, rgba(94, 49, 28, 0.96), rgba(121, 63, 32, 0.94)),
-        radial-gradient(circle at right top, rgba(255, 186, 86, 0.18), transparent 32%);
+        radial-gradient(circle at top right, rgba(255, 188, 82, 0.18), transparent 22%),
+        linear-gradient(135deg, rgba(84, 42, 23, 0.98), rgba(112, 58, 29, 0.98));
       border: 1px solid rgba(80, 60, 34, 0.08);
-      box-shadow: 0 18px 36px rgba(38, 26, 18, 0.14);
+      box-shadow: 0 24px 44px rgba(38, 26, 18, 0.16);
       color: #fff6e8;
+    }
+
+    .benko-tour__language-dictionary-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .benko-tour__language-dictionary-head h3 {
+      margin: 12px 0 10px;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+    }
+
+    .benko-tour__language-dictionary-head p {
+      margin: 0;
+      max-width: 66ch;
+      color: rgba(255, 242, 221, 0.84);
+      line-height: 1.7;
+    }
+
+    .benko-tour__language-dictionary-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .benko-tour__language-dictionary-stat {
+      display: grid;
+      gap: 4px;
+      padding: 16px 14px;
+      border-radius: 20px;
+      background: rgba(255, 247, 234, 0.1);
+      border: 1px solid rgba(255, 227, 174, 0.12);
+      backdrop-filter: blur(10px);
+    }
+
+    .benko-tour__language-dictionary-stat strong {
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .benko-tour__language-dictionary-stat span {
+      color: rgba(255, 240, 216, 0.76);
+      font-size: 0.84rem;
+      line-height: 1.35;
     }
 
     .benko-tour__language-search {
@@ -355,41 +403,43 @@
     .benko-tour__language-filter-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
+      gap: 12px;
+      align-items: flex-start;
       justify-content: space-between;
     }
 
     .benko-tour__language-filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 10px 8px;
     }
 
     .benko-tour__language-filter {
       min-width: 48px;
-      padding: 11px 14px;
-      border: none;
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 214, 138, 0.14);
       border-radius: 14px;
-      background: rgba(255, 183, 66, 0.92);
-      color: #4f2918;
+      background: rgba(255, 244, 222, 0.12);
+      color: rgba(255, 244, 222, 0.88);
       font: inherit;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 10px 18px rgba(26, 14, 8, 0.16);
-      transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease;
+      box-shadow: none;
+      transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
     }
 
     .benko-tour__language-filter:hover,
     .benko-tour__language-filter:focus-visible {
       transform: translateY(-1px);
-      background: #ffc75c;
+      background: rgba(255, 199, 92, 0.24);
+      border-color: rgba(255, 199, 92, 0.42);
       outline: none;
     }
 
     .benko-tour__language-filter.is-active {
-      background: #fff3db;
+      background: #ffbe52;
       color: var(--brand-dark);
+      border-color: #ffbe52;
     }
 
     .benko-tour__language-dictionary-meta {
@@ -397,25 +447,38 @@
       color: rgba(255, 241, 221, 0.8);
       line-height: 1.6;
       font-size: 0.95rem;
+      max-width: 56ch;
     }
 
     .benko-tour__language-dictionary-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .benko-tour__language-dictionary-grid[hidden] {
+      display: none;
     }
 
     .benko-tour__language-dictionary-card {
       display: grid;
       gap: 12px;
-      padding: 20px;
-      border-radius: 24px;
+      padding: 22px;
+      border-radius: 26px;
       background:
-        linear-gradient(180deg, rgba(166, 92, 46, 0.98), rgba(146, 79, 39, 0.98)),
-        radial-gradient(circle at right top, rgba(255, 200, 110, 0.18), transparent 28%);
-      border: 1px solid rgba(80, 60, 34, 0.08);
+        radial-gradient(circle at right top, rgba(239, 176, 58, 0.16), transparent 22%),
+        linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(249, 241, 228, 0.96));
+      border: 1px solid rgba(104, 66, 39, 0.1);
       box-shadow: 0 18px 34px rgba(38, 26, 18, 0.12);
-      color: #fff7eb;
+      color: var(--text);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+
+    .benko-tour__language-dictionary-card:hover,
+    .benko-tour__language-dictionary-card:focus-within {
+      transform: translateY(-2px);
+      border-color: rgba(209, 94, 56, 0.2);
+      box-shadow: 0 24px 40px rgba(38, 26, 18, 0.14);
     }
 
     .benko-tour__language-dictionary-card[hidden] {
@@ -450,9 +513,9 @@
 
     .benko-tour__language-dictionary-letter {
       min-width: 42px;
-      background: rgba(255, 245, 227, 0.12);
-      color: rgba(255, 242, 220, 0.92);
-      border: 1px solid rgba(255, 245, 227, 0.18);
+      background: rgba(91, 50, 30, 0.08);
+      color: var(--brand-dark);
+      border: 1px solid rgba(91, 50, 30, 0.12);
     }
 
     .benko-tour__language-dictionary-card strong {
@@ -460,18 +523,19 @@
       font-size: clamp(1.4rem, 3vw, 2rem);
       line-height: 1;
       letter-spacing: -0.04em;
+      color: #4a2314;
     }
 
     .benko-tour__language-dictionary-translation {
       display: block;
-      color: #fff2cf;
+      color: var(--brand-dark);
       font-weight: 800;
       font-size: 1rem;
     }
 
     .benko-tour__language-dictionary-card p {
       margin: 0;
-      color: rgba(255, 247, 235, 0.92);
+      color: var(--muted);
       line-height: 1.65;
       font-size: 0.95rem;
     }
@@ -483,8 +547,9 @@
     }
 
     .benko-tour__language-dictionary-tags span {
-      background: rgba(92, 43, 22, 0.62);
-      color: #fff7eb;
+      background: rgba(91, 50, 30, 0.08);
+      color: var(--brand-dark);
+      border: 1px solid rgba(91, 50, 30, 0.08);
     }
 
     .benko-tour__language-dictionary-empty {
@@ -494,6 +559,33 @@
       background: rgba(255, 252, 247, 0.72);
       color: var(--muted);
       line-height: 1.7;
+    }
+
+    .benko-tour__language-dictionary-actions {
+      display: flex;
+      justify-content: center;
+    }
+
+    .benko-tour__language-dictionary-loadmore {
+      min-width: 220px;
+      padding: 14px 22px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ffb43d 0%, #f37a59 100%);
+      color: #2f140b;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 16px 28px rgba(209, 94, 56, 0.22);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+    }
+
+    .benko-tour__language-dictionary-loadmore:hover,
+    .benko-tour__language-dictionary-loadmore:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 20px 34px rgba(209, 94, 56, 0.28);
+      filter: saturate(1.04);
+      outline: none;
     }
 
     .benko-tour__language-item {
@@ -671,6 +763,11 @@
         grid-template-columns: 1fr;
       }
 
+      .benko-tour__language-dictionary-head,
+      .benko-tour__language-dictionary-stats {
+        grid-template-columns: 1fr;
+      }
+
       .benko-tour__language-highlights {
         grid-template-columns: 1fr;
       }
@@ -709,6 +806,18 @@
 
       .benko-tour__language-photo-card {
         width: min(68%, 240px);
+      }
+
+      .benko-tour__language-dictionary-toolbar {
+        padding: 20px;
+      }
+
+      .benko-tour__language-dictionary-stat {
+        padding: 14px;
+      }
+
+      .benko-tour__language-dictionary-loadmore {
+        width: 100%;
       }
     }
   </style>
@@ -852,10 +961,10 @@
         <section class="benko-tour__language-section" id="kajangari" aria-labelledby="lengua-diccionario">
           <div class="benko-tour__language-section-head">
             <span class="benko-tour__eyebrow">Kajangarí</span>
-            <h2 id="lengua-diccionario">Un primer diccionario vivo para la web</h2>
+            <h2 id="lengua-diccionario">Un diccionario palenquero pensado para explorar la base completa</h2>
             <p>
-              Tomé palabras reales del material que me compartiste para que esta página ya comience a sonar
-              más palenquera sin perder la claridad en español.
+              Ahora esta sección ya no trabaja con unas pocas muestras: toma la base del Excel, la ordena y la convierte
+              en una herramienta más profesional para consultar lengua palenquera desde la web.
             </p>
           </div>
 
@@ -866,6 +975,32 @@
 
           <div class="benko-tour__language-dictionary">
             <div class="benko-tour__language-dictionary-toolbar">
+              <div class="benko-tour__language-dictionary-head">
+                <div>
+                  <span class="benko-tour__card-tag">Diccionario vivo</span>
+                  <h3>Kajangarí ya puede crecer como una herramienta real de consulta</h3>
+                  <p>
+                    Tomé el archivo base del diccionario y lo convertí en una experiencia más sólida para la web:
+                    búsqueda, navegación por letra y todas las palabras agrupadas en una misma sección.
+                  </p>
+                </div>
+
+                <div class="benko-tour__language-dictionary-stats" aria-label="Resumen del diccionario">
+                  <article class="benko-tour__language-dictionary-stat">
+                    <strong id="lengua-dictionary-total">0</strong>
+                    <span>Entradas cargadas</span>
+                  </article>
+                  <article class="benko-tour__language-dictionary-stat">
+                    <strong id="lengua-dictionary-visible">0</strong>
+                    <span>Resultados visibles</span>
+                  </article>
+                  <article class="benko-tour__language-dictionary-stat">
+                    <strong id="lengua-dictionary-active">Todas</strong>
+                    <span>Letra activa</span>
+                  </article>
+                </div>
+              </div>
+
               <label class="benko-tour__language-search" for="lengua-dictionary-search">
                 <input
                   id="lengua-dictionary-search"
@@ -877,202 +1012,23 @@
               </label>
 
               <div class="benko-tour__language-filter-row">
-                <div class="benko-tour__language-filters" aria-label="Filtrar por letra inicial">
-                  <button class="benko-tour__language-filter is-active" type="button" data-letter="all" aria-pressed="true">Todas</button>
-                  <button class="benko-tour__language-filter" type="button" data-letter="a" aria-pressed="false">A</button>
-                  <button class="benko-tour__language-filter" type="button" data-letter="b" aria-pressed="false">B</button>
-                  <button class="benko-tour__language-filter" type="button" data-letter="c" aria-pressed="false">C</button>
-                </div>
+                <div class="benko-tour__language-filters" id="lengua-dictionary-filters" aria-label="Filtrar por letra inicial"></div>
                 <p class="benko-tour__language-dictionary-meta" id="lengua-dictionary-meta">
-                  10 palabras reales del Excel para comenzar este primer diccionario web.
+                  Estamos preparando el diccionario completo para esta página.
                 </p>
               </div>
             </div>
 
-            <div class="benko-tour__language-dictionary-grid" id="lengua-dictionary-grid">
-              <article
-                class="benko-tour__language-dictionary-card"
-                data-letter="a"
-                data-lookup="abalenga estrella sol lucero astro sun sustantivo"
-              >
-                <div class="benko-tour__language-dictionary-card-top">
-                  <span class="benko-tour__language-dictionary-type">Sustantivo</span>
-                  <span class="benko-tour__language-dictionary-letter">A</span>
-                </div>
-                <strong>Abalenga</strong>
-                <span class="benko-tour__language-dictionary-translation">Estrella / Sol</span>
-                <p>Astro luminoso visible en la noche.</p>
-                <div class="benko-tour__language-dictionary-tags">
-                  <span>Lucero</span>
-                  <span>Sun</span>
-                </div>
-              </article>
-
-              <article
-                class="benko-tour__language-dictionary-card"
-                data-letter="a"
-                data-lookup="abbolia lanzar arrojar echar verbo infinitivo fuerza"
-              >
-                <div class="benko-tour__language-dictionary-card-top">
-                  <span class="benko-tour__language-dictionary-type">Verbo infinitivo</span>
-                  <span class="benko-tour__language-dictionary-letter">A</span>
-                </div>
-                <strong>Abboliá</strong>
-                <span class="benko-tour__language-dictionary-translation">Lanzar</span>
-                <p>Impulsar algo con fuerza hacia un lugar.</p>
-                <div class="benko-tour__language-dictionary-tags">
-                  <span>Arrojar</span>
-                  <span>Echar</span>
-                </div>
-              </article>
-
-              <article
-                class="benko-tour__language-dictionary-card"
-                data-letter="a"
-                data-lookup="abla decir hablar expresar verbo infinitivo voz"
-              >
-                <div class="benko-tour__language-dictionary-card-top">
-                  <span class="benko-tour__language-dictionary-type">Verbo infinitivo</span>
-                  <span class="benko-tour__language-dictionary-letter">A</span>
-                </div>
-                <strong>Ablá</strong>
-                <span class="benko-tour__language-dictionary-translation">Decir / Hablar</span>
-                <p>Expresar pensamientos o información de forma verbal.</p>
-                <div class="benko-tour__language-dictionary-tags">
-                  <span>Expresar</span>
-                  <span>Oralidad</span>
-                </div>
-              </article>
-
-              <article
-                class="benko-tour__language-dictionary-card"
-                data-letter="a"
-                data-lookup="anabakuru ancestros grupo de mayores guardia cimarrona sabios mayores sustantivo colectivo"
-              >
-                <div class="benko-tour__language-dictionary-card-top">
-                  <span class="benko-tour__language-dictionary-type">Sustantivo colectivo</span>
-                  <span class="benko-tour__language-dictionary-letter">A</span>
-                </div>
-                <strong>Anabakurú</strong>
-                <span class="benko-tour__language-dictionary-translation">Grupo de mayores / Ancestros</span>
-                <p>Agrupación de personas mayores o guardianes ancestrales.</p>
-                <div class="benko-tour__language-dictionary-tags">
-                  <span>Guardia cimarrona</span>
-                  <span>Ancestors</span>
-                </div>
-              </article>
-
-              <article
-                class="benko-tour__language-dictionary-card"
-                data-letter="b"
-                data-lookup="balondron mondongo cocina tradicional sopa tripe stew"
-              >
-                <div class="benko-tour__language-dictionary-card-top">
-                  <span class="benko-tour__language-dictionary-type">Cocina tradicional</span>
-                  <span class="benko-tour__language-dictionary-letter">B</span>
-                </div>
-                <strong>Balondron</strong>
-                <span class="benko-tour__language-dictionary-translation">Mondongo</span>
-                <p>Nombre usado en la hoja trilingüe para una preparación ligada a la cocina del territorio.</p>
-                <div class="benko-tour__language-dictionary-tags">
-                  <span>Gastronomía</span>
-                  <span>Tripe stew</span>
-                </div>
-              </article>
-
-              <article
-                class="benko-tour__language-dictionary-card"
-                data-letter="b"
-                data-lookup="baranganga secreto informacion reservada sustantivo memoria"
-              >
-                <div class="benko-tour__language-dictionary-card-top">
-                  <span class="benko-tour__language-dictionary-type">Sustantivo</span>
-                  <span class="benko-tour__language-dictionary-letter">B</span>
-                </div>
-                <strong>Baranganga</strong>
-                <span class="benko-tour__language-dictionary-translation">Secreto</span>
-                <p>Información reservada o que no se cuenta abiertamente.</p>
-                <div class="benko-tour__language-dictionary-tags">
-                  <span>Memoria</span>
-                  <span>Secret</span>
-                </div>
-              </article>
-
-              <article
-                class="benko-tour__language-dictionary-card"
-                data-letter="b"
-                data-lookup="bilongo brujeria encanto hechiceria magia sustantivo"
-              >
-                <div class="benko-tour__language-dictionary-card-top">
-                  <span class="benko-tour__language-dictionary-type">Sustantivo</span>
-                  <span class="benko-tour__language-dictionary-letter">B</span>
-                </div>
-                <strong>Bilongo</strong>
-                <span class="benko-tour__language-dictionary-translation">Brujería / Encanto</span>
-                <p>Práctica mágica o encantamiento dentro del universo simbólico de la lengua.</p>
-                <div class="benko-tour__language-dictionary-tags">
-                  <span>Hechicería</span>
-                  <span>Magia</span>
-                </div>
-              </article>
-
-              <article
-                class="benko-tour__language-dictionary-card"
-                data-letter="b"
-                data-lookup="brotokolo problema dificultad conflicto problem"
-              >
-                <div class="benko-tour__language-dictionary-card-top">
-                  <span class="benko-tour__language-dictionary-type">Uso cotidiano</span>
-                  <span class="benko-tour__language-dictionary-letter">B</span>
-                </div>
-                <strong>Brotokolo</strong>
-                <span class="benko-tour__language-dictionary-translation">Problema</span>
-                <p>Palabra breve para nombrar una dificultad, un asunto o un conflicto por resolver.</p>
-                <div class="benko-tour__language-dictionary-tags">
-                  <span>Problem</span>
-                  <span>Vida diaria</span>
-                </div>
-              </article>
-
-              <article
-                class="benko-tour__language-dictionary-card"
-                data-letter="b"
-                data-lookup="buyerenge canto tradicional musica oralidad tradicion song"
-              >
-                <div class="benko-tour__language-dictionary-card-top">
-                  <span class="benko-tour__language-dictionary-type">Música tradicional</span>
-                  <span class="benko-tour__language-dictionary-letter">B</span>
-                </div>
-                <strong>Buyerenge</strong>
-                <span class="benko-tour__language-dictionary-translation">Canto tradicional</span>
-                <p>Entrada que conecta el diccionario con la música, la transmisión oral y la memoria colectiva.</p>
-                <div class="benko-tour__language-dictionary-tags">
-                  <span>Oralidad</span>
-                  <span>Traditional song</span>
-                </div>
-              </article>
-
-              <article
-                class="benko-tour__language-dictionary-card"
-                data-letter="c"
-                data-lookup="cherrecherre maiz corn cocina alimento semilla"
-              >
-                <div class="benko-tour__language-dictionary-card-top">
-                  <span class="benko-tour__language-dictionary-type">Alimento base</span>
-                  <span class="benko-tour__language-dictionary-letter">C</span>
-                </div>
-                <strong>Cherrecherre</strong>
-                <span class="benko-tour__language-dictionary-translation">Maíz</span>
-                <p>Ingrediente clave para hablar de cocina, territorio y memoria alimentaria desde la lengua.</p>
-                <div class="benko-tour__language-dictionary-tags">
-                  <span>Corn</span>
-                  <span>Semilla</span>
-                </div>
-              </article>
-            </div>
+            <div class="benko-tour__language-dictionary-grid" id="lengua-dictionary-grid"></div>
 
             <div class="benko-tour__language-dictionary-empty" id="lengua-dictionary-empty" hidden>
               No encontramos coincidencias con esa búsqueda todavía. Prueba con otra palabra o cambia la letra.
+            </div>
+
+            <div class="benko-tour__language-dictionary-actions">
+              <button class="benko-tour__language-dictionary-loadmore" id="lengua-dictionary-loadmore" type="button" hidden>
+                Mostrar más palabras
+              </button>
             </div>
           </div>
         </section>
@@ -1282,19 +1238,29 @@
     </a>
   </div>
 
+  <script src="./assets/data/lengua-palenquera-dictionary.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      const dictionaryPayload = window.benkoPalenqueraDictionary || {};
+      const dictionaryEntries = Array.isArray(dictionaryPayload.entries) ? dictionaryPayload.entries : [];
+      const dictionaryLetters = Array.isArray(dictionaryPayload.letters) ? dictionaryPayload.letters : [];
       const searchInput = document.getElementById('lengua-dictionary-search');
-      const filterButtons = Array.from(document.querySelectorAll('.benko-tour__language-filter'));
-      const cards = Array.from(document.querySelectorAll('.benko-tour__language-dictionary-card'));
+      const filtersHost = document.getElementById('lengua-dictionary-filters');
+      const grid = document.getElementById('lengua-dictionary-grid');
       const meta = document.getElementById('lengua-dictionary-meta');
       const empty = document.getElementById('lengua-dictionary-empty');
+      const loadMoreButton = document.getElementById('lengua-dictionary-loadmore');
+      const totalMetric = document.getElementById('lengua-dictionary-total');
+      const visibleMetric = document.getElementById('lengua-dictionary-visible');
+      const activeMetric = document.getElementById('lengua-dictionary-active');
 
-      if (!searchInput || !filterButtons.length || !cards.length || !meta || !empty) {
+      if (!searchInput || !filtersHost || !grid || !meta || !empty || !loadMoreButton || !totalMetric || !visibleMetric || !activeMetric) {
         return;
       }
 
       let activeLetter = 'all';
+      let visibleLimit = 24;
+      const pageSize = 24;
 
       function normalizeText(value) {
         return String(value || '')
@@ -1303,45 +1269,159 @@
           .replace(/[\u0300-\u036f]/g, '');
       }
 
-      function renderDictionary() {
-        const query = normalizeText(searchInput.value);
-        let visible = 0;
+      function createFilterButton(letter, label) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'benko-tour__language-filter';
+        button.dataset.letter = letter;
+        button.textContent = label;
+        button.addEventListener('click', function() {
+          activeLetter = letter;
+          visibleLimit = pageSize;
+          renderDictionary();
+        });
+        return button;
+      }
 
-        cards.forEach(function(card) {
-          const matchesLetter = activeLetter === 'all' || card.dataset.letter === activeLetter;
-          const lookup = normalizeText(card.dataset.lookup || card.textContent);
-          const matchesQuery = !query || lookup.includes(query);
-          const shouldShow = matchesLetter && matchesQuery;
+      function renderFilters() {
+        const fragment = document.createDocumentFragment();
+        fragment.appendChild(createFilterButton('all', 'Todas'));
 
-          card.hidden = !shouldShow;
-
-          if (shouldShow) {
-            visible += 1;
-          }
+        dictionaryLetters.forEach(function(letter) {
+          fragment.appendChild(createFilterButton(letter.toLowerCase(), letter));
         });
 
-        filterButtons.forEach(function(button) {
+        filtersHost.replaceChildren(fragment);
+      }
+
+      function buildCard(entry) {
+        const article = document.createElement('article');
+        article.className = 'benko-tour__language-dictionary-card';
+
+        const top = document.createElement('div');
+        top.className = 'benko-tour__language-dictionary-card-top';
+
+        const type = document.createElement('span');
+        type.className = 'benko-tour__language-dictionary-type';
+        type.textContent = entry.category || 'Entrada del diccionario';
+
+        const letter = document.createElement('span');
+        letter.className = 'benko-tour__language-dictionary-letter';
+        letter.textContent = entry.letter || '#';
+
+        top.append(type, letter);
+
+        const term = document.createElement('strong');
+        term.textContent = entry.term || 'Sin término';
+
+        const translation = document.createElement('span');
+        translation.className = 'benko-tour__language-dictionary-translation';
+        translation.textContent = entry.translation || 'Sin traducción breve';
+
+        const description = document.createElement('p');
+        description.textContent = entry.description || 'Sin descripción disponible.';
+
+        const tags = document.createElement('div');
+        tags.className = 'benko-tour__language-dictionary-tags';
+
+        (entry.tags || []).slice(0, 5).forEach(function(tag) {
+          const chip = document.createElement('span');
+          chip.textContent = tag;
+          tags.appendChild(chip);
+        });
+
+        article.append(top, term, translation, description);
+
+        if (tags.childElementCount) {
+          article.appendChild(tags);
+        }
+
+        return article;
+      }
+
+      function getFilteredEntries() {
+        const query = normalizeText(searchInput.value);
+
+        return dictionaryEntries.filter(function(entry) {
+          const matchesLetter = activeLetter === 'all' || String(entry.letter || '').toLowerCase() === activeLetter;
+          const searchIndex = entry.search || normalizeText([
+            entry.term,
+            entry.category,
+            entry.translation,
+            entry.description,
+            ...(entry.tags || [])
+          ].join(' '));
+          const matchesQuery = !query || searchIndex.includes(query);
+          return matchesLetter && matchesQuery;
+        });
+      }
+
+      function renderDictionary() {
+        const filteredEntries = getFilteredEntries();
+        const visibleEntries = filteredEntries.slice(0, visibleLimit);
+
+        grid.replaceChildren();
+        visibleEntries.forEach(function(entry) {
+          grid.appendChild(buildCard(entry));
+        });
+
+        Array.from(filtersHost.querySelectorAll('.benko-tour__language-filter')).forEach(function(button) {
           const isActive = button.dataset.letter === activeLetter;
           button.classList.toggle('is-active', isActive);
           button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
 
-        empty.hidden = visible !== 0;
-        meta.textContent = visible === 1
-          ? '1 palabra visible en esta primera muestra del diccionario.'
-          : visible + ' palabras visibles en esta primera muestra del diccionario.';
+        totalMetric.textContent = String(dictionaryEntries.length);
+        visibleMetric.textContent = String(filteredEntries.length);
+        activeMetric.textContent = activeLetter === 'all' ? 'Todas' : activeLetter.toUpperCase();
+
+        grid.hidden = filteredEntries.length === 0;
+        empty.hidden = filteredEntries.length !== 0;
+
+        if (!filteredEntries.length) {
+          meta.textContent = 'No hubo coincidencias con la búsqueda actual dentro del diccionario base.';
+        } else if (filteredEntries.length === dictionaryEntries.length && visibleEntries.length === filteredEntries.length) {
+          meta.textContent = 'Base completa cargada desde el Excel del diccionario, adaptada para navegarla mejor en la web.';
+        } else {
+          meta.textContent = 'Mostrando ' + visibleEntries.length + ' de ' + filteredEntries.length + ' resultados para esta vista.';
+        }
+
+        const remaining = filteredEntries.length - visibleEntries.length;
+        loadMoreButton.hidden = remaining <= 0;
+        loadMoreButton.textContent = remaining > 0
+          ? 'Mostrar ' + Math.min(pageSize, remaining) + ' palabras más'
+          : 'No hay más palabras por cargar';
       }
 
-      searchInput.addEventListener('input', renderDictionary);
-
-      filterButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-          activeLetter = button.dataset.letter || 'all';
-          renderDictionary();
-        });
+      searchInput.addEventListener('input', function() {
+        visibleLimit = pageSize;
+        renderDictionary();
       });
 
+      loadMoreButton.addEventListener('click', function() {
+        visibleLimit += pageSize;
+        renderDictionary();
+      });
+
+      if (!dictionaryEntries.length) {
+        meta.textContent = 'No fue posible cargar todavía el archivo completo del diccionario.';
+        empty.hidden = false;
+        grid.hidden = true;
+        loadMoreButton.hidden = true;
+        totalMetric.textContent = '0';
+        visibleMetric.textContent = '0';
+        activeMetric.textContent = 'Todas';
+        return;
+      }
+
+      renderFilters();
       renderDictionary();
+
+      const firstFilter = filtersHost.querySelector('[data-letter="all"]');
+      if (firstFilter) {
+        firstFilter.classList.add('is-active');
+        firstFilter.setAttribute('aria-pressed', 'true');
+      }
     });
   </script>
 </body>
