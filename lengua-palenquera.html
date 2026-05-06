@@ -296,6 +296,118 @@
       line-height: 1.7;
     }
 
+    .benko-tour__language-translator {
+      display: grid;
+      gap: 16px;
+      padding: clamp(20px, 3vw, 28px);
+      border-radius: 26px;
+      border: 1px solid rgba(80, 60, 34, 0.1);
+      background:
+        radial-gradient(circle at top right, rgba(255, 188, 82, 0.16), transparent 26%),
+        linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(249, 242, 230, 0.95));
+      box-shadow: 0 18px 34px rgba(38, 26, 18, 0.1);
+    }
+
+    .benko-tour__language-translator-head {
+      display: grid;
+      gap: 8px;
+    }
+
+    .benko-tour__language-translator-head h3 {
+      margin: 0;
+      font-size: clamp(1.25rem, 2vw, 1.7rem);
+      line-height: 1.05;
+    }
+
+    .benko-tour__language-translator-head p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 68ch;
+    }
+
+    .benko-tour__language-translator-controls {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .benko-tour__language-translator-select,
+    .benko-tour__language-translator-input {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid rgba(80, 60, 34, 0.14);
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .benko-tour__language-translator-select {
+      padding: 12px 14px;
+      font-weight: 700;
+    }
+
+    .benko-tour__language-translator-input {
+      min-height: 118px;
+      resize: vertical;
+      padding: 14px 16px;
+      line-height: 1.65;
+    }
+
+    .benko-tour__language-translator-select:focus,
+    .benko-tour__language-translator-input:focus {
+      border-color: rgba(239, 176, 58, 0.5);
+      box-shadow: 0 0 0 4px rgba(239, 176, 58, 0.12);
+      background: #fffefb;
+    }
+
+    .benko-tour__language-translator-result {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(80, 60, 34, 0.1);
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .benko-tour__language-translator-output {
+      margin: 0;
+      min-height: 48px;
+      font-size: 1.02rem;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    .benko-tour__language-translator-meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .benko-tour__language-translator-alternatives {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .benko-tour__language-translator-alternatives span {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(80, 60, 34, 0.1);
+      background: rgba(255, 248, 233, 0.88);
+      color: var(--brand-dark);
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
     .benko-tour__language-dictionary {
       display: grid;
       gap: 20px;
@@ -938,6 +1050,10 @@
       .benko-tour__language-photo-card {
         width: min(52%, 240px);
       }
+
+      .benko-tour__language-translator-controls {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 720px) {
@@ -990,6 +1106,10 @@
 
       .benko-tour__language-dictionary-loadmore {
         width: 100%;
+      }
+
+      .benko-tour__language-translator-result {
+        padding: 16px;
       }
     }
   </style>
@@ -1143,6 +1263,46 @@
           <div class="benko-tour__language-quote">
             <strong>Jundo suto senda ung chocha</strong>
             <p>Juntos somos más. Esta clase de frase es perfecta para héroes, banners, llamadas de acción y bloques de identidad.</p>
+          </div>
+
+          <div class="benko-tour__language-translator" id="traduktor">
+            <div class="benko-tour__language-translator-head">
+              <span class="benko-tour__card-tag">Traduktor</span>
+              <h3>Traduce de español a lengua palenquera y de palenquera a español</h3>
+              <p>
+                Escribe una palabra, frase o texto corto. El traductor usa la base del diccionario actual para darte una
+                versión rápida y opciones cercanas para seguir aprendiendo.
+              </p>
+            </div>
+
+            <div class="benko-tour__language-translator-controls">
+              <select class="benko-tour__language-translator-select" id="lengua-translator-direction">
+                <option value="es-pal">Español → Palenquero</option>
+                <option value="pal-es">Palenquero → Español</option>
+              </select>
+              <select class="benko-tour__language-translator-select" id="lengua-translator-style">
+                <option value="contextual">Natural por frases</option>
+                <option value="literal">Literal exacto</option>
+              </select>
+              <button class="benko-tour__button" id="lengua-translator-submit" type="button">Traducir</button>
+              <button class="benko-tour__ghost benko-tour__ghost--dark" id="lengua-translator-clear" type="button">Limpiar</button>
+            </div>
+
+            <textarea
+              class="benko-tour__language-translator-input"
+              id="lengua-translator-input"
+              placeholder="Ejemplo: Buenos dias, quiero aprender lengua palenquera"
+            ></textarea>
+
+            <div class="benko-tour__language-translator-result" aria-live="polite">
+              <p class="benko-tour__language-translator-output" id="lengua-translator-output">
+                Escribe algo y pulsa Traducir para ver el resultado.
+              </p>
+              <p class="benko-tour__language-translator-meta" id="lengua-translator-meta">
+                Puedes cambiar el sentido de traducción cuando quieras.
+              </p>
+              <div class="benko-tour__language-translator-alternatives" id="lengua-translator-alternatives"></div>
+            </div>
           </div>
 
           <div class="benko-tour__language-dictionary">
@@ -1447,6 +1607,14 @@
       const visibleMetric = document.getElementById('lengua-dictionary-visible');
       const activeThemeMetric = document.getElementById('lengua-dictionary-active-theme');
       const activeLetterMetric = document.getElementById('lengua-dictionary-active-letter');
+      const translatorDirection = document.getElementById('lengua-translator-direction');
+      const translatorStyle = document.getElementById('lengua-translator-style');
+      const translatorInput = document.getElementById('lengua-translator-input');
+      const translatorSubmit = document.getElementById('lengua-translator-submit');
+      const translatorClear = document.getElementById('lengua-translator-clear');
+      const translatorOutput = document.getElementById('lengua-translator-output');
+      const translatorMeta = document.getElementById('lengua-translator-meta');
+      const translatorAlternatives = document.getElementById('lengua-translator-alternatives');
 
       if (
         !searchInput ||
@@ -1487,6 +1655,672 @@
         return dictionaryThemeMeta[themeId] && dictionaryThemeMeta[themeId].description
           ? dictionaryThemeMeta[themeId].description
           : 'Palabras de uso cotidiano para conversar mejor dentro del territorio.';
+      }
+
+      function getTranslatorFieldsReady() {
+        return Boolean(
+          translatorDirection &&
+          translatorStyle &&
+          translatorInput &&
+          translatorSubmit &&
+          translatorClear &&
+          translatorOutput &&
+          translatorMeta &&
+          translatorAlternatives
+        );
+      }
+
+      function splitSpanishCandidate(value) {
+        if (!value) {
+          return [];
+        }
+
+        return String(value)
+          .split(/[\/;,|]/g)
+          .map(function(part) {
+            return String(part || '')
+              .replace(/\s+/g, ' ')
+              .trim();
+          })
+          .filter(function(part) {
+            return part.length >= 2 && part.length <= 80;
+          });
+      }
+
+      function pushTranslatorIndex(map, key, entry) {
+        if (!key) {
+          return;
+        }
+
+        if (!map.has(key)) {
+          map.set(key, []);
+        }
+
+        const current = map.get(key);
+        const alreadyExists = current.some(function(currentEntry) {
+          return currentEntry.key === entry.key && currentEntry.term === entry.term;
+        });
+
+        if (!alreadyExists) {
+          current.push(entry);
+        }
+      }
+
+      function buildTranslatorIndexes() {
+        const palMap = new Map();
+        const spanishMap = new Map();
+
+        dictionaryEntries.forEach(function(entry) {
+          const palCandidates = [entry.term, entry.key]
+            .map(function(value) { return normalizeText(value); })
+            .filter(Boolean);
+
+          palCandidates.forEach(function(candidate) {
+            pushTranslatorIndex(palMap, candidate, entry);
+          });
+
+          const spanishCandidates = new Set();
+
+          if (entry.translation) {
+            splitSpanishCandidate(entry.translation).forEach(function(candidate) {
+              spanishCandidates.add(normalizeText(candidate));
+            });
+          }
+
+          if (Array.isArray(entry.translations)) {
+            entry.translations.forEach(function(translationItem) {
+              splitSpanishCandidate(translationItem).forEach(function(candidate) {
+                spanishCandidates.add(normalizeText(candidate));
+              });
+            });
+          }
+
+          spanishCandidates.forEach(function(candidate) {
+            pushTranslatorIndex(spanishMap, candidate, entry);
+          });
+        });
+
+        return {
+          palMap: palMap,
+          spanishMap: spanishMap,
+          palPhraseIndex: buildPhraseIndex(palMap),
+          spanishPhraseIndex: buildPhraseIndex(spanishMap)
+        };
+      }
+
+      function buildWordCountMap(words) {
+        const counts = new Map();
+        words.forEach(function(word) {
+          if (!word) {
+            return;
+          }
+
+          counts.set(word, (counts.get(word) || 0) + 1);
+        });
+        return counts;
+      }
+
+      function getWordCountOverlap(sourceCounts, candidateCounts) {
+        let overlap = 0;
+
+        sourceCounts.forEach(function(sourceCount, word) {
+          const candidateCount = candidateCounts.get(word) || 0;
+          overlap += Math.min(sourceCount, candidateCount);
+        });
+
+        return overlap;
+      }
+
+      function buildPhraseIndex(sourceMap) {
+        const phraseIndex = [];
+
+        sourceMap.forEach(function(entries, key) {
+          const words = String(key || '')
+            .split(/\s+/)
+            .map(function(value) { return normalizeText(value); })
+            .filter(Boolean);
+
+          if (words.length < 2 || words.length > 10) {
+            return;
+          }
+
+          phraseIndex.push({
+            key: key,
+            words: words,
+            wordCounts: buildWordCountMap(words),
+            entries: Array.isArray(entries) ? entries : []
+          });
+        });
+
+        return phraseIndex;
+      }
+
+      function applyWordCase(original, translated) {
+        if (!translated) {
+          return original;
+        }
+
+        if (original === original.toUpperCase()) {
+          return translated.toUpperCase();
+        }
+
+        if (original.charAt(0) === original.charAt(0).toUpperCase()) {
+          return translated.charAt(0).toUpperCase() + translated.slice(1);
+        }
+
+        return translated;
+      }
+
+      function renderTranslatorAlternatives(entries, direction) {
+        translatorAlternatives.replaceChildren();
+
+        if (!entries.length) {
+          return;
+        }
+
+        const alternatives = new Set();
+
+        entries.forEach(function(entry) {
+          if (direction === 'pal-es') {
+            if (Array.isArray(entry.translations)) {
+              entry.translations.forEach(function(value) {
+                splitSpanishCandidate(value).forEach(function(candidate) {
+                  if (candidate) {
+                    alternatives.add(candidate);
+                  }
+                });
+              });
+            } else if (entry.translation) {
+              splitSpanishCandidate(entry.translation).forEach(function(candidate) {
+                if (candidate) {
+                  alternatives.add(candidate);
+                }
+              });
+            }
+          } else if (entry.term) {
+            alternatives.add(entry.term);
+          }
+        });
+
+        Array.from(alternatives).slice(0, 6).forEach(function(candidate) {
+          const chip = document.createElement('span');
+          chip.textContent = candidate;
+          translatorAlternatives.appendChild(chip);
+        });
+      }
+
+      function setupTranslator(indexes) {
+        if (!getTranslatorFieldsReady()) {
+          return;
+        }
+
+        function getTranslatorStyle() {
+          return translatorStyle && translatorStyle.value === 'literal'
+            ? 'literal'
+            : 'contextual';
+        }
+
+        function getTranslatorStyleHint() {
+          return getTranslatorStyle() === 'contextual'
+            ? 'Modo natural activo: prioriza frases conversacionales.'
+            : 'Modo literal activo: respeta coincidencias directas del diccionario.';
+        }
+
+        function getPalenqueroBySpanishGloss(gloss, fallback) {
+          const lookupEntries = indexes.spanishMap.get(normalizeText(gloss)) || [];
+          const entry = lookupEntries.find(function(candidate) {
+            return candidate && candidate.term;
+          });
+          const value = entry ? String(entry.term || '').trim() : '';
+          return value || fallback;
+        }
+
+        function uniqueConversationSegments(segments) {
+          const deduped = [];
+          const seen = new Set();
+
+          segments.forEach(function(segment) {
+            const clean = String(segment || '')
+              .replace(/\s+/g, ' ')
+              .replace(/[,.!?;:]+$/g, '')
+              .trim();
+            if (!clean) {
+              return;
+            }
+
+            const key = normalizeText(clean);
+            if (seen.has(key)) {
+              return;
+            }
+
+            seen.add(key);
+            deduped.push(clean);
+          });
+
+          return deduped;
+        }
+
+        const conversationLexicon = {
+          hello: getPalenqueroBySpanishGloss('hola', 'Uepa'),
+          goodMorning: getPalenqueroBySpanishGloss('buenos dias', 'Asina ría'),
+          thanks: getPalenqueroBySpanishGloss('gracias', 'Bugunga'),
+          please: getPalenqueroBySpanishGloss('por favor', 'Bággame')
+        };
+
+        function applyConversationTone(rawInput, translatedText, direction) {
+          if (getTranslatorStyle() !== 'contextual') {
+            return { text: translatedText, note: '' };
+          }
+
+          const normalizedInput = normalizeText(rawInput);
+          const baseText = String(translatedText || '').trim();
+          if (!baseText) {
+            return { text: translatedText, note: '' };
+          }
+
+          if (direction === 'es-pal') {
+            const introSegments = [];
+            const outroSegments = [];
+
+            if (normalizedInput.includes('buenos dias') && conversationLexicon.goodMorning) {
+              introSegments.push(conversationLexicon.goodMorning);
+            } else if (normalizedInput.includes('hola') && conversationLexicon.hello) {
+              introSegments.push(conversationLexicon.hello);
+            }
+
+            if (normalizedInput.includes('gracias') && conversationLexicon.thanks) {
+              outroSegments.push(conversationLexicon.thanks);
+            }
+
+            if (normalizedInput.includes('por favor') && conversationLexicon.please) {
+              outroSegments.push(conversationLexicon.please);
+            }
+
+            const mergedSegments = uniqueConversationSegments([].concat(introSegments, baseText, outroSegments));
+            const naturalText = mergedSegments.join(', ');
+            const note = normalizeText(naturalText) !== normalizeText(baseText)
+              ? ' Modo natural: ajustamos saludo y cortesía para que suene más conversacional.'
+              : '';
+            return { text: naturalText || baseText, note: note };
+          }
+
+          let naturalSpanish = baseText;
+
+          if (
+            conversationLexicon.goodMorning &&
+            normalizedInput.includes(normalizeText(conversationLexicon.goodMorning)) &&
+            !normalizeText(naturalSpanish).includes('buenos dias')
+          ) {
+            naturalSpanish = 'Buenos días. ' + naturalSpanish;
+          } else if (
+            conversationLexicon.hello &&
+            normalizedInput.includes(normalizeText(conversationLexicon.hello)) &&
+            !normalizeText(naturalSpanish).includes('hola')
+          ) {
+            naturalSpanish = 'Hola. ' + naturalSpanish;
+          }
+
+          if (
+            conversationLexicon.thanks &&
+            normalizedInput.includes(normalizeText(conversationLexicon.thanks)) &&
+            !normalizeText(naturalSpanish).includes('gracias')
+          ) {
+            naturalSpanish = naturalSpanish + ' Gracias.';
+          }
+
+          naturalSpanish = naturalSpanish
+            .replace(/\s+/g, ' ')
+            .replace(/\s+([,.!?;:])/g, '$1')
+            .trim();
+
+          const note = normalizeText(naturalSpanish) !== normalizeText(baseText)
+            ? ' Modo natural: acomodamos la frase para que suene más fluida en español.'
+            : '';
+          return { text: naturalSpanish || baseText, note: note };
+        }
+
+        function getPreferredTranslation(entry, direction) {
+          if (!entry) {
+            return '';
+          }
+
+          if (direction === 'pal-es') {
+            const candidates = [];
+
+            if (Array.isArray(entry.translations)) {
+              entry.translations.forEach(function(value) {
+                splitSpanishCandidate(value).forEach(function(part) {
+                  if (part) {
+                    candidates.push(part);
+                  }
+                });
+              });
+            }
+
+            splitSpanishCandidate(entry.translation).forEach(function(part) {
+              if (part) {
+                candidates.push(part);
+              }
+            });
+
+            return candidates[0] || String(entry.translation || '').trim();
+          }
+
+          return String(entry.term || '').trim();
+        }
+
+        function runTranslator() {
+          const rawInput = String(translatorInput.value || '').trim();
+          const direction = translatorDirection.value === 'pal-es' ? 'pal-es' : 'es-pal';
+
+          if (!rawInput) {
+            translatorOutput.textContent = 'Escribe una palabra o frase para traducir.';
+            translatorMeta.textContent = 'También puedes pegar frases largas: el motor intentará resolverlas por bloques con mejor contexto. ' + getTranslatorStyleHint();
+            translatorAlternatives.replaceChildren();
+            return;
+          }
+
+          const tokens = rawInput.match(/([A-Za-zÁÉÍÓÚÜÑáéíóúüñ'-]+|[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ'-]+)/g) || [];
+          const wordTokenIndices = [];
+          const normalizedWords = [];
+          const wordTokenPattern = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ'-]+$/;
+          const maxPhraseSize = 10;
+
+          tokens.forEach(function(token, tokenIndex) {
+            if (!wordTokenPattern.test(token)) {
+              return;
+            }
+
+            wordTokenIndices.push(tokenIndex);
+            normalizedWords.push(normalizeText(token));
+          });
+
+          const sourceMap = direction === 'pal-es' ? indexes.palMap : indexes.spanishMap;
+          const phraseIndex = direction === 'pal-es' ? indexes.palPhraseIndex : indexes.spanishPhraseIndex;
+          if (!wordTokenIndices.length) {
+            translatorOutput.textContent = rawInput;
+            translatorMeta.textContent = 'No se detectaron palabras traducibles en la entrada.';
+            translatorAlternatives.replaceChildren();
+            return;
+          }
+
+          function hasHardSeparatorBetweenWords(startWord, endWord) {
+            for (let index = startWord; index < endWord - 1; index += 1) {
+              const leftToken = wordTokenIndices[index];
+              const rightToken = wordTokenIndices[index + 1];
+              const betweenText = tokens.slice(leftToken + 1, rightToken).join('');
+              if (/[^\s]/.test(betweenText)) {
+                return true;
+              }
+            }
+
+            return false;
+          }
+
+          function createChunk(startWord, endWord, entries, translatedOutput, options) {
+            const config = options || {};
+            return {
+              startWord: startWord,
+              endWord: endWord,
+              startToken: wordTokenIndices[startWord],
+              endToken: wordTokenIndices[endWord - 1],
+              output: translatedOutput,
+              entries: entries,
+              isFuzzy: Boolean(config.isFuzzy),
+              confidence: Number(config.confidence || 0)
+            };
+          }
+
+          const phraseOptionsByStart = new Map();
+          const totalWords = wordTokenIndices.length;
+          const fuzzyCache = new Map();
+
+          function findFuzzyPhraseEntries(phraseWords) {
+            const key = phraseWords.join(' ');
+            if (!key) {
+              return { entries: [], confidence: 0 };
+            }
+
+            if (fuzzyCache.has(key)) {
+              return fuzzyCache.get(key);
+            }
+
+            const phraseWordCounts = buildWordCountMap(phraseWords);
+            let bestEntries = [];
+            let bestConfidence = 0;
+
+            phraseIndex.forEach(function(candidatePhrase) {
+              if (Math.abs(candidatePhrase.words.length - phraseWords.length) > 3) {
+                return;
+              }
+
+              const overlap = getWordCountOverlap(phraseWordCounts, candidatePhrase.wordCounts);
+              if (!overlap) {
+                return;
+              }
+
+              const sourceCoverage = overlap / Math.max(phraseWords.length, 1);
+              const candidateCoverage = overlap / Math.max(candidatePhrase.words.length, 1);
+              if (sourceCoverage < 0.5 || candidateCoverage < 0.5) {
+                return;
+              }
+
+              let boundaryBonus = 0;
+              if (candidatePhrase.words[0] === phraseWords[0]) {
+                boundaryBonus += 0.05;
+              }
+              if (candidatePhrase.words[candidatePhrase.words.length - 1] === phraseWords[phraseWords.length - 1]) {
+                boundaryBonus += 0.05;
+              }
+
+              const confidence = (sourceCoverage * 0.55) + (candidateCoverage * 0.35) + boundaryBonus;
+              if (confidence > bestConfidence) {
+                bestConfidence = confidence;
+                bestEntries = candidatePhrase.entries;
+              }
+            });
+
+            const result = bestConfidence >= 0.68
+              ? { entries: bestEntries, confidence: bestConfidence }
+              : { entries: [], confidence: 0 };
+            fuzzyCache.set(key, result);
+            return result;
+          }
+
+          for (let startWord = 0; startWord < totalWords; startWord += 1) {
+            const remainingWords = totalWords - startWord;
+            const windowMax = Math.min(maxPhraseSize, remainingWords);
+            const options = [];
+
+            for (let size = windowMax; size >= 1; size -= 1) {
+              const endWord = startWord + size;
+
+              if (size > 1 && hasHardSeparatorBetweenWords(startWord, endWord)) {
+                continue;
+              }
+
+              const phraseKey = normalizedWords.slice(startWord, endWord).join(' ');
+              let phraseEntries = sourceMap.get(phraseKey) || [];
+              let isFuzzy = false;
+              let confidence = 1;
+
+              if (!phraseEntries.length && size > 1 && phraseIndex.length) {
+                const fuzzyResult = findFuzzyPhraseEntries(normalizedWords.slice(startWord, endWord));
+                phraseEntries = fuzzyResult.entries;
+                confidence = fuzzyResult.confidence;
+                isFuzzy = phraseEntries.length > 0;
+              }
+
+              if (!phraseEntries.length) {
+                continue;
+              }
+
+              const candidate = getPreferredTranslation(phraseEntries[0], direction);
+              if (!candidate) {
+                continue;
+              }
+
+              const originalWords = wordTokenIndices
+                .slice(startWord, endWord)
+                .map(function(index) { return tokens[index]; });
+              const originalText = originalWords.join(' ');
+              const outputText = size === 1
+                ? applyWordCase(originalWords[0], candidate)
+                : applyWordCase(originalText, candidate);
+
+              options.push(createChunk(startWord, endWord, phraseEntries, outputText, {
+                isFuzzy: isFuzzy,
+                confidence: confidence
+              }));
+            }
+
+            phraseOptionsByStart.set(startWord, options);
+          }
+
+          const bestState = new Array(totalWords + 1);
+          bestState[totalWords] = {
+            score: 0,
+            matchedWords: 0,
+            translatedChunkCount: 0,
+            nextWord: totalWords,
+            chunk: null
+          };
+
+          for (let cursor = totalWords - 1; cursor >= 0; cursor -= 1) {
+            const fallbackWordToken = wordTokenIndices[cursor];
+            const fallbackChunk = createChunk(cursor, cursor + 1, [], tokens[fallbackWordToken], {
+              isFuzzy: false,
+              confidence: 0
+            });
+            const fallbackNext = bestState[cursor + 1];
+            let bestCandidate = {
+              score: fallbackNext.score,
+              matchedWords: fallbackNext.matchedWords,
+              translatedChunkCount: fallbackNext.translatedChunkCount,
+              nextWord: cursor + 1,
+              chunk: fallbackChunk
+            };
+
+            const phraseOptions = phraseOptionsByStart.get(cursor) || [];
+            phraseOptions.forEach(function(option) {
+              const nextState = bestState[option.endWord];
+              if (!nextState) {
+                return;
+              }
+
+              const phraseSize = option.endWord - option.startWord;
+              const confidenceBonus = Math.round((option.confidence || 1) * 25);
+              const fuzzyPenalty = option.isFuzzy ? 20 : 0;
+              const phraseScore = (phraseSize * 100) + (phraseSize > 1 ? 45 : 15) + confidenceBonus - fuzzyPenalty;
+              const candidateState = {
+                score: nextState.score + phraseScore,
+                matchedWords: nextState.matchedWords + phraseSize,
+                translatedChunkCount: nextState.translatedChunkCount + 1,
+                nextWord: option.endWord,
+                chunk: option
+              };
+
+              const isBetterScore = candidateState.score > bestCandidate.score;
+              const isBetterCoverage = candidateState.score === bestCandidate.score
+                && candidateState.matchedWords > bestCandidate.matchedWords;
+              const isMoreNatural = candidateState.score === bestCandidate.score
+                && candidateState.matchedWords === bestCandidate.matchedWords
+                && candidateState.translatedChunkCount < bestCandidate.translatedChunkCount;
+
+              if (isBetterScore || isBetterCoverage || isMoreNatural) {
+                bestCandidate = candidateState;
+              }
+            });
+
+            bestState[cursor] = bestCandidate;
+          }
+
+          const translatedChunks = [];
+          const matchedEntries = [];
+          let matchedWords = 0;
+          let fuzzyMatchedWords = 0;
+          let fuzzyChunkCount = 0;
+          let cursor = 0;
+
+          while (cursor < totalWords) {
+            const state = bestState[cursor];
+            if (!state || !state.chunk) {
+              break;
+            }
+
+            const chunk = state.chunk;
+            translatedChunks.push(chunk);
+
+            if (chunk.entries.length) {
+              matchedWords += (chunk.endWord - chunk.startWord);
+              if (chunk.isFuzzy) {
+                fuzzyChunkCount += 1;
+                fuzzyMatchedWords += (chunk.endWord - chunk.startWord);
+              }
+              chunk.entries.forEach(function(entry) {
+                matchedEntries.push(entry);
+              });
+            }
+
+            cursor = state.nextWord;
+          }
+
+          const translatedParts = [];
+          let tokenCursor = 0;
+
+          translatedChunks.forEach(function(chunk) {
+            while (tokenCursor < chunk.startToken) {
+              translatedParts.push(tokens[tokenCursor]);
+              tokenCursor += 1;
+            }
+
+            translatedParts.push(chunk.output);
+            tokenCursor = chunk.endToken + 1;
+          });
+
+          while (tokenCursor < tokens.length) {
+            translatedParts.push(tokens[tokenCursor]);
+            tokenCursor += 1;
+          }
+
+          const translatedText = translatedParts.join('').replace(/\s+/g, ' ').trim();
+          const tonedTranslation = applyConversationTone(rawInput, translatedText || rawInput, direction);
+          translatorOutput.textContent = tonedTranslation.text || translatedText || rawInput;
+
+          if (!matchedWords) {
+            translatorMeta.textContent = 'No encontramos coincidencias exactas para esta entrada. Prueba con otra palabra o frase.' + tonedTranslation.note;
+            translatorAlternatives.replaceChildren();
+            return;
+          }
+
+          const matchCoverage = Math.round((matchedWords / Math.max(totalWords, 1)) * 100);
+          const fuzzyNote = fuzzyChunkCount > 0
+            ? ' Incluye ' + fuzzyChunkCount + ' bloque(s) contextual(es) aproximado(s) (' + fuzzyMatchedWords + ' palabra(s)).'
+            : '';
+          if (matchCoverage >= 80) {
+            translatorMeta.textContent = 'Traducción contextual lograda: ' + matchedWords + ' de ' + totalWords + ' palabra(s) reconocidas (' + matchCoverage + '%).' + fuzzyNote + tonedTranslation.note;
+          } else {
+            translatorMeta.textContent = 'Traducción parcial: ' + matchedWords + ' de ' + totalWords + ' palabra(s) reconocidas (' + matchCoverage + '%). Prueba frases más cortas para mejorar precisión.' + fuzzyNote + tonedTranslation.note;
+          }
+          renderTranslatorAlternatives(matchedEntries, direction);
+        }
+
+        translatorSubmit.addEventListener('click', runTranslator);
+        translatorClear.addEventListener('click', function() {
+          translatorInput.value = '';
+          translatorOutput.textContent = 'Escribe algo y pulsa Traducir para ver el resultado.';
+          translatorMeta.textContent = 'Puedes cambiar el sentido de traducción cuando quieras. ' + getTranslatorStyleHint();
+          translatorAlternatives.replaceChildren();
+          translatorInput.focus();
+        });
+
+        translatorDirection.addEventListener('change', runTranslator);
+        translatorStyle.addEventListener('change', runTranslator);
+        translatorInput.addEventListener('keydown', function(event) {
+          if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+            runTranslator();
+          }
+        });
       }
 
       function createThemeButton(themeId) {
@@ -1702,6 +2536,9 @@
         renderDictionary();
       });
 
+      const translatorIndexes = buildTranslatorIndexes();
+      setupTranslator(translatorIndexes);
+
       if (!dictionaryEntries.length) {
         meta.textContent = 'No fue posible cargar todavía el archivo completo del diccionario.';
         empty.hidden = false;
@@ -1711,6 +2548,11 @@
         visibleMetric.textContent = '0';
         activeThemeMetric.textContent = 'Todos';
         activeLetterMetric.textContent = 'Todas';
+        if (getTranslatorFieldsReady()) {
+          translatorOutput.textContent = 'La base del diccionario todavía no está disponible para traducir.';
+          translatorMeta.textContent = 'Cuando vuelva a cargar el archivo, el traductor quedará activo.';
+          translatorAlternatives.replaceChildren();
+        }
         return;
       }
 

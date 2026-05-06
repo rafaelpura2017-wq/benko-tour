@@ -315,6 +315,27 @@
                 <div class="benko-tour__form-actions">
                   <button class="benko-tour__button" type="submit">Entrar a mi cuenta</button>
                 </div>
+
+                <div class="benko-tour__social-auth" aria-label="Inicio con proveedores">
+                  <p class="benko-tour__social-auth-title">O entra con</p>
+                  <div class="benko-tour__social-auth-grid">
+                    <button class="benko-tour__social-auth-btn" type="button" data-social-provider="google">
+                      Continuar con Google (Gmail)
+                    </button>
+                    <button class="benko-tour__social-auth-btn" type="button" data-social-provider="facebook">
+                      Continuar con Facebook
+                    </button>
+                    <button class="benko-tour__social-auth-btn" type="button" data-social-provider="microsoft">
+                      Continuar con Outlook / Hotmail
+                    </button>
+                    <button class="benko-tour__social-auth-btn benko-tour__social-auth-btn--muted" type="button" data-social-provider="instagram">
+                      Instagram (próximamente)
+                    </button>
+                  </div>
+                  <p class="benko-tour__social-auth-note">
+                    Si usas otro correo, puedes seguir entrando con correo y contraseña desde este mismo formulario.
+                  </p>
+                </div>
                 <button class="benko-tour__text-button" id="reset-password-button" type="button">
                   ¿Olvidaste tu contraseña?
                 </button>
@@ -444,6 +465,7 @@
       const accessLoginLink = document.getElementById('access-login-link');
       const logoutBtn = document.getElementById('logout-button');
       const resetPasswordButton = document.getElementById('reset-password-button');
+      const socialAuthButtons = document.querySelectorAll('[data-social-provider]');
       const accessTabsWrap = document.querySelector('.benko-tour__access-tabs');
       const accessFormLead = document.getElementById('access-form-lead');
       const successBanner = document.getElementById('success-banner');
@@ -475,6 +497,7 @@
         login: 'Inicia sesión para retomar tus reservas, tus datos guardados y tu espacio personal dentro de Benko Tour.',
         register: 'Crea tu cuenta para activar tu código de miembro, guardar preferencias y verificar tu correo dentro de Benko Tour.'
       };
+      const socialRedirectKey = 'benkoSocialAccessIntent';
 
       function getSafeText(value, fallback) {
         const text = String(value || '').trim();
@@ -599,6 +622,42 @@
           valid: true,
           value: phone
         };
+      }
+
+      function getProviderLabel(providerKey) {
+        const key = String(providerKey || '').trim().toLowerCase();
+        const labels = {
+          google: 'Google',
+          gmail: 'Google',
+          facebook: 'Facebook',
+          microsoft: 'Microsoft',
+          outlook: 'Microsoft',
+          hotmail: 'Microsoft',
+          instagram: 'Instagram'
+        };
+
+        return labels[key] || 'Proveedor externo';
+      }
+
+      function handleAccessSuccess(resultado, sourceLabel = 'tu cuenta') {
+        try {
+          sessionStorage.removeItem(socialRedirectKey);
+        } catch (_) {}
+
+        const nombre = getSafeText(resultado.datos?.nombre, 'viajero');
+        const correoVerificado = Boolean(resultado.datos?.cuenta?.emailVerificado);
+
+        if (typeof window.authFirebase.migrarReservas === 'function') {
+          Promise.resolve(window.authFirebase.migrarReservas()).catch(() => {});
+        }
+
+        redirectToProfile(
+          correoVerificado ? 'login' : 'login-pending',
+          correoVerificado ? `Entrando a ${sourceLabel}, ${nombre}` : `Acceso iniciado, ${nombre}`,
+          correoVerificado
+            ? 'Estamos abriendo tu perfil para que sigas reservando desde un espacio más claro.'
+            : 'Estamos abriendo tu perfil para que revises tu cuenta y completes la verificación del correo.'
+        );
       }
 
       function updateFormLead(targetPanel) {
@@ -996,20 +1055,7 @@
           const resultado = await window.authFirebase.login(emailValidation.value, password);
 
           if (resultado.success) {
-            const nombre = getSafeText(resultado.datos?.nombre, 'viajero');
-            const correoVerificado = Boolean(resultado.datos?.cuenta?.emailVerificado);
-
-            if (typeof window.authFirebase.migrarReservas === 'function') {
-              Promise.resolve(window.authFirebase.migrarReservas()).catch(() => {});
-            }
-
-            redirectToProfile(
-              correoVerificado ? 'login' : 'login-pending',
-              correoVerificado ? `Entrando a tu cuenta, ${nombre}` : `Acceso iniciado, ${nombre}`,
-              correoVerificado
-                ? 'Estamos abriendo tu perfil para que sigas reservando desde un espacio más claro.'
-                : 'Estamos abriendo tu perfil para que revises tu cuenta y completes la verificación del correo.'
-            );
+            handleAccessSuccess(resultado, 'tu cuenta');
             return;
           } else {
             const errorCode = resultado.errorCode || '';
@@ -1037,6 +1083,89 @@
               renderStatus('error', 'No pudimos iniciar tu sesión', resultado.error || 'Intenta nuevamente en unos instantes.');
             }
           }
+        });
+      }
+
+      if (socialAuthButtons && socialAuthButtons.length) {
+        socialAuthButtons.forEach((button) => {
+          button.addEventListener('click', async function() {
+            const providerKey = this.dataset.socialProvider;
+            const providerLabel = getProviderLabel(providerKey);
+
+            if (providerKey === 'instagram') {
+              renderStatus(
+                'warning',
+                'Instagram aún no disponible',
+                'Instagram no ofrece inicio de sesión directo para este flujo con Firebase. Por ahora usa Google, Facebook, Outlook o correo y contraseña.'
+              );
+              return;
+            }
+
+            if (typeof window.authFirebase === 'undefined' || typeof window.authFirebase.loginConProveedor !== 'function') {
+              renderStatus('warning', 'Configuracion pendiente', 'El acceso con proveedores no está disponible en este momento. Intenta más tarde.');
+              return;
+            }
+
+            try {
+              sessionStorage.setItem(socialRedirectKey, providerKey);
+            } catch (_) {}
+
+            renderStatus(
+              'loading',
+              `Conectando con ${providerLabel}`,
+              'Abriremos una ventana segura para validar tu acceso. Si tu navegador bloquea popups, usaremos redirección automática.'
+            );
+
+            const resultado = await window.authFirebase.loginConProveedor(providerKey);
+
+            if (resultado.success && resultado.pendingRedirect) {
+              renderStatus(
+                'loading',
+                `Redirigiendo a ${providerLabel}`,
+                resultado.mensaje || 'Estamos enviándote al proveedor para completar el acceso.'
+              );
+              return;
+            }
+
+            if (resultado.success) {
+              handleAccessSuccess(resultado, `tu cuenta de ${providerLabel}`);
+              return;
+            }
+
+            try {
+              sessionStorage.removeItem(socialRedirectKey);
+            } catch (_) {}
+
+            const errorCode = resultado.errorCode || '';
+
+            if (errorCode === 'client/provider-not-supported') {
+              renderStatus('warning', `${providerLabel} no disponible`, resultado.error || 'Este proveedor todavía no está habilitado.');
+            } else if (errorCode === 'auth/operation-not-allowed') {
+              renderStatus(
+                'warning',
+                `Activa ${providerLabel} en Firebase`,
+                `Primero habilita ${providerLabel} en Firebase Authentication > Sign-in method y luego vuelve a intentarlo.`
+              );
+            } else if (errorCode === 'auth/unauthorized-domain') {
+              renderStatus(
+                'warning',
+                'Dominio no autorizado',
+                'Agrega este dominio en Firebase Authentication > Settings > Authorized domains para habilitar el inicio social.'
+              );
+            } else if (errorCode === 'auth/account-exists-with-different-credential') {
+              renderStatus(
+                'warning',
+                'Correo ya registrado con otro acceso',
+                'Ese correo ya está ligado a otro método. Inicia con ese método primero y luego podrás vincular el proveedor.'
+              );
+            } else if (errorCode === 'auth/popup-blocked' || errorCode === 'auth/popup-closed-by-user') {
+              renderStatus('warning', 'No se completó la ventana de acceso', resultado.error || 'Permite popups y vuelve a intentar.');
+            } else if (errorCode === 'auth/network-request-failed') {
+              renderStatus('warning', 'Problema de conexión', 'Revisa tu internet e intenta nuevamente.');
+            } else {
+              renderStatus('error', `No pudimos entrar con ${providerLabel}`, resultado.error || 'Intenta nuevamente en unos instantes.');
+            }
+          });
         });
       }
 
@@ -1224,6 +1353,7 @@
       }
 
       let authWatcherAttached = false;
+      let authSocialRedirectHandled = false;
 
       async function syncAccessSession(user) {
         const existingPrompt = document.getElementById('sesion-existente-msg');
@@ -1241,6 +1371,31 @@
         const datos = await window.authFirebase.obtenerDatos();
 
         if (!datos) {
+          return;
+        }
+
+        let pendingSocialProvider = '';
+        try {
+          pendingSocialProvider = String(sessionStorage.getItem(socialRedirectKey) || '').trim().toLowerCase();
+        } catch (_) {}
+
+        if (pendingSocialProvider && !authSocialRedirectHandled) {
+          authSocialRedirectHandled = true;
+          try {
+            sessionStorage.removeItem(socialRedirectKey);
+          } catch (_) {}
+
+          const providerLabel = getProviderLabel(pendingSocialProvider);
+          const nombre = getSafeText(datos.nombre, 'viajero');
+          const correoVerificado = Boolean(datos.cuenta?.emailVerificado);
+
+          redirectToProfile(
+            correoVerificado ? 'social-login' : 'social-login-pending',
+            `Acceso con ${providerLabel} listo, ${nombre}`,
+            correoVerificado
+              ? 'Estamos abriendo tu perfil para que continúes desde tu cuenta conectada.'
+              : 'Estamos abriendo tu perfil para que revises tu cuenta y completes la verificación del correo.'
+          );
           return;
         }
 

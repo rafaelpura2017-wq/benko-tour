@@ -4,7 +4,7 @@
  * INSTRUCCIONES DE CONFIGURACIÓN:
  * 1. Ve a https://console.firebase.google.com/
  * 2. Crea un nuevo proyecto llamado "Benko Tour"
- * 3. En la sección "Autenticación", activa "Email/Password"
+ * 3. En la sección "Autenticación", activa "Email/Password", "Google" y "Facebook" (opcional "Microsoft")
  * 4. En "Firestore Database", crea una base de datos en modo prueba
  * 5. Ve a Configuración del proyecto > General > Tus apps > Web
  * 6. Copia los valores de firebaseConfig y reemplaza los de abajo
@@ -1019,6 +1019,191 @@ async function iniciarSesion(email, password) {
   }
 }
 
+function buildSocialProvider(providerKey = '') {
+  const normalizedKey = sanitizeText(providerKey).toLowerCase();
+
+  if (normalizedKey === 'google' || normalizedKey === 'gmail') {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('email');
+    provider.addScope('profile');
+    provider.setCustomParameters({ prompt: 'select_account' });
+    return {
+      success: true,
+      provider,
+      key: 'google',
+      label: 'Google'
+    };
+  }
+
+  if (normalizedKey === 'facebook') {
+    const provider = new firebase.auth.FacebookAuthProvider();
+    provider.addScope('email');
+    provider.setCustomParameters({ display: 'popup' });
+    return {
+      success: true,
+      provider,
+      key: 'facebook',
+      label: 'Facebook'
+    };
+  }
+
+  if (normalizedKey === 'microsoft' || normalizedKey === 'outlook' || normalizedKey === 'hotmail') {
+    if (typeof firebase.auth.OAuthProvider !== 'function') {
+      return {
+        success: false,
+        error: 'Este proveedor no está disponible con la configuración actual.',
+        errorCode: 'client/provider-not-supported'
+      };
+    }
+
+    const provider = new firebase.auth.OAuthProvider('microsoft.com');
+    provider.addScope('email');
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    return {
+      success: true,
+      provider,
+      key: 'microsoft',
+      label: 'Microsoft'
+    };
+  }
+
+  if (normalizedKey === 'instagram') {
+    return {
+      success: false,
+      error: 'Instagram no ofrece inicio de sesión directo con Firebase en este flujo web.',
+      errorCode: 'client/provider-not-supported'
+    };
+  }
+
+  return {
+    success: false,
+    error: 'Este proveedor de acceso todavía no está configurado.',
+    errorCode: 'client/provider-not-supported'
+  };
+}
+
+async function iniciarSesionConProveedor(providerKey, profileHints = {}) {
+  if (!auth || !db) {
+    return {
+      success: false,
+      error: 'El sistema de autenticación no está disponible todavía.',
+      errorCode: 'client/auth-not-ready'
+    };
+  }
+
+  const providerResult = buildSocialProvider(providerKey);
+
+  if (!providerResult.success) {
+    return providerResult;
+  }
+
+  const { provider, key: normalizedProviderKey, label } = providerResult;
+
+  try {
+    const userCredential = await auth.signInWithPopup(provider);
+    const user = userCredential?.user || auth.currentUser;
+
+    if (!user) {
+      return {
+        success: false,
+        error: 'No pudimos recuperar la sesión del proveedor.',
+        errorCode: 'client/social-auth-missing-user'
+      };
+    }
+
+    await user.reload();
+
+    const email = sanitizeText(user.email).toLowerCase();
+
+    if (!email) {
+      return {
+        success: false,
+        error: 'La cuenta del proveedor no entregó correo. Prueba con otro acceso.',
+        errorCode: 'client/provider-missing-email'
+      };
+    }
+
+    const userRef = db.collection(COLLECTION_KEYS.users).doc(user.uid);
+    const existingSnapshot = await userRef.get();
+
+    if (!existingSnapshot.exists) {
+      await userRef.set(buildUserDocument(user, email, {
+        nombre: sanitizeText(user.displayName || profileHints.nombre || ''),
+        ciudad: sanitizeText(profileHints.ciudad || ''),
+        telefono: sanitizeText(profileHints.telefono || profileHints.phone || ''),
+        idioma: sanitizeText(profileHints.idioma || profileHints.language || 'Español'),
+        recogida: sanitizeText(profileHints.recogida || profileHints.pickup || '')
+      }), { merge: true });
+    }
+
+    const refreshedSnapshot = await userRef.get();
+    const baseData = normalizeUserData(refreshedSnapshot.data(), user);
+    const mergedData = normalizeUserData({
+      ...baseData,
+      nombre: sanitizeText(baseData.nombre || user.displayName || profileHints.nombre || ''),
+      email,
+      cuenta: {
+        ...(baseData.cuenta || {}),
+        estado: user.emailVerified ? 'Verificada' : 'Pendiente de verificación',
+        emailVerificado: Boolean(user.emailVerified),
+        origen: `social-${normalizedProviderKey}`
+      }
+    }, user);
+
+    await userRef.set(buildUserMergePayload(mergedData, user, {
+      ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp(),
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }), { merge: true });
+
+    return {
+      success: true,
+      user,
+      datos: {
+        ...mergedData,
+        progreso: {
+          perfilCompleto: calculateProfileCompletion(mergedData)
+        }
+      },
+      provider: normalizedProviderKey,
+      providerLabel: label,
+      mensaje: `Sesión iniciada con ${label}`
+    };
+  } catch (error) {
+    console.error('Error en inicio de sesión con proveedor:', error);
+
+    if (
+      error?.code === 'auth/popup-blocked' ||
+      error?.code === 'auth/popup-closed-by-user' ||
+      error?.code === 'auth/cancelled-popup-request' ||
+      error?.code === 'auth/operation-not-supported-in-this-environment'
+    ) {
+      try {
+        await auth.signInWithRedirect(provider);
+        return {
+          success: true,
+          pendingRedirect: true,
+          provider: normalizedProviderKey,
+          providerLabel: label,
+          mensaje: `Redirigiendo a ${label} para completar el acceso.`
+        };
+      } catch (redirectError) {
+        return {
+          success: false,
+          error: traducirErrorFirebase(redirectError.code) || redirectError.message,
+          errorCode: redirectError.code
+        };
+      }
+    }
+
+    return {
+      success: false,
+      error: traducirErrorFirebase(error.code) || error.message,
+      errorCode: error.code
+    };
+  }
+}
+
 /**
  * Cerrar sesión
  */
@@ -1246,6 +1431,10 @@ function traducirErrorFirebase(codigo) {
     'client/invalid-email-format': 'El correo electrónico no tiene un formato válido.',
     'client/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
     'client/weak-password-format': 'La contraseña debe tener al menos 8 caracteres e incluir letras y números.',
+    'client/auth-not-ready': 'El sistema de autenticación aún no está listo. Intenta nuevamente en unos segundos.',
+    'client/provider-not-supported': 'Este proveedor no está disponible todavía en Benko Tour.',
+    'client/provider-missing-email': 'La cuenta del proveedor no entregó un correo válido.',
+    'client/social-auth-missing-user': 'No pudimos completar el inicio con proveedor.',
     'auth/email-already-in-use': 'Este correo ya está registrado. Intenta iniciar sesión.',
     'auth/invalid-email': 'El correo electrónico no es válido.',
     'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
@@ -1255,7 +1444,14 @@ function traducirErrorFirebase(codigo) {
     'auth/too-many-requests': 'Demasiados intentos fallidos. Intenta más tarde.',
     'auth/network-request-failed': 'Error de conexión. Verifica tu internet.',
     'auth/user-disabled': 'Esta cuenta ha sido deshabilitada.',
-    'auth/requires-recent-login': 'Por seguridad, vuelve a iniciar sesión antes de cerrar tu cuenta.'
+    'auth/requires-recent-login': 'Por seguridad, vuelve a iniciar sesión antes de cerrar tu cuenta.',
+    'auth/popup-closed-by-user': 'Cerraste la ventana antes de terminar el acceso.',
+    'auth/popup-blocked': 'Tu navegador bloqueó la ventana de acceso. Habilita popups e intenta de nuevo.',
+    'auth/cancelled-popup-request': 'Se canceló la ventana de acceso. Intenta nuevamente.',
+    'auth/operation-not-allowed': 'Este proveedor aún no está activado en Firebase.',
+    'auth/unauthorized-domain': 'Este dominio no está autorizado en Firebase Authentication.',
+    'auth/operation-not-supported-in-this-environment': 'Este navegador no permite popup de acceso. Probaremos con redirección.',
+    'auth/account-exists-with-different-credential': 'Este correo ya existe con otro método de acceso. Inicia con ese método y luego enlaza el proveedor.'
   };
   
   return errores[codigo] || 'Ha ocurrido un error. Intenta de nuevo.';
@@ -1400,6 +1596,7 @@ async function migrarReservasTemporales() {
 window.authFirebase = {
   registrar: registrarUsuario,
   login: iniciarSesion,
+  loginConProveedor: iniciarSesionConProveedor,
   logout: cerrarSesion,
   deleteAccount: eliminarCuentaActual,
   resetPassword: restablecerPassword,

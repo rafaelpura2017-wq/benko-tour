@@ -71,6 +71,7 @@ const cartClearButton = document.querySelector("#cart-clear");
 const cartStatus = document.querySelector("#cart-status");
 const cartCityInput = document.querySelector("#cart-city");
 const catalogCartPanel = document.querySelector("[data-cart-panel]");
+const catalogCartLayout = catalogCartPanel ? catalogCartPanel.closest(".benko-tour__catalog-layout") : null;
 const catalogCartToggle = document.querySelector("[data-cart-toggle]");
 const catalogCartPanelBody = document.querySelector("[data-cart-panel-body]");
 const catalogCartToggleCount = document.querySelector("[data-cart-toggle-count]");
@@ -379,6 +380,9 @@ function setCatalogCartPanelOpenState(isOpen, options = {}) {
 
   catalogCartPanel.classList.toggle("is-open", shouldOpen);
   catalogCartPanel.classList.toggle("is-collapsed", !shouldOpen);
+  if (catalogCartLayout) {
+    catalogCartLayout.classList.toggle("is-cart-open", shouldOpen);
+  }
   catalogCartToggle.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
   catalogCartToggle.setAttribute("aria-label", shouldOpen ? "Ocultar carrito" : "Abrir carrito");
 
