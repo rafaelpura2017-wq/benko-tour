@@ -1100,6 +1100,26 @@ async function iniciarSesionConProveedor(providerKey, profileHints = {}) {
 
   const { provider, key: normalizedProviderKey, label } = providerResult;
 
+  if (normalizedProviderKey === 'google') {
+    try {
+      await auth.signInWithRedirect(provider);
+      return {
+        success: true,
+        pendingRedirect: true,
+        provider: normalizedProviderKey,
+        providerLabel: label,
+        mensaje: 'Te estamos redirigiendo a Google para completar el acceso.'
+      };
+    } catch (redirectError) {
+      console.error('Error al iniciar redirección con Google:', redirectError);
+      return {
+        success: false,
+        error: traducirErrorFirebase(redirectError.code) || redirectError.message,
+        errorCode: redirectError.code
+      };
+    }
+  }
+
   try {
     const userCredential = await auth.signInWithPopup(provider);
     const user = userCredential?.user || auth.currentUser;
@@ -1450,7 +1470,7 @@ function traducirErrorFirebase(codigo) {
     'auth/cancelled-popup-request': 'Se canceló la ventana de acceso. Intenta nuevamente.',
     'auth/operation-not-allowed': 'Este proveedor aún no está activado en Firebase.',
     'auth/unauthorized-domain': 'Este dominio no está autorizado en Firebase Authentication.',
-    'auth/operation-not-supported-in-this-environment': 'Este navegador no permite popup de acceso. Probaremos con redirección.',
+    'auth/operation-not-supported-in-this-environment': 'Este entorno no permite acceso social en esta URL. Abre la página desde localhost o un dominio HTTPS autorizado en Firebase.',
     'auth/account-exists-with-different-credential': 'Este correo ya existe con otro método de acceso. Inicia con ese método y luego enlaza el proveedor.'
   };
   

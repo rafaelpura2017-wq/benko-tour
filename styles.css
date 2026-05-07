@@ -348,6 +348,53 @@ body {
   outline: none;
 }
 
+.benko-tour__language-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 6px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 236, 194, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.benko-tour__language-switcher-label {
+  color: rgba(255, 243, 217, 0.9);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.benko-tour__language-switcher-select {
+  min-height: 34px;
+  min-width: 148px;
+  padding: 0 32px 0 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 221, 162, 0.36);
+  background: rgba(20, 33, 24, 0.9);
+  color: #fff4d6;
+  font-size: 0.84rem;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+}
+
+.benko-tour__language-switcher-select:focus-visible {
+  border-color: rgba(255, 208, 120, 0.92);
+  box-shadow: 0 0 0 2px rgba(255, 208, 120, 0.2);
+}
+
+.benko-tour__google-translate-host {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .benko-tour__mobile-bar {
   display: none;
 }
@@ -1499,56 +1546,110 @@ body {
 
 .benko-tour__social-auth {
   display: grid;
-  gap: 10px;
-  padding: 14px;
-  border-radius: 18px;
-  border: 1px solid rgba(80, 60, 34, 0.1);
-  background: linear-gradient(180deg, rgba(255, 253, 249, 0.96), rgba(255, 246, 234, 0.84));
+  gap: 12px;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(80, 60, 34, 0.12);
+  background: linear-gradient(180deg, rgba(255, 253, 249, 0.98), rgba(255, 247, 236, 0.9));
 }
 
 .benko-tour__social-auth-title {
   margin: 0;
-  color: var(--muted);
-  font-size: 0.88rem;
-  font-weight: 700;
+  color: #6c5a4f;
+  font-size: 0.9rem;
+  font-weight: 800;
 }
 
 .benko-tour__social-auth-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 10px;
 }
 
 .benko-tour__social-auth-btn {
-  min-height: 42px;
-  border-radius: 12px;
-  border: 1px solid rgba(80, 60, 34, 0.14);
-  background: rgba(255, 255, 255, 0.92);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 62px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(80, 60, 34, 0.16);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.98), rgba(249, 245, 238, 0.96));
   color: var(--text);
   font: inherit;
-  font-size: 0.88rem;
+  text-align: left;
+  font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.benko-tour__social-auth-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  flex: 0 0 34px;
+  color: #fff;
+  background: linear-gradient(145deg, #8f4a1f, #c86f3d);
+  box-shadow: 0 10px 20px rgba(70, 30, 14, 0.22);
+}
+
+.benko-tour__social-auth-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.benko-tour__social-auth-copy strong {
+  font-size: 1rem;
+  line-height: 1.1;
+  color: #2c211c;
+}
+
+.benko-tour__social-auth-copy small {
+  font-size: 0.78rem;
+  line-height: 1.25;
+  color: #6e5f56;
 }
 
 .benko-tour__social-auth-btn:hover,
 .benko-tour__social-auth-btn:focus-visible {
-  transform: translateY(-1px);
-  border-color: rgba(223, 112, 74, 0.35);
-  box-shadow: 0 10px 20px rgba(38, 26, 18, 0.08);
+  transform: translateY(-2px);
+  border-color: rgba(223, 112, 74, 0.45);
+  box-shadow: 0 14px 28px rgba(38, 26, 18, 0.12);
   outline: none;
 }
 
+.benko-tour__social-auth-btn--google .benko-tour__social-auth-icon {
+  background: linear-gradient(145deg, #2a66f7, #ea4335);
+}
+
+.benko-tour__social-auth-btn--facebook .benko-tour__social-auth-icon {
+  background: linear-gradient(145deg, #2457c7, #3a8df0);
+}
+
+.benko-tour__social-auth-btn--microsoft .benko-tour__social-auth-icon {
+  background: linear-gradient(145deg, #0067b8, #00a4ef);
+}
+
+.benko-tour__social-auth-btn--instagram .benko-tour__social-auth-icon {
+  background: linear-gradient(145deg, #833ab4, #fd1d1d 56%, #fcb045);
+}
+
 .benko-tour__social-auth-btn--muted {
-  opacity: 0.75;
+  opacity: 0.78;
+  filter: saturate(0.9);
 }
 
 .benko-tour__social-auth-note {
   margin: 0;
   color: var(--muted);
-  font-size: 0.82rem;
-  line-height: 1.5;
+  font-size: 0.83rem;
+  line-height: 1.55;
 }
 
 .benko-tour__access-form--hidden,
@@ -4088,6 +4189,20 @@ body {
   .benko-tour__topbar > .benko-tour__menu,
   .benko-tour__topbar > .benko-tour__login {
     display: none;
+  }
+
+  .benko-tour__language-switcher {
+    margin-left: auto;
+    padding: 6px 8px;
+  }
+
+  .benko-tour__language-switcher-label {
+    display: none;
+  }
+
+  .benko-tour__language-switcher-select {
+    min-width: 122px;
+    font-size: 0.78rem;
   }
 
   .benko-tour__account-menu {

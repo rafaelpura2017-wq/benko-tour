@@ -8,8 +8,11 @@
     content="Accede a tu cuenta de Benko Tour o crea una nueva para guardar tus datos y reservar más rápido."
   >
   <meta name="theme-color" content="#20392b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="canonical" href="https://benkotour.wordpress.com/acceso">
   <link rel="icon" type="image/jpeg" href="./assets/images/brand/favicon-benko.jpg">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./assets/images/brand/apple-touch-icon-180.png">
   <title>Acceso | Benko Tour</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,14 +20,14 @@
     href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap"
     rel="stylesheet"
   >
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css?v=20260507-auth-ui">
   <script src="./config.js"></script>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="./firebase-config.js"></script>
-  <script src="./script.js" defer></script>
+  <script src="./firebase-config.js?v=20260507-auth-ui"></script>
+  <script src="./script.js?v=20260507-auth-ui" defer></script>
 </head>
 <body>
   <div class="benko-tour__page-loader benko-tour__hidden" id="access-page-loader" aria-live="polite" aria-hidden="true">
@@ -319,17 +322,33 @@
                 <div class="benko-tour__social-auth" aria-label="Inicio con proveedores">
                   <p class="benko-tour__social-auth-title">O entra con</p>
                   <div class="benko-tour__social-auth-grid">
-                    <button class="benko-tour__social-auth-btn" type="button" data-social-provider="google">
-                      Continuar con Google (Gmail)
+                    <button class="benko-tour__social-auth-btn benko-tour__social-auth-btn--google" type="button" data-social-provider="google">
+                      <span class="benko-tour__social-auth-icon" aria-hidden="true">G</span>
+                      <span class="benko-tour__social-auth-copy">
+                        <strong>Google</strong>
+                        <small>Entrar con Gmail</small>
+                      </span>
                     </button>
-                    <button class="benko-tour__social-auth-btn" type="button" data-social-provider="facebook">
-                      Continuar con Facebook
+                    <button class="benko-tour__social-auth-btn benko-tour__social-auth-btn--facebook" type="button" data-social-provider="facebook">
+                      <span class="benko-tour__social-auth-icon" aria-hidden="true">f</span>
+                      <span class="benko-tour__social-auth-copy">
+                        <strong>Facebook</strong>
+                        <small>Entrar con tu perfil</small>
+                      </span>
                     </button>
-                    <button class="benko-tour__social-auth-btn" type="button" data-social-provider="microsoft">
-                      Continuar con Outlook / Hotmail
+                    <button class="benko-tour__social-auth-btn benko-tour__social-auth-btn--microsoft" type="button" data-social-provider="microsoft">
+                      <span class="benko-tour__social-auth-icon" aria-hidden="true">M</span>
+                      <span class="benko-tour__social-auth-copy">
+                        <strong>Outlook / Hotmail</strong>
+                        <small>Correo Microsoft</small>
+                      </span>
                     </button>
-                    <button class="benko-tour__social-auth-btn benko-tour__social-auth-btn--muted" type="button" data-social-provider="instagram">
-                      Instagram (próximamente)
+                    <button class="benko-tour__social-auth-btn benko-tour__social-auth-btn--muted benko-tour__social-auth-btn--instagram" type="button" data-social-provider="instagram">
+                      <span class="benko-tour__social-auth-icon" aria-hidden="true">IG</span>
+                      <span class="benko-tour__social-auth-copy">
+                        <strong>Instagram</strong>
+                        <small>Próximamente</small>
+                      </span>
                     </button>
                   </div>
                   <p class="benko-tour__social-auth-note">
@@ -1101,6 +1120,15 @@
               return;
             }
 
+            if (window.location.protocol === 'file:') {
+              renderStatus(
+                'warning',
+                'Abre la página como sitio web',
+                'El acceso social no funciona si abres el archivo directo (file://). Usa localhost o un dominio HTTPS autorizado en Firebase.'
+              );
+              return;
+            }
+
             if (typeof window.authFirebase === 'undefined' || typeof window.authFirebase.loginConProveedor !== 'function') {
               renderStatus('warning', 'Configuracion pendiente', 'El acceso con proveedores no está disponible en este momento. Intenta más tarde.');
               return;
@@ -1110,10 +1138,14 @@
               sessionStorage.setItem(socialRedirectKey, providerKey);
             } catch (_) {}
 
+            const usesDirectRedirect = providerKey === 'google';
+
             renderStatus(
               'loading',
               `Conectando con ${providerLabel}`,
-              'Abriremos una ventana segura para validar tu acceso. Si tu navegador bloquea popups, usaremos redirección automática.'
+              usesDirectRedirect
+                ? 'Te llevaremos directamente a Google para validar tu acceso y volver aquí automáticamente.'
+                : 'Abriremos una ventana segura para validar tu acceso. Si tu navegador bloquea popups, usaremos redirección automática.'
             );
 
             const resultado = await window.authFirebase.loginConProveedor(providerKey);
@@ -1151,6 +1183,12 @@
                 'warning',
                 'Dominio no autorizado',
                 'Agrega este dominio en Firebase Authentication > Settings > Authorized domains para habilitar el inicio social.'
+              );
+            } else if (errorCode === 'auth/operation-not-supported-in-this-environment') {
+              renderStatus(
+                'warning',
+                'Este entorno no permite el acceso social',
+                'Abre la página desde localhost o desde tu dominio HTTPS autorizado. Si la abres como archivo local, Google/Facebook no podrán iniciar sesión.'
               );
             } else if (errorCode === 'auth/account-exists-with-different-credential') {
               renderStatus(

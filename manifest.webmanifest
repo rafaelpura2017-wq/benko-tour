@@ -1,0 +1,51 @@
+{
+  "name": "Benko Tour",
+  "short_name": "Benko Tour",
+  "description": "Reserva experiencias culturales en San Basilio de Palenque, compra productos y conecta con la comunidad Benko Tour.",
+  "lang": "es-CO",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f6f1e8",
+  "theme_color": "#20392b",
+  "icons": [
+    {
+      "src": "./assets/images/brand/pwa-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/images/brand/pwa-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "travel",
+    "lifestyle",
+    "shopping"
+  ],
+  "shortcuts": [
+    {
+      "name": "Reservar tour",
+      "short_name": "Reservas",
+      "description": "Abrir formulario de reservas",
+      "url": "./reservas.html"
+    },
+    {
+      "name": "Tienda",
+      "short_name": "Tienda",
+      "description": "Ver productos y comprar",
+      "url": "./tienda.html"
+    },
+    {
+      "name": "Lengua palenquera",
+      "short_name": "Lengua",
+      "description": "Explorar diccionario y traductor",
+      "url": "./lengua-palenquera.html"
+    }
+  ]
+}

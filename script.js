@@ -105,8 +105,368 @@ const STORAGE_KEYS = {
   session: "benko-tour-session",
   reviews: "benko-tour-reviews",
   cart: "benkoCart",
-  cartPanelOpen: "benkoCartPanelOpen"
+  cartPanelOpen: "benkoCartPanelOpen",
+  siteLanguage: "benkoSiteLanguage"
 };
+const SITE_LANGUAGE_OPTIONS = [
+  { code: "es", label: "Español" },
+  { code: "en", label: "English" },
+  { code: "pt", label: "Português" },
+  { code: "zh-CN", label: "中文 (Mandarín)" }
+];
+const DEFAULT_SITE_LANGUAGE = "es";
+const GOOGLE_TRANSLATE_SCRIPT_ID = "benko-google-translate-script";
+const MANUAL_UI_TEXT_BY_LANGUAGE = {
+  es: {
+    menuExperience: "Experiencia",
+    menuAbout: "Nosotros",
+    menuLanguage: "Lengua palenquera",
+    menuPackages: "Paquetes",
+    menuItinerary: "Itinerario",
+    menuReviews: "Opiniones",
+    menuShop: "Tienda",
+    menuReservations: "Reservas",
+    loginStart: "Iniciar sesión",
+    loginAccount: "Mi cuenta",
+    quickMenu: "Menú rápido",
+    quickActionExperience: "Abrir experiencia",
+    quickActionReservations: "Ir a reservas",
+    heroCtaReserve: "Reservar itinerario",
+    heroCtaShop: "Comprar productos",
+    mobileBarReserve: "Reservar",
+    mobileBarPackages: "Paquetes",
+    mobileBarReviews: "Opiniones",
+    mobileBarWhatsapp: "WhatsApp",
+    quickStartTag: "Inicio",
+    quickExploreTag: "Mapa",
+    quickPackagesTag: "Venta",
+    quickItineraryTag: "Ruta",
+    quickFlavorsTag: "Sabores",
+    quickVoicesTag: "Voces",
+    quickConversionTag: "Acción",
+    quickStartTitle: "Portada y marca",
+    quickExploreTitle: "Páginas dedicadas",
+    quickPackagesTitle: "Paquetes y precios",
+    quickItineraryTitle: "Cómo se vive el tour",
+    quickFlavorsTitle: "Guías y extras",
+    quickVoicesTitle: "Opiniones reales",
+    quickConversionTitle: "Reservas y tienda"
+  },
+  en: {
+    menuExperience: "Experience",
+    menuAbout: "About us",
+    menuLanguage: "Palenquero language",
+    menuPackages: "Packages",
+    menuItinerary: "Itinerary",
+    menuReviews: "Reviews",
+    menuShop: "Shop",
+    menuReservations: "Reservations",
+    loginStart: "Sign in",
+    loginAccount: "My account",
+    quickMenu: "Quick menu",
+    quickActionExperience: "Open experience",
+    quickActionReservations: "Go to reservations",
+    heroCtaReserve: "Book itinerary",
+    heroCtaShop: "Buy products",
+    mobileBarReserve: "Book",
+    mobileBarPackages: "Packages",
+    mobileBarReviews: "Reviews",
+    mobileBarWhatsapp: "WhatsApp",
+    quickStartTag: "Start",
+    quickExploreTag: "Map",
+    quickPackagesTag: "Sales",
+    quickItineraryTag: "Route",
+    quickFlavorsTag: "Flavors",
+    quickVoicesTag: "Voices",
+    quickConversionTag: "Action",
+    quickStartTitle: "Homepage and brand",
+    quickExploreTitle: "Dedicated pages",
+    quickPackagesTitle: "Packages and pricing",
+    quickItineraryTitle: "How the tour is lived",
+    quickFlavorsTitle: "Guides and extras",
+    quickVoicesTitle: "Real reviews",
+    quickConversionTitle: "Reservations and shop"
+  },
+  pt: {
+    menuExperience: "Experiência",
+    menuAbout: "Sobre nós",
+    menuLanguage: "Língua palenquera",
+    menuPackages: "Pacotes",
+    menuItinerary: "Roteiro",
+    menuReviews: "Avaliações",
+    menuShop: "Loja",
+    menuReservations: "Reservas",
+    loginStart: "Entrar",
+    loginAccount: "Minha conta",
+    quickMenu: "Menu rápido",
+    quickActionExperience: "Abrir experiência",
+    quickActionReservations: "Ir para reservas",
+    heroCtaReserve: "Reservar roteiro",
+    heroCtaShop: "Comprar produtos",
+    mobileBarReserve: "Reservar",
+    mobileBarPackages: "Pacotes",
+    mobileBarReviews: "Avaliações",
+    mobileBarWhatsapp: "WhatsApp",
+    quickStartTag: "Início",
+    quickExploreTag: "Mapa",
+    quickPackagesTag: "Vendas",
+    quickItineraryTag: "Rota",
+    quickFlavorsTag: "Sabores",
+    quickVoicesTag: "Vozes",
+    quickConversionTag: "Ação",
+    quickStartTitle: "Capa e marca",
+    quickExploreTitle: "Páginas dedicadas",
+    quickPackagesTitle: "Pacotes e preços",
+    quickItineraryTitle: "Como o tour é vivido",
+    quickFlavorsTitle: "Guias e extras",
+    quickVoicesTitle: "Avaliações reais",
+    quickConversionTitle: "Reservas e loja"
+  },
+  "zh-CN": {
+    menuExperience: "体验",
+    menuAbout: "关于我们",
+    menuLanguage: "帕伦克拉语",
+    menuPackages: "套餐",
+    menuItinerary: "行程",
+    menuReviews: "评价",
+    menuShop: "商店",
+    menuReservations: "预订",
+    loginStart: "登录",
+    loginAccount: "我的账户",
+    quickMenu: "快捷菜单",
+    quickActionExperience: "打开体验页面",
+    quickActionReservations: "前往预订",
+    heroCtaReserve: "预订行程",
+    heroCtaShop: "购买产品",
+    mobileBarReserve: "预订",
+    mobileBarPackages: "套餐",
+    mobileBarReviews: "评价",
+    mobileBarWhatsapp: "WhatsApp",
+    quickStartTag: "首页",
+    quickExploreTag: "地图",
+    quickPackagesTag: "销售",
+    quickItineraryTag: "路线",
+    quickFlavorsTag: "风味",
+    quickVoicesTag: "声音",
+    quickConversionTag: "操作",
+    quickStartTitle: "首页与品牌",
+    quickExploreTitle: "独立页面",
+    quickPackagesTitle: "套餐与价格",
+    quickItineraryTitle: "体验路线",
+    quickFlavorsTitle: "导览与附加项",
+    quickVoicesTitle: "真实评价",
+    quickConversionTitle: "预订与商店"
+  }
+};
+const MANUAL_UI_TARGETS = [
+  {
+    key: "menuExperience",
+    selectors: [
+      '.benko-tour__menu a[href="./experiencia.html"] span',
+      '.benko-tour__mobile-menu a[href="./experiencia.html"] span'
+    ]
+  },
+  {
+    key: "menuAbout",
+    selectors: [
+      '.benko-tour__menu a[href="./nosotros.html"] span',
+      '.benko-tour__mobile-menu a[href="./nosotros.html"] span'
+    ]
+  },
+  {
+    key: "menuLanguage",
+    selectors: [
+      '.benko-tour__menu a[href="./lengua-palenquera.html"] span',
+      '.benko-tour__mobile-menu a[href="./lengua-palenquera.html"] span'
+    ]
+  },
+  {
+    key: "menuPackages",
+    selectors: [
+      '.benko-tour__menu a[href="#paquetes"] span',
+      '.benko-tour__menu a[href="./index.html#paquetes"] span',
+      '.benko-tour__mobile-menu a[href="#paquetes"] span',
+      '.benko-tour__mobile-menu a[href="./index.html#paquetes"] span'
+    ]
+  },
+  {
+    key: "menuItinerary",
+    selectors: [
+      '.benko-tour__menu a[href="#itinerario"] span',
+      '.benko-tour__menu a[href="./index.html#itinerario"] span',
+      '.benko-tour__mobile-menu a[href="#itinerario"] span',
+      '.benko-tour__mobile-menu a[href="./index.html#itinerario"] span'
+    ]
+  },
+  {
+    key: "menuReviews",
+    selectors: [
+      '.benko-tour__menu a[href="#opiniones"] span',
+      '.benko-tour__menu a[href="./index.html#opiniones"] span',
+      '.benko-tour__mobile-menu a[href="#opiniones"] span',
+      '.benko-tour__mobile-menu a[href="./index.html#opiniones"] span'
+    ]
+  },
+  {
+    key: "menuShop",
+    selectors: [
+      '.benko-tour__menu a[href="./tienda.html"] span',
+      '.benko-tour__mobile-menu a[href="./tienda.html"] span'
+    ]
+  },
+  {
+    key: "menuReservations",
+    selectors: [
+      '.benko-tour__menu a[href="./reservas.html"] span',
+      '.benko-tour__mobile-menu a[href="./reservas.html"] span'
+    ]
+  },
+  {
+    key: "loginStart",
+    selectors: [
+      '.benko-tour__mobile-menu a[href="./acceso.html#acceso"] span',
+      '.benko-tour__footer-links a[href="./acceso.html#acceso"]'
+    ]
+  },
+  {
+    key: "quickMenu",
+    selectors: [
+      ".benko-tour__quick-nav-copy .benko-tour__eyebrow"
+    ]
+  },
+  {
+    key: "quickActionExperience",
+    selectors: [
+      ".benko-tour__quick-nav-action--primary"
+    ]
+  },
+  {
+    key: "quickActionReservations",
+    selectors: [
+      '.benko-tour__quick-nav-action[href="./reservas.html"]'
+    ]
+  },
+  {
+    key: "heroCtaReserve",
+    selectors: [
+      '.benko-tour__hero .benko-tour__actions .benko-tour__button[href="./reservas.html"]'
+    ]
+  },
+  {
+    key: "heroCtaShop",
+    selectors: [
+      '.benko-tour__hero .benko-tour__actions .benko-tour__ghost[href="./tienda.html"]'
+    ]
+  },
+  {
+    key: "mobileBarReserve",
+    selectors: [
+      ".benko-tour__mobile-bar .benko-tour__mobile-bar-link--primary"
+    ]
+  },
+  {
+    key: "mobileBarPackages",
+    selectors: [
+      '.benko-tour__mobile-bar .benko-tour__mobile-bar-link[href="#paquetes"]'
+    ]
+  },
+  {
+    key: "mobileBarReviews",
+    selectors: [
+      '.benko-tour__mobile-bar .benko-tour__mobile-bar-link[href="#opiniones"]'
+    ]
+  },
+  {
+    key: "mobileBarWhatsapp",
+    selectors: [
+      ".benko-tour__mobile-bar .benko-tour__mobile-bar-link--whatsapp"
+    ]
+  },
+  {
+    key: "quickStartTag",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#inicio"] span'
+    ]
+  },
+  {
+    key: "quickExploreTag",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#explora"] span'
+    ]
+  },
+  {
+    key: "quickPackagesTag",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#paquetes"] span'
+    ]
+  },
+  {
+    key: "quickItineraryTag",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#itinerario"] span'
+    ]
+  },
+  {
+    key: "quickFlavorsTag",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#sabores"] span'
+    ]
+  },
+  {
+    key: "quickVoicesTag",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#opiniones"] span'
+    ]
+  },
+  {
+    key: "quickConversionTag",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#conversion"] span'
+    ]
+  },
+  {
+    key: "quickStartTitle",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#inicio"] strong'
+    ]
+  },
+  {
+    key: "quickExploreTitle",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#explora"] strong'
+    ]
+  },
+  {
+    key: "quickPackagesTitle",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#paquetes"] strong'
+    ]
+  },
+  {
+    key: "quickItineraryTitle",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#itinerario"] strong'
+    ]
+  },
+  {
+    key: "quickFlavorsTitle",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#sabores"] strong'
+    ]
+  },
+  {
+    key: "quickVoicesTitle",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#opiniones"] strong'
+    ]
+  },
+  {
+    key: "quickConversionTitle",
+    selectors: [
+      '.benko-tour__quick-nav-links a[href="#conversion"] strong'
+    ]
+  }
+];
 const defaultReviews = [
   {
     id: "seed-1",
@@ -547,13 +907,18 @@ function syncReviewFormState() {
 
 function renderAccessState() {
   const currentUser = getCurrentUser();
+  const activeLanguage = getActiveSiteLanguage();
 
   renderAccessSession(currentUser);
   syncBookingIdentity(currentUser);
   syncReviewFormState();
 
   if (topLoginLink) {
-    topLoginLink.textContent = currentUser ? "Mi cuenta" : "Iniciar sesión";
+    topLoginLink.textContent = currentUser
+      ? getManualUiText(activeLanguage, "loginAccount")
+      : getManualUiText(activeLanguage, "loginStart");
+    topLoginLink.classList.add("notranslate");
+    topLoginLink.setAttribute("translate", "no");
     topLoginLink.setAttribute("href", "./acceso.html#acceso");
   }
 
@@ -1887,6 +2252,298 @@ function initMobileMenu() {
   });
 }
 
+function normalizeSiteLanguage(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  const map = {
+    es: "es",
+    en: "en",
+    pt: "pt",
+    "zh-cn": "zh-CN",
+    "zh_cn": "zh-CN",
+    zh: "zh-CN"
+  };
+
+  return map[normalized] || DEFAULT_SITE_LANGUAGE;
+}
+
+function getCookieValue(name) {
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : "";
+}
+
+function getStoredSiteLanguage() {
+  try {
+    return normalizeSiteLanguage(window.localStorage.getItem(STORAGE_KEYS.siteLanguage));
+  } catch (_) {
+    return DEFAULT_SITE_LANGUAGE;
+  }
+}
+
+function setStoredSiteLanguage(languageCode) {
+  try {
+    window.localStorage.setItem(STORAGE_KEYS.siteLanguage, normalizeSiteLanguage(languageCode));
+  } catch (_) {}
+}
+
+function getActiveSiteLanguage() {
+  const cookieLanguage = getGoogtransLanguageFromCookie();
+  if (cookieLanguage) {
+    return cookieLanguage;
+  }
+
+  return getStoredSiteLanguage();
+}
+
+function getManualUiText(languageCode, key) {
+  const safeLanguage = normalizeSiteLanguage(languageCode);
+  const catalog = MANUAL_UI_TEXT_BY_LANGUAGE[safeLanguage] || MANUAL_UI_TEXT_BY_LANGUAGE[DEFAULT_SITE_LANGUAGE];
+  return catalog[key] || MANUAL_UI_TEXT_BY_LANGUAGE[DEFAULT_SITE_LANGUAGE][key] || "";
+}
+
+function applyManualTextToElement(element, text) {
+  if (!element || !text) {
+    return;
+  }
+
+  element.textContent = text;
+  element.classList.add("notranslate");
+  element.setAttribute("translate", "no");
+}
+
+function applyManualUiTranslations(languageCode) {
+  const safeLanguage = normalizeSiteLanguage(languageCode);
+
+  MANUAL_UI_TARGETS.forEach((target) => {
+    const text = getManualUiText(safeLanguage, target.key);
+    if (!text) {
+      return;
+    }
+
+    target.selectors.forEach((selector) => {
+      document.querySelectorAll(selector).forEach((element) => {
+        applyManualTextToElement(element, text);
+      });
+    });
+  });
+
+  document.documentElement.lang = safeLanguage === "zh-CN" ? "zh-Hans" : safeLanguage;
+}
+
+function getGoogtransLanguageFromCookie() {
+  const rawValue = getCookieValue("googtrans");
+
+  if (!rawValue) {
+    return "";
+  }
+
+  const parts = rawValue.split("/");
+  return normalizeSiteLanguage(parts[parts.length - 1] || "");
+}
+
+function setGoogtransCookie(languageCode) {
+  const safeLanguage = normalizeSiteLanguage(languageCode);
+  const cookieValue = `/${DEFAULT_SITE_LANGUAGE}/${safeLanguage}`;
+  const maxAge = 60 * 60 * 24 * 365;
+  const baseCookie = `googtrans=${cookieValue};path=/;max-age=${maxAge}`;
+
+  document.cookie = baseCookie;
+
+  const host = window.location.hostname;
+  if (host && host !== "localhost" && host !== "127.0.0.1") {
+    document.cookie = `${baseCookie};domain=.${host}`;
+  }
+
+  return safeLanguage;
+}
+
+function ensureTranslateHost() {
+  if (document.getElementById("google_translate_element")) {
+    return;
+  }
+
+  const host = document.createElement("div");
+  host.id = "google_translate_element";
+  host.className = "benko-tour__google-translate-host";
+  host.setAttribute("aria-hidden", "true");
+  document.body.appendChild(host);
+}
+
+function initGoogleTranslateWidget() {
+  if (
+    !window.google ||
+    !window.google.translate ||
+    typeof window.google.translate.TranslateElement !== "function"
+  ) {
+    return;
+  }
+
+  ensureTranslateHost();
+
+  if (window.__benkoGoogleTranslateReady === true) {
+    return;
+  }
+
+  window.__benkoGoogleTranslateReady = true;
+
+  new window.google.translate.TranslateElement(
+    {
+      pageLanguage: DEFAULT_SITE_LANGUAGE,
+      includedLanguages: SITE_LANGUAGE_OPTIONS.map((item) => item.code).join(","),
+      autoDisplay: false
+    },
+    "google_translate_element"
+  );
+}
+
+function loadGoogleTranslateScript() {
+  if (
+    window.google &&
+    window.google.translate &&
+    typeof window.google.translate.TranslateElement === "function"
+  ) {
+    initGoogleTranslateWidget();
+    return;
+  }
+
+  if (document.getElementById(GOOGLE_TRANSLATE_SCRIPT_ID)) {
+    return;
+  }
+
+  window.googleTranslateElementInit = initGoogleTranslateWidget;
+
+  const script = document.createElement("script");
+  script.id = GOOGLE_TRANSLATE_SCRIPT_ID;
+  script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+  script.async = true;
+  document.head.appendChild(script);
+}
+
+function buildLanguageSwitcher() {
+  const wrapper = document.createElement("div");
+  wrapper.className = "benko-tour__language-switcher";
+
+  const label = document.createElement("label");
+  label.className = "benko-tour__language-switcher-label";
+  label.setAttribute("for", "site-language-select");
+  label.textContent = "Idioma";
+
+  const select = document.createElement("select");
+  select.className = "benko-tour__language-switcher-select";
+  select.id = "site-language-select";
+  select.setAttribute("aria-label", "Seleccionar idioma del sitio");
+
+  SITE_LANGUAGE_OPTIONS.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item.code;
+    option.textContent = item.label;
+    select.appendChild(option);
+  });
+
+  wrapper.append(label, select);
+  return { wrapper, select };
+}
+
+function applySiteLanguage(languageCode, options = {}) {
+  const safeLanguage = setGoogtransCookie(languageCode);
+  setStoredSiteLanguage(safeLanguage);
+
+  if (options.reload === false) {
+    return;
+  }
+
+  window.location.reload();
+}
+
+function initGlobalLanguageSwitcher() {
+  const topbar = document.querySelector(".benko-tour__topbar");
+
+  if (!topbar || topbar.dataset.languageReady === "true") {
+    return;
+  }
+
+  topbar.dataset.languageReady = "true";
+
+  const { wrapper, select } = buildLanguageSwitcher();
+  const insertionAnchor = topbar.querySelector(".benko-tour__hamburger") || topbar.querySelector("#login-link");
+
+  if (insertionAnchor) {
+    topbar.insertBefore(wrapper, insertionAnchor);
+  } else {
+    topbar.appendChild(wrapper);
+  }
+
+  const storedLanguage = getStoredSiteLanguage();
+  const cookieLanguage = getGoogtransLanguageFromCookie();
+  const activeLanguage = cookieLanguage || storedLanguage || DEFAULT_SITE_LANGUAGE;
+
+  select.value = activeLanguage;
+  applyManualUiTranslations(activeLanguage);
+
+  if (cookieLanguage !== activeLanguage) {
+    setGoogtransCookie(activeLanguage);
+  }
+
+  select.addEventListener("change", () => {
+    const selectedLanguage = normalizeSiteLanguage(select.value);
+    applyManualUiTranslations(selectedLanguage);
+    applySiteLanguage(selectedLanguage);
+  });
+
+  loadGoogleTranslateScript();
+}
+
+function ensurePwaHeadTags() {
+  if (!document.head) {
+    return;
+  }
+
+  if (!document.querySelector('link[rel="manifest"]')) {
+    const manifestLink = document.createElement("link");
+    manifestLink.rel = "manifest";
+    manifestLink.href = "./manifest.webmanifest";
+    document.head.appendChild(manifestLink);
+  }
+
+  if (!document.querySelector('link[rel="apple-touch-icon"]')) {
+    const appleIconLink = document.createElement("link");
+    appleIconLink.rel = "apple-touch-icon";
+    appleIconLink.href = "./assets/images/brand/apple-touch-icon-180.png";
+    document.head.appendChild(appleIconLink);
+  }
+
+  if (!document.querySelector('meta[name="apple-mobile-web-app-capable"]')) {
+    const appleCapableMeta = document.createElement("meta");
+    appleCapableMeta.name = "apple-mobile-web-app-capable";
+    appleCapableMeta.content = "yes";
+    document.head.appendChild(appleCapableMeta);
+  }
+}
+
+function registerBenkoServiceWorker() {
+  if (!("serviceWorker" in navigator)) {
+    return;
+  }
+
+  const protocol = window.location.protocol;
+
+  if (protocol !== "https:" && protocol !== "http:") {
+    return;
+  }
+
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("./service-worker.js")
+      .catch((error) => {
+        console.warn("No se pudo registrar el service worker de Benko Tour.", error);
+      });
+  });
+}
+
+function initPwaSupport() {
+  ensurePwaHeadTags();
+  registerBenkoServiceWorker();
+}
+
 restoreCartState();
 window.addToCart = addProductToCart;
 window.removeFromCart = removeCartItem;
@@ -1906,4 +2563,6 @@ setupCatalogCartPanel();
 setupCatalogPlaceholders();
 setupCatalogFilters();
 setupCatalogCartButtons();
+initGlobalLanguageSwitcher();
 initMobileMenu();
+initPwaSupport();

@@ -25,6 +25,27 @@ Landing page comercial para turismo cultural en San Basilio de Palenque, con res
 2. Abre `index.html`.
 3. Si tienes Live Server, ejecuta `Open with Live Server`.
 
+## Modo app (PWA)
+
+La web ya está preparada para instalarse como app en móvil o escritorio.
+
+- `manifest.webmanifest`: define nombre, iconos, color y accesos rápidos.
+- `service-worker.js`: activa caché base para carga más rápida y soporte offline parcial.
+- Iconos PWA:
+  - `assets/images/brand/pwa-icon-192.png`
+  - `assets/images/brand/pwa-icon-512.png`
+  - `assets/images/brand/apple-touch-icon-180.png`
+
+Para probar localmente:
+
+```bash
+py -m http.server 5500
+```
+
+Luego abre `http://localhost:5500/index.html`.
+
+Importante: para instalar y probar login social, no abras el HTML con `file://`; úsalo desde `localhost` o dominio HTTPS.
+
 ## Cómo correr el backend
 
 1. Entra a la carpeta `backend`
