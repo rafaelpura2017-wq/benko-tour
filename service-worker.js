@@ -1,4 +1,4 @@
-const CACHE_VERSION = "benko-tour-cache-v1";
+const CACHE_VERSION = "benko-tour-cache-v2";
 const CORE_CACHE_URLS = [
   "./",
   "./index.html",
@@ -20,7 +20,7 @@ const CORE_CACHE_URLS = [
   "./firebase-config.js",
   "./firebase-config.js?v=20260507-auth-ui",
   "./manifest.webmanifest",
-  "./assets/images/brand/favicon-benko.jpg",
+  "./assets/images/brand/favicon-ph.png",
   "./assets/images/brand/pwa-icon-192.png",
   "./assets/images/brand/pwa-icon-512.png",
   "./assets/images/brand/apple-touch-icon-180.png"

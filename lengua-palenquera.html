@@ -16,7 +16,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://benkotour.wordpress.com/lengua-palenquera">
   <link rel="canonical" href="https://benkotour.wordpress.com/lengua-palenquera">
-  <link rel="icon" type="image/jpeg" href="./assets/images/brand/favicon-benko.jpg">
+  <link rel="icon" type="image/png" href="./assets/images/brand/favicon-ph.png">
   <title>Lengua palenquera | Benko Tour</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,7 +95,7 @@
       inset: 0;
       pointer-events: none;
       opacity: 0.08;
-      background: url("./assets/images/brand/patron-marca.jpg") center/280px auto repeat;
+      background: url("./assets/images/brand/patron-marcas-ph.png") center/280px auto repeat;
     }
 
     .benko-tour__language-card > *,
@@ -1121,7 +1121,7 @@
         <div class="benko-tour__topbar">
           <a class="benko-tour__topbar-brand" href="./index.html" aria-label="Benko Tour, ir al inicio">
             <img
-              src="./assets/images/brand/logo-sello.jpg"
+              src="./assets/images/brand/logo-sello-ph.png"
               alt=""
               loading="eager"
               decoding="async"
@@ -1268,10 +1268,10 @@
           <div class="benko-tour__language-translator" id="traduktor">
             <div class="benko-tour__language-translator-head">
               <span class="benko-tour__card-tag">Traduktor</span>
-              <h3>Traduce de español a lengua palenquera y de palenquera a español</h3>
+              <h3>Traduce entre español, lengua palenquera e inglés</h3>
               <p>
                 Escribe una palabra, frase o texto corto. El traductor usa la base del diccionario actual para darte una
-                versión rápida y opciones cercanas para seguir aprendiendo.
+                versión rápida y opciones cercanas para seguir aprendiendo en tres rutas de traducción.
               </p>
             </div>
 
@@ -1279,6 +1279,8 @@
               <select class="benko-tour__language-translator-select" id="lengua-translator-direction">
                 <option value="es-pal">Español → Palenquero</option>
                 <option value="pal-es">Palenquero → Español</option>
+                <option value="pal-en">Palenquero → Inglés</option>
+                <option value="en-pal">Inglés → Palenquero</option>
               </select>
               <select class="benko-tour__language-translator-select" id="lengua-translator-style">
                 <option value="contextual">Natural por frases</option>
@@ -1291,7 +1293,7 @@
             <textarea
               class="benko-tour__language-translator-input"
               id="lengua-translator-input"
-              placeholder="Ejemplo: Buenos dias, quiero aprender lengua palenquera"
+              placeholder="Ejemplo: Buenos dias / Uepa, suto ta aprendé / Good morning"
             ></textarea>
 
             <div class="benko-tour__language-translator-result" aria-live="polite">
@@ -1552,7 +1554,7 @@
         <div class="benko-tour__footer-brand">
           <img
             class="benko-tour__footer-logo"
-            src="./assets/images/brand/logo-horizontal.jpg"
+            src="./assets/images/brand/logo-horizontal-ph.png"
             alt="Logo horizontal de Benko Tour"
             loading="lazy"
             decoding="async"
@@ -1684,6 +1686,23 @@
           })
           .filter(function(part) {
             return part.length >= 2 && part.length <= 80;
+          });
+      }
+
+      function splitEnglishCandidate(value) {
+        if (!value) {
+          return [];
+        }
+
+        return String(value)
+          .split(/[\/;,|]/g)
+          .map(function(part) {
+            return String(part || '')
+              .replace(/\s+/g, ' ')
+              .trim();
+          })
+          .filter(function(part) {
+            return part.length >= 2 && part.length <= 100;
           });
       }
 
@@ -1837,6 +1856,17 @@
                 }
               });
             }
+          } else if (direction === 'pal-en') {
+            const englishValues = Array.isArray(entry.english)
+              ? entry.english
+              : [entry.english];
+            englishValues.forEach(function(value) {
+              splitEnglishCandidate(value).forEach(function(candidate) {
+                if (candidate) {
+                  alternatives.add(candidate);
+                }
+              });
+            });
           } else if (entry.term) {
             alternatives.add(entry.term);
           }
@@ -1875,6 +1905,263 @@
           return value || fallback;
         }
 
+        function getSpanishCandidatesFromEntry(entry) {
+          if (!entry) {
+            return [];
+          }
+
+          const candidates = [];
+
+          if (Array.isArray(entry.translations)) {
+            entry.translations.forEach(function(value) {
+              splitSpanishCandidate(value).forEach(function(part) {
+                if (part) {
+                  candidates.push(part);
+                }
+              });
+            });
+          }
+
+          splitSpanishCandidate(entry.translation).forEach(function(part) {
+            if (part) {
+              candidates.push(part);
+            }
+          });
+
+          return candidates;
+        }
+
+        function dedupeCandidates(values) {
+          const deduped = [];
+          const seen = new Set();
+
+          values.forEach(function(value) {
+            const clean = String(value || '').replace(/\s+/g, ' ').trim();
+            if (!clean) {
+              return;
+            }
+            const key = normalizeText(clean);
+            if (seen.has(key)) {
+              return;
+            }
+            seen.add(key);
+            deduped.push(clean);
+          });
+
+          return deduped;
+        }
+
+        function escapeRegExp(value) {
+          return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        const spanishToEnglishPhraseMap = {
+          'buenos dias': 'good morning',
+          'buenas tardes': 'good afternoon',
+          'buenas noches': 'good evening',
+          'por favor': 'please',
+          'muchas gracias': 'thank you very much',
+          'de nada': 'you are welcome',
+          'hasta luego': 'see you later',
+          'hasta pronto': 'see you soon',
+          'san basilio de palenque': 'San Basilio de Palenque'
+        };
+
+        const spanishToEnglishWordMap = {
+          agua: 'water',
+          arroz: 'rice',
+          arbol: 'tree',
+          artesano: 'artisan',
+          artesania: 'craft',
+          baile: 'dance',
+          bebida: 'drink',
+          boca: 'mouth',
+          bueno: 'good',
+          buena: 'good',
+          camino: 'path',
+          calle: 'street',
+          caminante: 'walker',
+          casa: 'house',
+          comida: 'food',
+          comunidad: 'community',
+          canto: 'song',
+          cultura: 'culture',
+          dulce: 'sweet',
+          dia: 'day',
+          dias: 'days',
+          energia: 'energy',
+          escuela: 'school',
+          familia: 'family',
+          fiesta: 'festival',
+          fuerza: 'strength',
+          fuego: 'fire',
+          gente: 'people',
+          historia: 'history',
+          hombre: 'man',
+          humedal: 'wetland',
+          idioma: 'language',
+          juego: 'game',
+          lucero: 'morning star',
+          maiz: 'corn',
+          mar: 'sea',
+          memoria: 'memory',
+          mujer: 'woman',
+          musica: 'music',
+          negro: 'black',
+          niño: 'child',
+          nino: 'child',
+          noche: 'night',
+          oscuridad: 'darkness',
+          palabra: 'word',
+          pasado: 'past',
+          persona: 'person',
+          pozo: 'well',
+          pueblo: 'town',
+          rio: 'river',
+          risa: 'laughter',
+          secreto: 'secret',
+          sombra: 'shadow',
+          sol: 'sun',
+          sonido: 'sound',
+          tambor: 'drum',
+          territorio: 'territory',
+          tierra: 'land',
+          tiempo: 'time',
+          tradicional: 'traditional',
+          viajero: 'traveler',
+          vida: 'life',
+          voz: 'voice'
+        };
+
+        function translateSpanishPhraseToEnglish(rawSpanish) {
+          const source = String(rawSpanish || '').replace(/\s+/g, ' ').trim();
+          if (!source) {
+            return '';
+          }
+
+          const normalized = normalizeText(source);
+          let working = normalized;
+          let phraseMatched = false;
+
+          Object.keys(spanishToEnglishPhraseMap)
+            .sort(function(a, b) { return b.length - a.length; })
+            .forEach(function(spanishPhrase) {
+              const replacement = spanishToEnglishPhraseMap[spanishPhrase];
+              const pattern = new RegExp('\\b' + escapeRegExp(spanishPhrase) + '\\b', 'g');
+              const next = working.replace(pattern, replacement);
+              if (next !== working) {
+                phraseMatched = true;
+                working = next;
+              }
+            });
+
+          const tokens = working.match(/([a-zA-Z'-]+|[^a-zA-Z'-]+)/g) || [];
+          let wordMatched = 0;
+
+          const translatedTokens = tokens.map(function(token) {
+            if (!/^[a-zA-Z'-]+$/.test(token)) {
+              return token;
+            }
+
+            const key = token.toLowerCase();
+            if (Object.prototype.hasOwnProperty.call(spanishToEnglishWordMap, key)) {
+              wordMatched += 1;
+              return spanishToEnglishWordMap[key];
+            }
+
+            return token;
+          });
+
+          const translated = translatedTokens
+            .join('')
+            .replace(/\s+/g, ' ')
+            .replace(/\s+([,.!?;:])/g, '$1')
+            .trim();
+
+          if (!translated) {
+            return source;
+          }
+
+          if (!phraseMatched && wordMatched === 0) {
+            return source;
+          }
+
+          return translated.charAt(0).toUpperCase() + translated.slice(1);
+        }
+
+        function getEnglishCandidatesFromEntry(entry) {
+          if (!entry) {
+            return [];
+          }
+
+          const directEnglish = [];
+          const englishValues = Array.isArray(entry.english)
+            ? entry.english
+            : [entry.english];
+
+          englishValues.forEach(function(value) {
+            splitEnglishCandidate(value).forEach(function(candidate) {
+              if (candidate) {
+                directEnglish.push(candidate);
+              }
+            });
+          });
+
+          if (directEnglish.length) {
+            return dedupeCandidates(directEnglish);
+          }
+
+          const translatedFromSpanish = getSpanishCandidatesFromEntry(entry).map(function(candidate) {
+            return translateSpanishPhraseToEnglish(candidate);
+          });
+
+          if (translatedFromSpanish.length) {
+            return dedupeCandidates(translatedFromSpanish);
+          }
+
+          return [];
+        }
+
+        function hasDirectEnglishCandidates(entry) {
+          if (!entry) {
+            return false;
+          }
+
+          const englishValues = Array.isArray(entry.english)
+            ? entry.english
+            : [entry.english];
+
+          return englishValues.some(function(value) {
+            return splitEnglishCandidate(value).length > 0;
+          });
+        }
+
+        let englishToPalenqueroCache = null;
+
+        function buildEnglishToPalenqueroIndexes() {
+          if (englishToPalenqueroCache) {
+            return englishToPalenqueroCache;
+          }
+
+          const englishMap = new Map();
+
+          dictionaryEntries.forEach(function(entry) {
+            getEnglishCandidatesFromEntry(entry).forEach(function(candidate) {
+              const normalizedCandidate = normalizeText(candidate);
+              if (normalizedCandidate) {
+                pushTranslatorIndex(englishMap, normalizedCandidate, entry);
+              }
+            });
+          });
+
+          englishToPalenqueroCache = {
+            englishMap: englishMap,
+            englishPhraseIndex: buildPhraseIndex(englishMap)
+          };
+
+          return englishToPalenqueroCache;
+        }
+
         function uniqueConversationSegments(segments) {
           const deduped = [];
           const seen = new Set();
@@ -1901,10 +2188,14 @@
         }
 
         const conversationLexicon = {
-          hello: getPalenqueroBySpanishGloss('hola', 'Uepa'),
-          goodMorning: getPalenqueroBySpanishGloss('buenos dias', 'Asina ría'),
-          thanks: getPalenqueroBySpanishGloss('gracias', 'Bugunga'),
-          please: getPalenqueroBySpanishGloss('por favor', 'Bággame')
+          palHello: getPalenqueroBySpanishGloss('hola', 'Uepa'),
+          palGoodMorning: getPalenqueroBySpanishGloss('buenos dias', 'Asina ría'),
+          palThanks: getPalenqueroBySpanishGloss('gracias', 'Bugunga'),
+          palPlease: getPalenqueroBySpanishGloss('por favor', 'Bággame'),
+          enHello: 'Hello',
+          enGoodMorning: 'Good morning',
+          enThanks: 'Thank you',
+          enPlease: 'Please'
         };
 
         function applyConversationTone(rawInput, translatedText, direction) {
@@ -1922,18 +2213,18 @@
             const introSegments = [];
             const outroSegments = [];
 
-            if (normalizedInput.includes('buenos dias') && conversationLexicon.goodMorning) {
-              introSegments.push(conversationLexicon.goodMorning);
-            } else if (normalizedInput.includes('hola') && conversationLexicon.hello) {
-              introSegments.push(conversationLexicon.hello);
+            if (normalizedInput.includes('buenos dias') && conversationLexicon.palGoodMorning) {
+              introSegments.push(conversationLexicon.palGoodMorning);
+            } else if (normalizedInput.includes('hola') && conversationLexicon.palHello) {
+              introSegments.push(conversationLexicon.palHello);
             }
 
-            if (normalizedInput.includes('gracias') && conversationLexicon.thanks) {
-              outroSegments.push(conversationLexicon.thanks);
+            if (normalizedInput.includes('gracias') && conversationLexicon.palThanks) {
+              outroSegments.push(conversationLexicon.palThanks);
             }
 
-            if (normalizedInput.includes('por favor') && conversationLexicon.please) {
-              outroSegments.push(conversationLexicon.please);
+            if (normalizedInput.includes('por favor') && conversationLexicon.palPlease) {
+              outroSegments.push(conversationLexicon.palPlease);
             }
 
             const mergedSegments = uniqueConversationSegments([].concat(introSegments, baseText, outroSegments));
@@ -1944,25 +2235,101 @@
             return { text: naturalText || baseText, note: note };
           }
 
+          if (direction === 'en-pal') {
+            const introSegments = [];
+            const outroSegments = [];
+
+            if (normalizedInput.includes('good morning') && conversationLexicon.palGoodMorning) {
+              introSegments.push(conversationLexicon.palGoodMorning);
+            } else if (
+              (normalizedInput.includes('hello') || normalizedInput.includes('hi')) &&
+              conversationLexicon.palHello
+            ) {
+              introSegments.push(conversationLexicon.palHello);
+            }
+
+            if (
+              (normalizedInput.includes('thank you') || normalizedInput.includes('thanks')) &&
+              conversationLexicon.palThanks
+            ) {
+              outroSegments.push(conversationLexicon.palThanks);
+            }
+
+            if (normalizedInput.includes('please') && conversationLexicon.palPlease) {
+              outroSegments.push(conversationLexicon.palPlease);
+            }
+
+            const mergedSegments = uniqueConversationSegments([].concat(introSegments, baseText, outroSegments));
+            const naturalText = mergedSegments.join(', ');
+            const note = normalizeText(naturalText) !== normalizeText(baseText)
+              ? ' Modo natural: ajustamos saludo y cortesía para sonar más fluido en lengua palenquera.'
+              : '';
+            return { text: naturalText || baseText, note: note };
+          }
+
+          if (direction === 'pal-en') {
+            let naturalEnglish = baseText;
+
+            if (
+              conversationLexicon.palGoodMorning &&
+              normalizedInput.includes(normalizeText(conversationLexicon.palGoodMorning)) &&
+              !normalizeText(naturalEnglish).includes('good morning')
+            ) {
+              naturalEnglish = conversationLexicon.enGoodMorning + '. ' + naturalEnglish;
+            } else if (
+              conversationLexicon.palHello &&
+              normalizedInput.includes(normalizeText(conversationLexicon.palHello)) &&
+              !normalizeText(naturalEnglish).includes('hello')
+            ) {
+              naturalEnglish = conversationLexicon.enHello + '. ' + naturalEnglish;
+            }
+
+            if (
+              conversationLexicon.palThanks &&
+              normalizedInput.includes(normalizeText(conversationLexicon.palThanks)) &&
+              !normalizeText(naturalEnglish).includes('thank')
+            ) {
+              naturalEnglish = naturalEnglish + ' ' + conversationLexicon.enThanks + '.';
+            }
+
+            if (
+              conversationLexicon.palPlease &&
+              normalizedInput.includes(normalizeText(conversationLexicon.palPlease)) &&
+              !normalizeText(naturalEnglish).includes('please')
+            ) {
+              naturalEnglish = naturalEnglish + ' ' + conversationLexicon.enPlease + '.';
+            }
+
+            naturalEnglish = naturalEnglish
+              .replace(/\s+/g, ' ')
+              .replace(/\s+([,.!?;:])/g, '$1')
+              .trim();
+
+            const note = normalizeText(naturalEnglish) !== normalizeText(baseText)
+              ? ' Natural mode: we adjusted greeting and courtesy for smoother English.'
+              : '';
+            return { text: naturalEnglish || baseText, note: note };
+          }
+
           let naturalSpanish = baseText;
 
           if (
-            conversationLexicon.goodMorning &&
-            normalizedInput.includes(normalizeText(conversationLexicon.goodMorning)) &&
+            conversationLexicon.palGoodMorning &&
+            normalizedInput.includes(normalizeText(conversationLexicon.palGoodMorning)) &&
             !normalizeText(naturalSpanish).includes('buenos dias')
           ) {
             naturalSpanish = 'Buenos días. ' + naturalSpanish;
           } else if (
-            conversationLexicon.hello &&
-            normalizedInput.includes(normalizeText(conversationLexicon.hello)) &&
+            conversationLexicon.palHello &&
+            normalizedInput.includes(normalizeText(conversationLexicon.palHello)) &&
             !normalizeText(naturalSpanish).includes('hola')
           ) {
             naturalSpanish = 'Hola. ' + naturalSpanish;
           }
 
           if (
-            conversationLexicon.thanks &&
-            normalizedInput.includes(normalizeText(conversationLexicon.thanks)) &&
+            conversationLexicon.palThanks &&
+            normalizedInput.includes(normalizeText(conversationLexicon.palThanks)) &&
             !normalizeText(naturalSpanish).includes('gracias')
           ) {
             naturalSpanish = naturalSpanish + ' Gracias.';
@@ -1984,24 +2351,18 @@
             return '';
           }
 
-          if (direction === 'pal-es') {
-            const candidates = [];
-
-            if (Array.isArray(entry.translations)) {
-              entry.translations.forEach(function(value) {
-                splitSpanishCandidate(value).forEach(function(part) {
-                  if (part) {
-                    candidates.push(part);
-                  }
-                });
-              });
+          if (direction === 'pal-en') {
+            const englishCandidates = getEnglishCandidatesFromEntry(entry);
+            if (englishCandidates.length) {
+              return englishCandidates[0];
             }
 
-            splitSpanishCandidate(entry.translation).forEach(function(part) {
-              if (part) {
-                candidates.push(part);
-              }
-            });
+            const spanishFallback = getSpanishCandidatesFromEntry(entry)[0] || String(entry.translation || '').trim();
+            return translateSpanishPhraseToEnglish(spanishFallback) || spanishFallback;
+          }
+
+          if (direction === 'pal-es') {
+            const candidates = getSpanishCandidatesFromEntry(entry);
 
             return candidates[0] || String(entry.translation || '').trim();
           }
@@ -2009,9 +2370,39 @@
           return String(entry.term || '').trim();
         }
 
+        function renderDirectionAlternatives(entries, direction) {
+          if (direction !== 'pal-en') {
+            renderTranslatorAlternatives(entries, direction);
+            return;
+          }
+
+          translatorAlternatives.replaceChildren();
+          if (!entries.length) {
+            return;
+          }
+
+          const alternatives = new Set();
+          entries.forEach(function(entry) {
+            getEnglishCandidatesFromEntry(entry).forEach(function(candidate) {
+              if (candidate) {
+                alternatives.add(candidate);
+              }
+            });
+          });
+
+          Array.from(alternatives).slice(0, 6).forEach(function(candidate) {
+            const chip = document.createElement('span');
+            chip.textContent = candidate;
+            translatorAlternatives.appendChild(chip);
+          });
+        }
+
         function runTranslator() {
           const rawInput = String(translatorInput.value || '').trim();
-          const direction = translatorDirection.value === 'pal-es' ? 'pal-es' : 'es-pal';
+          const allowedDirections = ['es-pal', 'pal-es', 'pal-en', 'en-pal'];
+          const direction = allowedDirections.includes(translatorDirection.value)
+            ? translatorDirection.value
+            : 'es-pal';
 
           if (!rawInput) {
             translatorOutput.textContent = 'Escribe una palabra o frase para traducir.';
@@ -2035,8 +2426,17 @@
             normalizedWords.push(normalizeText(token));
           });
 
-          const sourceMap = direction === 'pal-es' ? indexes.palMap : indexes.spanishMap;
-          const phraseIndex = direction === 'pal-es' ? indexes.palPhraseIndex : indexes.spanishPhraseIndex;
+          let sourceMap = indexes.spanishMap;
+          let phraseIndex = indexes.spanishPhraseIndex;
+
+          if (direction === 'pal-es' || direction === 'pal-en') {
+            sourceMap = indexes.palMap;
+            phraseIndex = indexes.palPhraseIndex;
+          } else if (direction === 'en-pal') {
+            const englishIndexes = buildEnglishToPalenqueroIndexes();
+            sourceMap = englishIndexes.englishMap;
+            phraseIndex = englishIndexes.englishPhraseIndex;
+          }
           if (!wordTokenIndices.length) {
             translatorOutput.textContent = rawInput;
             translatorMeta.textContent = 'No se detectaron palabras traducibles en la entrada.';
@@ -2297,19 +2697,43 @@
           const fuzzyNote = fuzzyChunkCount > 0
             ? ' Incluye ' + fuzzyChunkCount + ' bloque(s) contextual(es) aproximado(s) (' + fuzzyMatchedWords + ' palabra(s)).'
             : '';
-          if (matchCoverage >= 80) {
-            translatorMeta.textContent = 'Traducción contextual lograda: ' + matchedWords + ' de ' + totalWords + ' palabra(s) reconocidas (' + matchCoverage + '%).' + fuzzyNote + tonedTranslation.note;
-          } else {
-            translatorMeta.textContent = 'Traducción parcial: ' + matchedWords + ' de ' + totalWords + ' palabra(s) reconocidas (' + matchCoverage + '%). Prueba frases más cortas para mejorar precisión.' + fuzzyNote + tonedTranslation.note;
+          let englishQualityNote = '';
+
+          if (direction === 'pal-en') {
+            const uniqueEntries = [];
+            const seenEntries = new Set();
+
+            matchedEntries.forEach(function(entry) {
+              const key = normalizeText((entry && entry.key) || (entry && entry.term) || '');
+              if (!key || seenEntries.has(key)) {
+                return;
+              }
+              seenEntries.add(key);
+              uniqueEntries.push(entry);
+            });
+
+            const directEnglishCount = uniqueEntries.filter(function(entry) {
+              return hasDirectEnglishCandidates(entry);
+            }).length;
+
+            if (uniqueEntries.length && directEnglishCount < uniqueEntries.length) {
+              englishQualityNote = ' Nota: parte del resultado usa equivalencias aproximadas porque algunas entradas del diccionario aún no traen inglés directo.';
+            }
           }
-          renderTranslatorAlternatives(matchedEntries, direction);
+
+          if (matchCoverage >= 80) {
+            translatorMeta.textContent = 'Traducción contextual lograda: ' + matchedWords + ' de ' + totalWords + ' palabra(s) reconocidas (' + matchCoverage + '%).' + fuzzyNote + englishQualityNote + tonedTranslation.note;
+          } else {
+            translatorMeta.textContent = 'Traducción parcial: ' + matchedWords + ' de ' + totalWords + ' palabra(s) reconocidas (' + matchCoverage + '%). Prueba frases más cortas para mejorar precisión.' + fuzzyNote + englishQualityNote + tonedTranslation.note;
+          }
+          renderDirectionAlternatives(matchedEntries, direction);
         }
 
         translatorSubmit.addEventListener('click', runTranslator);
         translatorClear.addEventListener('click', function() {
           translatorInput.value = '';
           translatorOutput.textContent = 'Escribe algo y pulsa Traducir para ver el resultado.';
-          translatorMeta.textContent = 'Puedes cambiar el sentido de traducción cuando quieras. ' + getTranslatorStyleHint();
+          translatorMeta.textContent = 'Puedes cambiar entre español, palenquero e inglés cuando quieras. ' + getTranslatorStyleHint();
           translatorAlternatives.replaceChildren();
           translatorInput.focus();
         });
@@ -2569,3 +2993,4 @@
   </script>
 </body>
 </html>
+
