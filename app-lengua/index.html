@@ -2,49 +2,101 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#6e3524">
-  <meta name="description" content="App profesional para fortalecer la lengua palenquera con experiencia tipo ruta diaria, práctica guiada y progresión premium.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#052e25">
+  <meta name="description" content="Habla nuestras raíces: app premium para aprender, preservar y globalizar la lengua palenquera.">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" type="image/png" href="../assets/images/brand/favicon-ph.png">
-  <link rel="apple-touch-icon" href="../assets/images/brand/apple-touch-icon-180.png">
-  <title>Palenque Lengua Viva | App</title>
+  <link rel="icon" type="image/png" href="./assets/images/brand/favicon-ph.png">
+  <link rel="apple-touch-icon" href="./assets/images/brand/apple-touch-icon-180.png">
+  <title>Kumaina | Lengua Palenquera</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./app.css">
-  <script src="../config.js"></script>
+  <script src="./config.js" onerror="this.onerror=null;this.src='../config.js';"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="../firebase-config.js"></script>
-  <script src="../assets/data/lengua-palenquera-dictionary.js"></script>
+  <script src="./firebase-config.js" onerror="this.onerror=null;this.src='../firebase-config.js';"></script>
+  <script src="./assets/data/lengua-palenquera-dictionary.js" onerror="this.onerror=null;this.src='../assets/data/lengua-palenquera-dictionary.js';"></script>
   <script src="./lessons-data.js"></script>
   <script src="./app.js" defer></script>
 </head>
 <body>
+  <div class="pv-splash" id="pv-splash" aria-hidden="true">
+    <div class="pv-splash-inner">
+      <img src="./assets/images/brand/logo-sello-ph.png" onerror="this.onerror=null;this.src='../assets/images/brand/logo-sello-ph.png';" alt="Logo Kumaina" class="pv-splash-logo" loading="eager" decoding="async">
+      <p class="pv-splash-brand">KUMAINA</p>
+      <h1>Habla nuestras raíces.</h1>
+      <p class="pv-splash-quote">Cada palabra mantiene viva nuestra historia.</p>
+    </div>
+  </div>
+
   <div class="pv-app">
     <div class="pv-shell">
       <main class="pv-main">
-        <section class="pv-topbar">
+        <section class="pv-topbar pv-topbar-brand">
           <div class="pv-brand">
-            <img src="../assets/images/brand/logo-sello-ph.png" alt="Logo Palenque Lengua Viva" loading="eager" decoding="async">
+            <img src="./assets/images/brand/logo-sello-ph.png" onerror="this.onerror=null;this.src='../assets/images/brand/logo-sello-ph.png';" alt="Logo Kumaina" loading="eager" decoding="async">
             <div>
-              <strong>Palenque Lengua Viva</strong>
-              <span>Aplicación de aprendizaje comunitario</span>
+              <strong>KUMAINA</strong>
+              <span>Lengua Palenquera</span>
             </div>
+          </div>
+          <div class="pv-brand-slogan">
+            <b>Habla nuestras raíces.</b>
+            <small>Afrofuturismo cultural + aprendizaje moderno</small>
           </div>
           <div class="pv-actions">
             <button class="pv-btn-ghost pv-install" id="install-app-btn" type="button">Instalar app</button>
-            <a class="pv-btn-ghost" href="../acceso.html#acceso">Iniciar sesión</a>
+            <button class="pv-btn-ghost" id="playstore-btn" type="button" hidden>Google Play</button>
+            <button class="pv-btn-ghost" id="apk-download-btn" type="button" hidden>Descargar APK (beta)</button>
+            <a class="pv-btn-ghost" href="../acceso.html#acceso">Centro de acceso</a>
             <a class="pv-btn-ghost" href="../index.html">Volver al sitio</a>
           </div>
+          <small class="pv-distribution-note" id="distribution-note">Instala la app desde el navegador mientras publicamos en Google Play.</small>
+        </section>
+
+        <section class="pv-card pv-auth-strip">
+          <div class="pv-auth-row">
+            <div class="pv-auth-session">
+              <strong id="auth-user-name">Invitado</strong>
+              <small id="auth-user-email">Inicia sesión para sincronizar progreso, premium y admin.</small>
+            </div>
+            <div class="pv-actions pv-auth-actions">
+              <button class="pv-btn-ghost" id="auth-google-btn" type="button">Google</button>
+              <button class="pv-btn-ghost" id="auth-facebook-btn" type="button">Facebook</button>
+              <button class="pv-btn-ghost" id="auth-microsoft-btn" type="button">Microsoft</button>
+              <button class="pv-btn-ghost" id="auth-logout-btn" type="button" hidden>Cerrar sesión</button>
+            </div>
+          </div>
+          <div class="pv-note" id="auth-note">Autenticación social lista para activar comunidad, progreso y premium.</div>
         </section>
 
         <section class="pv-card pv-onboarding" id="onboarding-card">
           <span class="pv-pill">Bienvenida</span>
-          <h1>Aprende lengua palenquera con ritmo diario</h1>
-          <p>Configura tu perfil de estudio y empezamos con una ruta gamificada estilo app moderna.</p>
+          <h1>La plataforma digital para preservar la lengua palenquera</h1>
+          <p>Aprende con IA, juegos interactivos y cultura afrocaribeña en una experiencia premium pensada para móvil y tablet.</p>
+
+          <div class="pv-onboarding-grid">
+            <article class="pv-onboarding-card">
+              <h3>Aprende paso a paso</h3>
+              <p>Ruta por niveles A1, A2 y B1 con progreso claro.</p>
+            </article>
+            <article class="pv-onboarding-card">
+              <h3>Juega y refuerza</h3>
+              <p>Palabra oculta, trivia y desafíos diarios.</p>
+            </article>
+            <article class="pv-onboarding-card">
+              <h3>Practica voz con IA</h3>
+              <p>Pronunciación, escucha activa y conversación guiada.</p>
+            </article>
+            <article class="pv-onboarding-card">
+              <h3>Vive la cultura</h3>
+              <p>Historias, música, tradición y comunidad viva.</p>
+            </article>
+          </div>
+
           <div class="pv-grid">
             <div class="pv-field">
               <label for="profile-name">Tu nombre</label>
@@ -59,6 +111,7 @@
               </select>
             </div>
           </div>
+
           <div class="pv-actions">
             <button class="pv-btn" id="start-learning-btn" type="button">Comenzar mi ruta</button>
             <button class="pv-btn-ghost" id="skip-onboarding-btn" type="button">Explorar primero</button>
@@ -67,14 +120,90 @@
 
         <section class="pv-view is-active" id="view-home" data-view="home">
           <article class="pv-card pv-hero">
-            <span class="pv-pill">Ruta formativa</span>
-            <h2>Del saludo cotidiano al dominio aplicado</h2>
-            <p>Completa lecciones, gana XP, cuida tus corazones y desbloquea la ruta premium validada con tu cuenta.</p>
+            <div class="pv-hero-stage">
+              <div class="pv-hero-copy">
+                <span class="pv-pill">Slogan oficial</span>
+                <h2>Aprende. Vive. Fortalece.</h2>
+                <p>Primera app premium para aprender, preservar y globalizar la lengua palenquera con tecnología cultural inmersiva.</p>
+              </div>
+              <div class="pv-hero-visual">
+                <img src="./assets/images/catalog/moda/moda-18.jpg" onerror="this.onerror=null;this.src='../assets/images/catalog/moda/moda-18.jpg';" alt="Escena cultural palenquera" loading="lazy" decoding="async">
+              </div>
+            </div>
+
+            <div class="pv-hero-progress">
+              <article class="pv-hero-progress-card">
+                <p>Tu progreso</p>
+                <b id="hero-level-value">Nivel 1 · Semilla</b>
+                <div class="pv-hero-progress-track"><span id="hero-progress-bar" style="width: 0%"></span></div>
+                <small id="hero-progress-value">0%</small>
+              </article>
+              <article class="pv-hero-progress-card">
+                <p>Sigue aprendiendo</p>
+                <b id="hero-next-lesson">Saludos y presentaciones</b>
+                <small id="hero-next-meta">Lección 1/5</small>
+              </article>
+            </div>
+
             <div class="pv-actions">
-              <button class="pv-btn" id="continue-last-btn" type="button">Continuar lección</button>
-              <button class="pv-btn-ghost" data-go-view="premium" type="button">Ver premium</button>
+              <button class="pv-btn" id="continue-last-btn" type="button">Continuar</button>
+              <button class="pv-btn-ghost" data-go-view="learn" type="button">Ver lecciones</button>
             </div>
           </article>
+
+          <article class="pv-card pv-levels">
+            <span class="pv-pill">Niveles CEFR</span>
+            <div class="pv-level-chip-group">
+              <button class="pv-level-chip is-active" data-level-filter="all" type="button">Todos</button>
+              <button class="pv-level-chip" data-level-filter="A1" type="button">A1</button>
+              <button class="pv-level-chip" data-level-filter="A2" type="button">A2</button>
+              <button class="pv-level-chip" data-level-filter="B1" type="button">B1</button>
+            </div>
+            <div class="pv-note" id="level-progress-note">Progreso por nivel pendiente de cálculo.</div>
+          </article>
+
+          <section class="pv-home-grid">
+            <article class="pv-card pv-home-card">
+              <h3>Palabra del día</h3>
+              <p class="pv-home-word" id="word-of-day-term">Kumaina</p>
+              <p class="pv-home-translation" id="word-of-day-translation">¿Cómo estás?</p>
+              <p class="pv-home-desc" id="word-of-day-description">Expresión cotidiana para abrir conversación.</p>
+              <span class="pv-chip" id="word-of-day-theme">Saludos</span>
+            </article>
+
+            <article class="pv-card pv-home-card">
+              <h3>Juegos rápidos</h3>
+              <ul class="pv-home-list">
+                <li>Palabra oculta</li>
+                <li>Trivia palenquera</li>
+                <li>Ordena la frase</li>
+                <li>Escucha y responde</li>
+              </ul>
+              <div class="pv-actions">
+                <button class="pv-btn-ghost" data-go-view="dictionary" type="button">Abrir juegos</button>
+              </div>
+            </article>
+
+            <article class="pv-card pv-home-card">
+              <h3>Desafío diario</h3>
+              <p class="pv-home-desc">Completa 1 lección + 1 juego para mantener tu racha y desbloquear bonificación XP.</p>
+              <span class="pv-chip">Recompensa: +25 XP</span>
+            </article>
+
+            <article class="pv-card pv-home-card">
+              <h3>Cultura destacada</h3>
+              <p class="pv-home-desc">Historias ancestrales, música tradicional y personajes que sostienen nuestra memoria colectiva.</p>
+              <span class="pv-chip">Modo documental</span>
+            </article>
+
+            <article class="pv-card pv-home-card">
+              <h3>Eventos de comunidad</h3>
+              <p class="pv-home-desc">Retos semanales, clubes culturales y encuentros en vivo para practicar entre usuarios.</p>
+              <div class="pv-actions">
+                <button class="pv-btn-ghost" data-go-view="premium" type="button">Ver comunidad</button>
+              </div>
+            </article>
+          </section>
 
           <article class="pv-card pv-course" id="course-map"></article>
         </section>
@@ -84,13 +213,16 @@
             <div class="pv-player-head">
               <div>
                 <h3 id="lesson-title">Selecciona una lección</h3>
-                <p id="lesson-subtitle">Elige una ruta desde Inicio para comenzar.</p>
+                <p id="lesson-subtitle">Saludos, familia, comida, cultura, historia y conversaciones reales.</p>
               </div>
               <span class="pv-chip" id="lesson-progress-chip">0/0</span>
             </div>
 
             <div class="pv-question" id="lesson-question-card">
               <b id="question-prompt">Todavía no hay pregunta activa.</b>
+              <div class="pv-question-tools">
+                <button class="pv-btn-ghost pv-audio-btn" id="play-pronunciation-btn" type="button" disabled>Escuchar pronunciación</button>
+              </div>
               <div class="pv-options" id="question-options"></div>
               <div class="pv-feedback" id="question-feedback">Cuando inicies una lección verás aquí la retroalimentación.</div>
             </div>
@@ -103,6 +235,25 @@
         </section>
 
         <section class="pv-view" id="view-dictionary" data-view="dictionary">
+          <article class="pv-card pv-games">
+            <span class="pv-pill">Game Center</span>
+            <h3>Módulo de juegos</h3>
+            <p class="pv-games-copy">Practica jugando: memoria visual, palabra oculta, karaoke cultural y más.</p>
+            <article class="pv-game-featured">
+              <div>
+                <b>¡Aprende jugando!</b>
+                <small>Refuerza tu conocimiento mientras te diviertes.</small>
+              </div>
+              <span>Mis logros</span>
+            </article>
+            <div class="pv-game-grid">
+              <article class="pv-game-card"><b>Palabra oculta</b><small>Descubre términos clave.</small></article>
+              <article class="pv-game-card"><b>Trivia palenquera</b><small>Historia y cultura en retos rápidos.</small></article>
+              <article class="pv-game-card"><b>Escucha y responde</b><small>Entrena comprensión oral.</small></article>
+              <article class="pv-game-card"><b>Ordena la frase</b><small>Construye expresiones reales.</small></article>
+            </div>
+          </article>
+
           <article class="pv-card pv-dictionary">
             <span class="pv-pill">Diccionario vivo</span>
             <div class="pv-field">
@@ -114,6 +265,26 @@
         </section>
 
         <section class="pv-view" id="view-premium" data-view="premium">
+          <article class="pv-card pv-community">
+            <span class="pv-pill">Comunidad</span>
+            <h3>Conecta, comparte y compite</h3>
+            <p>Feed social, retos semanales, rankings y clubes para vivir la lengua en colectivo.</p>
+            <div class="pv-community-list">
+              <article class="pv-community-item">
+                <b>Reto semanal</b>
+                <small>Publica un audio corto con una frase palenquera.</small>
+              </article>
+              <article class="pv-community-item">
+                <b>Club cultural</b>
+                <small>Foro activo: refranes, gastronomía y música tradicional.</small>
+              </article>
+              <article class="pv-community-item">
+                <b>Ranking vivo</b>
+                <small>Top de rachas, XP y logros de la semana.</small>
+              </article>
+            </div>
+          </article>
+
           <article class="pv-card pv-premium">
             <span class="pv-pill">Membresía premium</span>
             <div class="pv-premium-status">
@@ -135,9 +306,7 @@
               <button class="pv-btn-ghost" id="premium-sync-btn" type="button">Verificar acceso</button>
             </div>
 
-            <div class="pv-note" id="premium-note">
-              La activación premium se valida con Firestore en tu cuenta real.
-            </div>
+            <div class="pv-note" id="premium-note">La activación premium se valida con Firestore en tu cuenta real.</div>
           </article>
         </section>
 
@@ -150,9 +319,48 @@
               <div class="pv-kpi"><b id="profile-completed-kpi">0</b><small>Lecciones completadas</small></div>
               <div class="pv-kpi"><b id="profile-premium-kpi">Pendiente</b><small>Estado premium</small></div>
             </div>
+
+            <div class="pv-rank-list">
+              <span class="pv-rank-chip">Semilla</span>
+              <span class="pv-rank-chip">Aprendiz</span>
+              <span class="pv-rank-chip">Guardián</span>
+              <span class="pv-rank-chip">Maestro</span>
+              <span class="pv-rank-chip">Raíz ancestral</span>
+            </div>
+
             <div class="pv-actions">
               <button class="pv-btn-ghost" id="reset-progress-btn" type="button">Reiniciar progreso local</button>
             </div>
+          </article>
+        </section>
+
+        <section class="pv-view" id="view-admin" data-view="admin">
+          <article class="pv-card pv-admin">
+            <span class="pv-pill">Panel admin premium</span>
+            <p class="pv-admin-copy">Aprueba solicitudes y activa premium automático en `membresias_lengua/{uid}`.</p>
+
+            <div class="pv-grid">
+              <div class="pv-field">
+                <label for="admin-api-key">Clave admin backend</label>
+                <input id="admin-api-key" type="password" placeholder="ADMIN_API_KEY">
+              </div>
+              <div class="pv-field">
+                <label for="admin-status-filter">Filtrar estado</label>
+                <select id="admin-status-filter">
+                  <option value="pendiente" selected>Pendiente</option>
+                  <option value="aprobada">Aprobada</option>
+                  <option value="rechazada">Rechazada</option>
+                  <option value="all">Todos</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="pv-actions">
+              <button class="pv-btn" id="admin-load-btn" type="button">Cargar solicitudes</button>
+            </div>
+
+            <div class="pv-note" id="admin-note">Este panel aparece para cuentas admin autorizadas.</div>
+            <div class="pv-admin-list" id="admin-requests-list"></div>
           </article>
         </section>
       </main>
@@ -176,11 +384,12 @@
     </div>
 
     <nav class="pv-bottom-nav" aria-label="Navegación principal de la app">
-      <button class="pv-tab is-active" data-tab="home" type="button"><b>🏠</b><span>Inicio</span></button>
-      <button class="pv-tab" data-tab="learn" type="button"><b>🎯</b><span>Practicar</span></button>
-      <button class="pv-tab" data-tab="dictionary" type="button"><b>📚</b><span>Diccionario</span></button>
-      <button class="pv-tab" data-tab="premium" type="button"><b>💎</b><span>Premium</span></button>
-      <button class="pv-tab" data-tab="profile" type="button"><b>👤</b><span>Perfil</span></button>
+      <button class="pv-tab is-active" data-tab="home" type="button"><b>⌂</b><span>Inicio</span></button>
+      <button class="pv-tab" data-tab="learn" type="button"><b>◎</b><span>Lecciones</span></button>
+      <button class="pv-tab" data-tab="dictionary" type="button"><b>◈</b><span>Juegos</span></button>
+      <button class="pv-tab" data-tab="premium" type="button"><b>◍</b><span>Comunidad</span></button>
+      <button class="pv-tab" data-tab="profile" type="button"><b>◉</b><span>Perfil</span></button>
+      <button class="pv-tab" data-tab="admin" type="button" hidden><b>⚙</b><span>Admin</span></button>
     </nav>
   </div>
 </body>

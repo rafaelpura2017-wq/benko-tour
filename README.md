@@ -77,6 +77,60 @@ Para activar premium de forma automática después de pago:
   - `app-lengua/sw.js`
 - Objetivo: separar la experiencia de la landing y trabajarla como aplicación profesional de aprendizaje (móvil primero, PWA instalable, progreso gamificado, premium validado con Firebase).
 
+## Publicación en Google Play (checklist)
+
+Checklist recomendado para lanzar `app-lengua` de forma profesional para usuarios finales:
+
+1. **Dominio y seguridad**
+   - [ ] Publicar la app en URL HTTPS estable (no IP local).
+   - [ ] Confirmar que `manifest.webmanifest` y `sw.js` cargan sin errores.
+   - [ ] Verificar PWA en móvil (instalar, abrir offline parcial, navegación por tabs).
+
+2. **Políticas y contenido legal**
+   - [ ] Crear página de Política de Privacidad pública (URL accesible).
+   - [ ] Definir correo de soporte para usuarios.
+   - [ ] Preparar texto de manejo de datos (auth, progreso, premium, pagos).
+
+3. **Cuenta y ficha en Play Console**
+   - [ ] Crear app en Google Play Console (idioma ES, categoría Educación).
+   - [ ] Completar nombre, descripción corta y descripción completa.
+   - [ ] Cargar ícono 512x512, feature graphic y capturas (móvil + tablet).
+   - [ ] Completar clasificación de contenido y formulario de seguridad de datos.
+
+4. **Build Android (AAB/APK)**
+   - [ ] Elegir estrategia:
+     - PWA empaquetada (TWA/WebView) para publicar rápido.
+     - Flutter/Android nativo si deseas más control offline/performance.
+   - [ ] Generar **AAB firmado** para subida a Play.
+   - [ ] Guardar keystore y credenciales de firma en lugar seguro.
+
+5. **Pruebas antes de publicar**
+   - [ ] Subir primero a **Internal testing** (equipo).
+   - [ ] Validar login social, premium y navegación completa en Android real.
+   - [ ] Revisar tiempos de carga, errores de consola y permisos.
+
+6. **Salida a producción**
+   - [ ] Publicar en **Closed testing** (grupo de usuarios).
+   - [ ] Ajustar texto/UX según feedback.
+   - [ ] Lanzar a **Production** y activar monitoreo de crashes/reseñas.
+
+### Configuración de botones Play Store / APK en esta app
+
+En `config.js` y `app-lengua/config.js`:
+
+```js
+languageApp: {
+  distribution: {
+    playStoreUrl: "",         // URL final de Google Play
+    apkUrl: "",               // URL de descarga APK (opcional/beta)
+    apkLabel: "Descargar APK (beta)",
+    showApkOnDesktop: false   // true solo si también quieres mostrar APK en PC
+  }
+}
+```
+
+Cuando `playStoreUrl` tenga valor, aparecerá el botón **Google Play** en `app-lengua`.
+
 ## Cómo correr el backend
 
 1. Entra a la carpeta `backend`

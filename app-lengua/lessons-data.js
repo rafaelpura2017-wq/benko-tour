@@ -4,29 +4,34 @@ window.BENKO_LENGUA_APP_DATA = {
   units: [
     {
       id: "u1",
+      cefrLevel: "A1",
       name: "Raíz y saludo",
       description: "Primer contacto con expresiones base del día a día.",
       lessons: [
         {
           id: "u1l1",
           title: "Saludar con confianza",
-          level: "Inicio",
+          level: "A1",
+          cefrLevel: "A1",
           xp: 20,
           questions: [
             {
               prompt: "¿Qué expresa “Jundo suto senda ung chocha”?",
+              audioText: "Jundo suto senda ung chocha",
               options: ["Juntos somos más", "Buenas noches", "Me quiero ir"],
               answer: 0,
               hint: "Es una frase de comunidad y unión."
             },
             {
               prompt: "Elige la opción más cercana a “Kuchá”.",
+              audioText: "Kuchá",
               options: ["Escuchar", "Comer", "Caminar"],
               answer: 0,
               hint: "Está relacionada con la atención al otro."
             },
             {
               prompt: "¿Cuál frase usarías para abrir una conversación con respeto?",
+              audioText: "Jundo suto senda ung chocha",
               options: ["Jundo suto senda ung chocha", "Adiós para siempre", "No quiero hablar"],
               answer: 0,
               hint: "Piensa en una frase de conexión positiva."
@@ -36,17 +41,20 @@ window.BENKO_LENGUA_APP_DATA = {
         {
           id: "u1l2",
           title: "Presentarte en comunidad",
-          level: "Inicio",
+          level: "A1",
+          cefrLevel: "A1",
           xp: 20,
           questions: [
             {
               prompt: "En esta app, “Komenasá” se usa como:",
+              audioText: "Komenasá",
               options: ["Inicio", "Pagar", "Cerrar sesión"],
               answer: 0,
               hint: "Es el punto de entrada."
             },
             {
               prompt: "¿Qué significa “Kumunirá” en el menú de Benko?",
+              audioText: "Kumunirá",
               options: ["Nosotros / comunidad", "Tienda", "Carrito"],
               answer: 0,
               hint: "Habla de quiénes somos."
@@ -62,17 +70,20 @@ window.BENKO_LENGUA_APP_DATA = {
         {
           id: "u1l3",
           title: "Comprensión de frases cortas",
-          level: "Inicio",
+          level: "A1",
+          cefrLevel: "A1",
           xp: 25,
           questions: [
             {
               prompt: "“Luénga” en el menú corresponde a:",
+              audioText: "Luénga",
               options: ["Lengua palenquera", "Ropa", "Pago"],
               answer: 0,
               hint: "Es una sección formativa."
             },
             {
               prompt: "Si alguien dice “Kuchá”, la acción esperada es:",
+              audioText: "Kuchá",
               options: ["Escuchar", "Dormir", "Comprar"],
               answer: 0,
               hint: "Implica atención."
@@ -89,13 +100,15 @@ window.BENKO_LENGUA_APP_DATA = {
     },
     {
       id: "u2",
+      cefrLevel: "A1",
       name: "Vida diaria",
       description: "Vocabulario útil para conversaciones cotidianas.",
       lessons: [
         {
           id: "u2l1",
           title: "Familia y comunidad",
-          level: "Base",
+          level: "A1",
+          cefrLevel: "A1",
           xp: 25,
           questions: [
             {
@@ -121,7 +134,8 @@ window.BENKO_LENGUA_APP_DATA = {
         {
           id: "u2l2",
           title: "Territorio y memoria",
-          level: "Base",
+          level: "A1",
+          cefrLevel: "A1",
           xp: 25,
           questions: [
             {
@@ -147,7 +161,8 @@ window.BENKO_LENGUA_APP_DATA = {
         {
           id: "u2l3",
           title: "Ruta de escucha",
-          level: "Base",
+          level: "A1",
+          cefrLevel: "A1",
           xp: 30,
           questions: [
             {
@@ -174,13 +189,15 @@ window.BENKO_LENGUA_APP_DATA = {
     },
     {
       id: "u3",
+      cefrLevel: "A2",
       name: "Cultura viva",
       description: "Lengua conectada con música, cocina y memoria.",
       lessons: [
         {
           id: "u3l1",
           title: "Lengua y música",
-          level: "Intermedio",
+          level: "A2",
+          cefrLevel: "A2",
           xp: 30,
           questions: [
             {
@@ -206,7 +223,8 @@ window.BENKO_LENGUA_APP_DATA = {
         {
           id: "u3l2",
           title: "Lengua y cocina",
-          level: "Intermedio",
+          level: "A2",
+          cefrLevel: "A2",
           xp: 30,
           questions: [
             {
@@ -232,7 +250,8 @@ window.BENKO_LENGUA_APP_DATA = {
         {
           id: "u3l3",
           title: "Lengua en recorridos",
-          level: "Intermedio",
+          level: "A2",
+          cefrLevel: "A2",
           xp: 35,
           questions: [
             {
@@ -259,13 +278,15 @@ window.BENKO_LENGUA_APP_DATA = {
     },
     {
       id: "u4",
+      cefrLevel: "B1",
       name: "Dominio aplicado",
       description: "Retos más profundos para formar fluidez práctica.",
       lessons: [
         {
           id: "u4l1",
           title: "Conversación guiada",
-          level: "Avanzado",
+          level: "B1",
+          cefrLevel: "B1",
           xp: 35,
           questions: [
             {
@@ -291,7 +312,8 @@ window.BENKO_LENGUA_APP_DATA = {
         {
           id: "u4l2",
           title: "Interpretación cultural",
-          level: "Avanzado",
+          level: "B1",
+          cefrLevel: "B1",
           xp: 35,
           questions: [
             {
@@ -317,7 +339,8 @@ window.BENKO_LENGUA_APP_DATA = {
         {
           id: "u4l3",
           title: "Reto final",
-          level: "Avanzado",
+          level: "B1",
+          cefrLevel: "B1",
           xp: 45,
           questions: [
             {
