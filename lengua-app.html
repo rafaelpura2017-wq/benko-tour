@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="Aplicación formativa de lengua palenquera con ruta gratis y ruta premium para fortalecer la lengua desde la práctica, la memoria y el territorio."
+  >
+  <meta name="theme-color" content="#20392b">
+  <meta property="og:title" content="App de lengua palenquera | Benko Tour">
+  <meta
+    property="og:description"
+    content="Una experiencia educativa profesional para aprender lengua palenquera: sesión gratis, sesión premium y progreso personalizado."
+  >
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://benkotour.wordpress.com/lengua-app">
+  <link rel="canonical" href="https://benkotour.wordpress.com/lengua-app">
+  <link rel="icon" type="image/png" href="./assets/images/brand/favicon-ph.png">
+  <title>App de lengua palenquera | Benko Tour</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="./firebase-config.js"></script>
+  <script src="./script.js" defer></script>
+  <style>
+    .benko-tour__lab-page {
+      display: grid;
+      gap: 24px;
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .benko-tour__lab-hero,
+    .benko-tour__lab-panel,
+    .benko-tour__lab-progress,
+    .benko-tour__lab-roadmap {
+      border-radius: 30px;
+      border: 1px solid rgba(72, 48, 28, 0.1);
+      background: rgba(255, 251, 246, 0.94);
+      box-shadow: 0 24px 52px rgba(38, 26, 18, 0.1);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .benko-tour__lab-hero {
+      padding: clamp(24px, 4vw, 42px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 20px;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(239, 176, 58, 0.24), transparent 26%),
+        radial-gradient(circle at 82% 16%, rgba(36, 150, 192, 0.18), transparent 24%),
+        rgba(255, 252, 248, 0.96);
+    }
+
+    .benko-tour__lab-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.08;
+      background: url("./assets/images/brand/patron-marcas-ph.png") center/290px auto repeat;
+    }
+
+    .benko-tour__lab-hero > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .benko-tour__lab-title {
+      margin: 14px 0 10px;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2.1rem, 5vw, 3.6rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      max-width: 13ch;
+    }
+
+    .benko-tour__lab-copy {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
+      max-width: 62ch;
+    }
+
+    .benko-tour__lab-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .benko-tour__lab-badges {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .benko-tour__lab-badge {
+      border-radius: 18px;
+      border: 1px solid rgba(80, 60, 34, 0.1);
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.86);
+      display: grid;
+      gap: 4px;
+    }
+
+    .benko-tour__lab-badge strong {
+      font-size: 1.24rem;
+      color: var(--brand-dark);
+    }
+
+    .benko-tour__lab-workspace {
+      display: grid;
+      gap: 14px;
+    }
+
+    .benko-tour__lab-tabs {
+      display: inline-flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .benko-tour__lab-tab {
+      border: 1px solid rgba(80, 60, 34, 0.14);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--brand-dark);
+      font-weight: 800;
+      font-size: 0.94rem;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .benko-tour__lab-tab.is-active {
+      border-color: transparent;
+      color: #fff;
+      background: linear-gradient(135deg, #1d3523 0%, #355c3f 42%, #7b4f2a 100%);
+      box-shadow: 0 12px 20px rgba(28, 20, 13, 0.18);
+    }
+
+    .benko-tour__lab-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .benko-tour__lab-panel {
+      padding: 22px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .benko-tour__lab-panel h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--brand-dark);
+    }
+
+    .benko-tour__lab-panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .benko-tour__lab-lessons {
+      display: grid;
+      gap: 12px;
+    }
+
+    .benko-tour__lab-lesson {
+      border-radius: 18px;
+      border: 1px solid rgba(80, 60, 34, 0.1);
+      background: rgba(255, 255, 255, 0.86);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .benko-tour__lab-lesson strong {
+      font-size: 1.02rem;
+    }
+
+    .benko-tour__lab-lesson.is-done {
+      border-color: rgba(19, 99, 108, 0.3);
+      background: linear-gradient(135deg, rgba(208, 244, 246, 0.62), rgba(231, 248, 239, 0.72));
+    }
+
+    .benko-tour__lab-quiz {
+      border-radius: 20px;
+      border: 1px solid rgba(80, 60, 34, 0.12);
+      background: rgba(255, 248, 239, 0.86);
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .benko-tour__lab-quiz h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--brand-dark);
+    }
+
+    .benko-tour__lab-question {
+      display: grid;
+      gap: 8px;
+      border-top: 1px dashed rgba(122, 52, 23, 0.22);
+      padding-top: 12px;
+    }
+
+    .benko-tour__lab-question strong {
+      font-size: 0.95rem;
+    }
+
+    .benko-tour__lab-options {
+      display: grid;
+      gap: 6px;
+    }
+
+    .benko-tour__lab-options label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .benko-tour__lab-status {
+      border-radius: 14px;
+      border: 1px solid rgba(80, 60, 34, 0.12);
+      background: rgba(255, 255, 255, 0.84);
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      color: var(--brand-dark);
+      min-height: 44px;
+    }
+
+    .benko-tour__lab-status.is-error {
+      border-color: rgba(192, 84, 53, 0.3);
+      color: #8d2f16;
+      background: rgba(255, 238, 232, 0.86);
+    }
+
+    .benko-tour__lab-status.is-success {
+      border-color: rgba(19, 99, 108, 0.3);
+      color: #0d5560;
+      background: rgba(224, 248, 250, 0.86);
+    }
+
+    .benko-tour__lab-premium-lock {
+      border-radius: 18px;
+      border: 1px solid rgba(122, 52, 23, 0.2);
+      background: linear-gradient(135deg, rgba(255, 239, 212, 0.8), rgba(255, 245, 231, 0.92));
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .benko-tour__lab-premium-fields {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .benko-tour__lab-input {
+      flex: 1 1 220px;
+      min-height: 44px;
+      border-radius: 12px;
+      border: 1px solid rgba(80, 60, 34, 0.16);
+      padding: 0 12px;
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--text);
+    }
+
+    .benko-tour__lab-input:focus-visible {
+      outline: none;
+      border-color: rgba(122, 52, 23, 0.5);
+      box-shadow: 0 0 0 2px rgba(239, 176, 58, 0.25);
+    }
+
+    .benko-tour__lab-premium-content {
+      display: grid;
+      gap: 10px;
+    }
+
+    .benko-tour__lab-premium-item {
+      border-radius: 16px;
+      border: 1px solid rgba(19, 99, 108, 0.16);
+      background: rgba(230, 248, 246, 0.74);
+      padding: 12px 14px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .benko-tour__lab-progress {
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .benko-tour__lab-progress h3 {
+      margin: 0;
+      color: var(--brand-dark);
+      font-size: 1.2rem;
+    }
+
+    .benko-tour__lab-kpi {
+      border-radius: 14px;
+      border: 1px solid rgba(80, 60, 34, 0.1);
+      background: rgba(255, 255, 255, 0.88);
+      padding: 12px 14px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .benko-tour__lab-kpi strong {
+      color: var(--brand-dark);
+      font-size: 1.35rem;
+    }
+
+    .benko-tour__lab-kpi span {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .benko-tour__lab-roadmap {
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .benko-tour__lab-roadmap h2 {
+      margin: 0;
+      color: var(--brand-dark);
+      font-size: 1.35rem;
+    }
+
+    .benko-tour__lab-roadmap ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 980px) {
+      .benko-tour__lab-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .benko-tour__lab-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .benko-tour__lab-panel,
+      .benko-tour__lab-progress,
+      .benko-tour__lab-roadmap {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="benko-tour">
+    <div class="benko-tour__shell">
+      <header class="benko-tour__header">
+        <div class="benko-tour__topbar">
+          <a class="benko-tour__topbar-brand" href="./index.html" aria-label="Benko Tour, ir al inicio">
+            <img src="./assets/images/brand/logo-sello-ph.png" alt="" loading="eager" decoding="async">
+            <span>Benko Tour</span>
+          </a>
+          <nav class="benko-tour__menu" aria-label="Secciones principales">
+            <a href="./experiencia.html" target="_blank" rel="noopener noreferrer"><strong>Biáje</strong><span>Experiencia</span></a>
+            <a href="./nosotros.html" target="_blank" rel="noopener noreferrer"><strong>Kumunirá</strong><span>Nosotros</span></a>
+            <a href="./lengua-palenquera.html"><strong>Luénga</strong><span>Lengua palenquera</span></a>
+            <a href="./index.html#paquetes" target="_blank" rel="noopener noreferrer"><strong>Kaddume</strong><span>Paquetes</span></a>
+            <a href="./index.html#itinerario" target="_blank" rel="noopener noreferrer"><strong>Itoría</strong><span>Itinerario</span></a>
+            <a href="./index.html#opiniones" target="_blank" rel="noopener noreferrer"><strong>Kuchá</strong><span>Opiniones</span></a>
+            <a href="./tienda.html" target="_blank" rel="noopener noreferrer"><strong>Kumblá</strong><span>Tienda</span></a>
+            <a href="./reservas.html" target="_blank" rel="noopener noreferrer"><strong>Chitiá</strong><span>Reservas</span></a>
+          </nav>
+          <div class="benko-tour__user-menu" id="user-menu" style="display: none; align-items: center; gap: 10px;">
+            <span class="benko-tour__user-name" id="user-name-display" style="color: var(--brand-dark); font-weight: 600; font-size: 0.9rem;"></span>
+            <a href="./perfil.html" class="benko-tour__login" style="background: linear-gradient(135deg, var(--brand) 0%, #e0a030 100%); color: white; font-size: 0.8rem; padding: 8px 12px;">👤 Perfil</a>
+            <button id="logout-btn" class="benko-tour__ghost" style="padding: 6px 12px; font-size: 0.8rem; border-color: rgba(255,255,255,0.3); color: #fff;">🚪</button>
+          </div>
+          <a class="benko-tour__login" href="./acceso.html#acceso" id="login-link">Iniciar sesión</a>
+          <button class="benko-tour__hamburger" aria-label="Abrir menú" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+
+        <nav class="benko-tour__mobile-menu" aria-label="Menú móvil desplegable" hidden>
+          <div class="benko-tour__mobile-menu-inner">
+            <a href="./experiencia.html" target="_blank" rel="noopener noreferrer"><strong>Biáje</strong><span>Experiencia</span></a>
+            <a href="./nosotros.html" target="_blank" rel="noopener noreferrer"><strong>Kumunirá</strong><span>Nosotros</span></a>
+            <a href="./lengua-palenquera.html"><strong>Luénga</strong><span>Lengua palenquera</span></a>
+            <a href="./index.html#paquetes" target="_blank" rel="noopener noreferrer"><strong>Kaddume</strong><span>Paquetes</span></a>
+            <a href="./index.html#itinerario" target="_blank" rel="noopener noreferrer"><strong>Itoría</strong><span>Itinerario</span></a>
+            <a href="./index.html#opiniones" target="_blank" rel="noopener noreferrer"><strong>Kuchá</strong><span>Opiniones</span></a>
+            <a href="./tienda.html" target="_blank" rel="noopener noreferrer"><strong>Kumblá</strong><span>Tienda</span></a>
+            <a href="./reservas.html" target="_blank" rel="noopener noreferrer"><strong>Chitiá</strong><span>Reservas</span></a>
+            <a href="./acceso.html#acceso"><strong>Komenasá</strong><span>Iniciar sesión</span></a>
+          </div>
+        </nav>
+      </header>
+
+      <main class="benko-tour__lab-page">
+        <section class="benko-tour__lab-hero">
+          <article>
+            <span class="benko-tour__pill">Aplicación educativa de comunidad</span>
+            <h1 class="benko-tour__lab-title">Fortalecer la lengua palenquera desde práctica real</h1>
+            <p class="benko-tour__lab-copy">
+              Esta app nace para que niñas, jóvenes, familias y visitantes puedan aprender con una ruta clara:
+              una sesión gratis para entrar sin barreras y una sesión premium para escalar con mentoría,
+              retos avanzados y certificación comunitaria.
+            </p>
+            <div class="benko-tour__lab-actions">
+              <button class="benko-tour__button" type="button" data-go-mode="free">Empezar gratis ahora</button>
+              <button class="benko-tour__ghost benko-tour__ghost--dark" type="button" data-go-mode="premium">Ver sesión premium</button>
+              <a class="benko-tour__ghost" href="./lengua-palenquera.html">Volver a página lengua</a>
+            </div>
+          </article>
+
+          <aside class="benko-tour__lab-badges" aria-label="Resumen de valor de la app">
+            <div class="benko-tour__lab-badge">
+              <strong>Ruta Gratis</strong>
+              <span>Lecciones base, vocabulario, práctica diaria y mini quiz.</span>
+            </div>
+            <div class="benko-tour__lab-badge">
+              <strong>Ruta Premium</strong>
+              <span>Laboratorios, acompañamiento, retos por niveles y evaluación final.</span>
+            </div>
+            <div class="benko-tour__lab-badge">
+              <strong id="lab-user-chip">Comunidad activa</strong>
+              <span>Tu progreso se guarda en este dispositivo para continuar luego.</span>
+            </div>
+          </aside>
+        </section>
+
+        <section class="benko-tour__lab-workspace" aria-label="Sesiones de aprendizaje">
+          <div class="benko-tour__lab-tabs" role="tablist" aria-label="Seleccionar tipo de sesión">
+            <button class="benko-tour__lab-tab is-active" type="button" data-lab-mode="free" role="tab" aria-selected="true">Sesión gratis</button>
+            <button class="benko-tour__lab-tab" type="button" data-lab-mode="premium" role="tab" aria-selected="false">Sesión premium</button>
+          </div>
+
+          <div class="benko-tour__lab-grid">
+            <article class="benko-tour__lab-panel" data-lab-panel="free">
+              <h2>Ruta gratis: entrada abierta para todo el pueblo</h2>
+              <p>Completa estas cápsulas base para levantar escucha, vocabulario y expresiones de uso cotidiano.</p>
+
+              <div class="benko-tour__lab-lessons">
+                <article class="benko-tour__lab-lesson" data-lesson-id="saludos">
+                  <strong>Komenasá: saludos y presentación</strong>
+                  <p>Aprende formas naturales de saludar, presentarte y abrir conversación.</p>
+                  <button class="benko-tour__ghost benko-tour__ghost--dark" type="button" data-complete-lesson="saludos">Marcar completada</button>
+                </article>
+                <article class="benko-tour__lab-lesson" data-lesson-id="familia">
+                  <strong>Kumunirá: familia y comunidad</strong>
+                  <p>Palabras clave para identidad, respeto, parentesco y vida comunitaria.</p>
+                  <button class="benko-tour__ghost benko-tour__ghost--dark" type="button" data-complete-lesson="familia">Marcar completada</button>
+                </article>
+                <article class="benko-tour__lab-lesson" data-lesson-id="territorio">
+                  <strong>Ría y Kuttuá: territorio y cultura</strong>
+                  <p>Vocabulario para hablar de memoria, música, cocina y espacio vivo.</p>
+                  <button class="benko-tour__ghost benko-tour__ghost--dark" type="button" data-complete-lesson="territorio">Marcar completada</button>
+                </article>
+                <article class="benko-tour__lab-lesson" data-lesson-id="escucha">
+                  <strong>Kuchá: entrenamiento de escucha</strong>
+                  <p>Ejercicio guiado para reconocer palabras frecuentes en frases reales.</p>
+                  <button class="benko-tour__ghost benko-tour__ghost--dark" type="button" data-complete-lesson="escucha">Marcar completada</button>
+                </article>
+              </div>
+
+              <section class="benko-tour__lab-quiz" aria-labelledby="lab-quiz-title">
+                <h3 id="lab-quiz-title">Mini quiz de fortalecimiento</h3>
+
+                <article class="benko-tour__lab-question">
+                  <strong>1) ¿Qué comunica “Jundo suto senda ung chocha”?</strong>
+                  <div class="benko-tour__lab-options">
+                    <label><input type="radio" name="lab-q1" value="a"> Estamos lejos de la tradición</label>
+                    <label><input type="radio" name="lab-q1" value="b"> Juntos somos más</label>
+                    <label><input type="radio" name="lab-q1" value="c"> Solo aprende quien paga</label>
+                  </div>
+                </article>
+
+                <article class="benko-tour__lab-question">
+                  <strong>2) ¿Cuál ruta es abierta para cualquier persona?</strong>
+                  <div class="benko-tour__lab-options">
+                    <label><input type="radio" name="lab-q2" value="a"> Solo premium</label>
+                    <label><input type="radio" name="lab-q2" value="b"> Ruta gratis</label>
+                    <label><input type="radio" name="lab-q2" value="c"> Solo mentores</label>
+                  </div>
+                </article>
+
+                <article class="benko-tour__lab-question">
+                  <strong>3) ¿Cuál es el objetivo de esta app?</strong>
+                  <div class="benko-tour__lab-options">
+                    <label><input type="radio" name="lab-q3" value="a"> Fortalecer lengua y memoria cultural</label>
+                    <label><input type="radio" name="lab-q3" value="b"> Reemplazar la comunidad</label>
+                    <label><input type="radio" name="lab-q3" value="c"> Vender solo turismo</label>
+                  </div>
+                </article>
+
+                <div class="benko-tour__lab-actions">
+                  <button class="benko-tour__button" type="button" id="lab-quiz-check">Calificar quiz</button>
+                </div>
+                <div class="benko-tour__lab-status" id="lab-quiz-status" aria-live="polite"></div>
+              </section>
+            </article>
+
+            <article class="benko-tour__lab-panel" data-lab-panel="premium" hidden>
+              <h2>Ruta premium: avance profundo y sostenible</h2>
+              <p>Diseñada para estudiantes comprometidos, instituciones y equipos que quieren continuidad real.</p>
+
+              <div class="benko-tour__lab-premium-lock" id="lab-premium-lock">
+                <strong>Acceso premium bloqueado</strong>
+                <p>
+                  La activación premium ahora se valida con cuenta real y estado de pago.
+                  Si ya compraste, verifica tu acceso o reporta tu referencia para revisión.
+                </p>
+                <div class="benko-tour__lab-premium-fields">
+                  <input class="benko-tour__lab-input" id="lab-premium-order-ref" type="text" placeholder="Referencia de pago (opcional)">
+                  <button class="benko-tour__button" type="button" id="lab-premium-request">Reportar compra</button>
+                  <button class="benko-tour__ghost benko-tour__ghost--dark" type="button" id="lab-premium-refresh">Verificar acceso</button>
+                </div>
+                <div class="benko-tour__lab-actions">
+                  <button class="benko-tour__button" type="button" id="lab-premium-pay-wompi">Pagar premium con Wompi</button>
+                  <button class="benko-tour__ghost benko-tour__ghost--dark" type="button" id="lab-premium-pay-mp">Pagar premium con Mercado Pago</button>
+                  <a
+                    class="benko-tour__ghost"
+                    href="https://wa.me/573245065560?text=Hola%20Benko%20Tour,%20quiero%20activar%20la%20ruta%20premium%20de%20la%20app%20de%20lengua%20palenquera."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Hablar con el equipo
+                  </a>
+                  <a class="benko-tour__ghost" href="./acceso.html#acceso" target="_blank" rel="noopener noreferrer">Iniciar sesión</a>
+                </div>
+                <div class="benko-tour__lab-status" id="lab-premium-status-msg" aria-live="polite"></div>
+              </div>
+
+              <div class="benko-tour__lab-premium-content" id="lab-premium-content" hidden>
+                <article class="benko-tour__lab-premium-item">
+                  <strong>Laboratorio de conversación avanzada</strong>
+                  <p>Práctica por escenarios reales: aula, turismo, comunidad e investigación cultural.</p>
+                </article>
+                <article class="benko-tour__lab-premium-item">
+                  <strong>Mentoría comunitaria</strong>
+                  <p>Acompañamiento directo para pronunciación, seguridad oral y construcción de discurso.</p>
+                </article>
+                <article class="benko-tour__lab-premium-item">
+                  <strong>Ruta certificable</strong>
+                  <p>Evaluación de progreso por niveles con evidencia de aprendizaje y proyecto final.</p>
+                </article>
+                <article class="benko-tour__lab-premium-item">
+                  <strong>Banco de materiales</strong>
+                  <p>Guías descargables, retos semanales y secuencias pedagógicas para continuar en casa.</p>
+                </article>
+              </div>
+            </article>
+
+            <aside class="benko-tour__lab-progress" aria-label="Progreso de aprendizaje">
+              <h3>Tu tablero de progreso</h3>
+              <div class="benko-tour__lab-kpi">
+                <strong id="lab-user-name">Visitante</strong>
+                <span>Perfil activo en esta app</span>
+              </div>
+              <div class="benko-tour__lab-kpi">
+                <strong id="lab-lessons-progress">0/4</strong>
+                <span>Lecciones gratis completadas</span>
+              </div>
+              <div class="benko-tour__lab-kpi">
+                <strong id="lab-quiz-best">0%</strong>
+                <span>Mejor resultado en quiz</span>
+              </div>
+              <div class="benko-tour__lab-kpi">
+                <strong id="lab-streak-days">1 día</strong>
+                <span>Racha de práctica</span>
+              </div>
+              <div class="benko-tour__lab-kpi">
+                <strong id="lab-premium-status">Pendiente</strong>
+                <span>Estado de membresía premium</span>
+              </div>
+              <button class="benko-tour__ghost benko-tour__ghost--dark" id="lab-reset-progress" type="button">Reiniciar progreso gratis</button>
+            </aside>
+          </div>
+        </section>
+
+        <section class="benko-tour__lab-roadmap" aria-labelledby="lab-roadmap-title">
+          <h2 id="lab-roadmap-title">Próxima fase profesional de la app</h2>
+          <ul>
+            <li>Sincronizar progreso por usuario en base de datos para no depender solo del navegador.</li>
+            <li>Habilitar pasarela de pago para activar premium automáticamente al confirmar compra.</li>
+            <li>Incluir audios de pronunciación por palabra y por frase.</li>
+            <li>Agregar niveles A1, A2 y B1 con evaluaciones y certificados descargables.</li>
+          </ul>
+        </section>
+      </main>
+
+      <footer class="benko-tour__footer">
+        <div class="benko-tour__footer-brand">
+          <img class="benko-tour__footer-logo" src="./assets/images/brand/logo-horizontal-ph.png" alt="Logo horizontal de Benko Tour" loading="lazy" decoding="async">
+          <p>Aplicación educativa comunitaria para fortalecer lengua palenquera con formación accesible y profesional.</p>
+        </div>
+        <div class="benko-tour__footer-links">
+          <a href="./index.html">Inicio</a>
+          <a href="./lengua-palenquera.html">Lengua palenquera</a>
+          <a href="./lengua-app.html">App de lengua</a>
+          <a href="./reservas.html" target="_blank" rel="noopener noreferrer">Reservas</a>
+        </div>
+      </footer>
+    </div>
+
+    <a
+      class="benko-tour__whatsapp"
+      href="https://wa.me/573245065560?text=Hola%20Benko%20Tour,%20quiero%20usar%20la%20app%20de%20lengua%20palenquera."
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Escribir a Benko Tour por WhatsApp"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20.52 3.48A11.88 11.88 0 0 0 12.06 0C5.47 0 .1 5.34.1 11.92c0 2.1.55 4.16 1.6 5.98L0 24l6.3-1.64a11.92 11.92 0 0 0 5.75 1.47h.01c6.58 0 11.94-5.35 11.94-11.93 0-3.18-1.24-6.17-3.48-8.42Zm-8.46 18.33h-.01a9.92 9.92 0 0 1-5.05-1.38l-.36-.21-3.74.98 1-3.65-.24-.38A9.9 9.9 0 0 1 2.15 11.92c0-5.47 4.45-9.92 9.92-9.92 2.65 0 5.14 1.03 7.01 2.9a9.85 9.85 0 0 1 2.9 7.01c0 5.47-4.45 9.92-9.92 9.92Zm5.44-7.43c-.3-.15-1.78-.88-2.05-.98-.27-.1-.47-.15-.66.15-.2.3-.76.98-.94 1.18-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.78-1.67-2.08-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.66-1.6-.91-2.2-.24-.57-.48-.49-.66-.5h-.56c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.89.12.58-.09 1.78-.73 2.03-1.43.25-.7.25-1.31.17-1.43-.07-.12-.27-.2-.56-.35Z"></path>
+      </svg>
+      WhatsApp
+    </a>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const STORAGE_KEY = "benko-lengua-app-v2";
+      const LESSON_IDS = ["saludos", "familia", "territorio", "escucha"];
+      const QUIZ_ANSWERS = { q1: "b", q2: "b", q3: "a" };
+      const PREMIUM_MEMBERSHIP_COLLECTION = "membresias_lengua";
+      const PREMIUM_REQUEST_COLLECTION = "solicitudes_membresia_lengua";
+      const defaultLanguageConfig = {
+        premium: {
+          priceCop: 189000,
+          productId: "lengua-premium",
+          productName: "Membresía premium lengua palenquera"
+        }
+      };
+      const globalConfig = window.BENKO_CONFIG || {};
+      const languageConfig = Object.assign(
+        {},
+        defaultLanguageConfig,
+        globalConfig.languageApp || {},
+        {
+          premium: Object.assign(
+            {},
+            defaultLanguageConfig.premium,
+            (globalConfig.languageApp && globalConfig.languageApp.premium) || {}
+          )
+        }
+      );
+      const paymentConfig = Object.assign(
+        {
+          wompi: { checkoutEndpoint: "", fallbackCheckoutUrl: "" },
+          mercadopago: { preferenceEndpoint: "", fallbackCheckoutUrl: "" }
+        },
+        globalConfig.payments || {}
+      );
+
+      const tabButtons = document.querySelectorAll("[data-lab-mode]");
+      const modeButtons = document.querySelectorAll("[data-go-mode]");
+      const panels = document.querySelectorAll("[data-lab-panel]");
+      const lessonButtons = document.querySelectorAll("[data-complete-lesson]");
+      const lessonsCards = document.querySelectorAll("[data-lesson-id]");
+      const quizCheckButton = document.getElementById("lab-quiz-check");
+      const quizStatus = document.getElementById("lab-quiz-status");
+      const premiumRequestButton = document.getElementById("lab-premium-request");
+      const premiumRefreshButton = document.getElementById("lab-premium-refresh");
+      const premiumOrderRefInput = document.getElementById("lab-premium-order-ref");
+      const premiumPayWompiButton = document.getElementById("lab-premium-pay-wompi");
+      const premiumPayMercadoPagoButton = document.getElementById("lab-premium-pay-mp");
+      const premiumStatusMessage = document.getElementById("lab-premium-status-msg");
+      const premiumLock = document.getElementById("lab-premium-lock");
+      const premiumContent = document.getElementById("lab-premium-content");
+      const resetButton = document.getElementById("lab-reset-progress");
+
+      const userChip = document.getElementById("lab-user-chip");
+      const userName = document.getElementById("lab-user-name");
+      const lessonsProgress = document.getElementById("lab-lessons-progress");
+      const quizBest = document.getElementById("lab-quiz-best");
+      const streakDays = document.getElementById("lab-streak-days");
+      const premiumStatus = document.getElementById("lab-premium-status");
+
+      function readJsonStorage(key, fallback) {
+        try {
+          const value = window.localStorage.getItem(key);
+          return value ? JSON.parse(value) : fallback;
+        } catch (_) {
+          return fallback;
+        }
+      }
+
+      function saveState() {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function formatCOP(amount) {
+        return new Intl.NumberFormat("es-CO", {
+          style: "currency",
+          currency: "COP",
+          maximumFractionDigits: 0
+        }).format(Number(amount || 0));
+      }
+
+      function createReference(prefix) {
+        const left = Date.now().toString(36).toUpperCase();
+        const right = Math.random().toString(36).slice(2, 8).toUpperCase();
+        return prefix + "-" + left + "-" + right;
+      }
+
+      async function postJson(url, payload) {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const contentType = response.headers.get("content-type") || "";
+        const data = contentType.includes("application/json")
+          ? await response.json()
+          : { message: await response.text() };
+
+        if (!response.ok) {
+          throw new Error(data.message || "No pudimos procesar la solicitud.");
+        }
+
+        return data;
+      }
+
+      function createHiddenForm(action, fields) {
+        const form = document.createElement("form");
+        form.action = action;
+        form.method = "GET";
+        form.target = "_blank";
+        form.style.display = "none";
+
+        Object.entries(fields || {}).forEach(function(entry) {
+          const key = entry[0];
+          const value = entry[1];
+
+          if (value === undefined || value === null || value === "") {
+            return;
+          }
+
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = key;
+          input.value = String(value);
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+      }
+
+      function getTodayKey() {
+        return new Date().toISOString().slice(0, 10);
+      }
+
+      function getDayDiff(previousDate, currentDate) {
+        const previous = new Date(previousDate + "T00:00:00Z");
+        const current = new Date(currentDate + "T00:00:00Z");
+        const msDiff = current.getTime() - previous.getTime();
+        return Math.round(msDiff / 86400000);
+      }
+
+      function getSessionUserName() {
+        const fallbackName = getCurrentAuthUser() ? (
+          String((getCurrentAuthUser().displayName || getCurrentAuthUser().email || "Miembro Benko")).trim()
+        ) : "Visitante";
+        const users = readJsonStorage("benko-tour-users", []);
+        const sessionUserId = window.localStorage.getItem("benko-tour-session") || "";
+        if (!Array.isArray(users) || !sessionUserId) {
+          return fallbackName;
+        }
+
+        const sessionUser = users.find(function(user) {
+          return user && user.id === sessionUserId;
+        });
+
+        if (!sessionUser) {
+          return fallbackName;
+        }
+
+        return String(
+          sessionUser.name ||
+          sessionUser.nombre ||
+          sessionUser.fullName ||
+          sessionUser.email ||
+          "Miembro Benko"
+        ).trim();
+      }
+
+      function getSessionUserProfile() {
+        const users = readJsonStorage("benko-tour-users", []);
+        const sessionUserId = window.localStorage.getItem("benko-tour-session") || "";
+        const sessionUser = Array.isArray(users)
+          ? users.find(function(user) { return user && user.id === sessionUserId; })
+          : null;
+
+        return {
+          name: (sessionUser && (sessionUser.name || sessionUser.nombre || sessionUser.fullName)) || "",
+          email: (sessionUser && sessionUser.email) || "",
+          phone: (sessionUser && (sessionUser.phone || sessionUser.telefono)) || "",
+          city: (sessionUser && (sessionUser.city || sessionUser.ciudad)) || ""
+        };
+      }
+
+      function getCurrentAuthUser() {
+        if (window.authFirebase && typeof window.authFirebase.obtenerUsuarioActual === "function") {
+          try {
+            const userFromHelper = window.authFirebase.obtenerUsuarioActual();
+            if (userFromHelper) {
+              return userFromHelper;
+            }
+          } catch (_) {
+            /* noop */
+          }
+        }
+
+        if (typeof firebase !== "undefined" && firebase.apps && firebase.apps.length && typeof firebase.auth === "function") {
+          try {
+            return firebase.auth().currentUser;
+          } catch (_) {
+            return null;
+          }
+        }
+
+        return null;
+      }
+
+      async function waitAuthUser() {
+        if (window.authFirebase && typeof window.authFirebase.esperarAuth === "function") {
+          try {
+            const user = await window.authFirebase.esperarAuth(2500);
+            if (user) {
+              return user;
+            }
+          } catch (_) {
+            /* noop */
+          }
+        }
+
+        return getCurrentAuthUser();
+      }
+
+      function getFirestoreInstance() {
+        if (typeof firebase === "undefined" || !firebase.apps || !firebase.apps.length || typeof firebase.firestore !== "function") {
+          return null;
+        }
+
+        try {
+          return firebase.firestore();
+        } catch (_) {
+          return null;
+        }
+      }
+
+      function normalizeMembershipStatus(value) {
+        return String(value || "").trim().toLowerCase();
+      }
+
+      function isPremiumStatusActive(status) {
+        return ["activa", "aprobada", "pagada", "vigente", "trial"].includes(normalizeMembershipStatus(status));
+      }
+
+      function normalizeMode(value) {
+        return value === "premium" ? "premium" : "free";
+      }
+
+      function setMode(mode) {
+        const nextMode = normalizeMode(mode);
+        state.mode = nextMode;
+        tabButtons.forEach(function(button) {
+          const active = button.dataset.labMode === nextMode;
+          button.classList.toggle("is-active", active);
+          button.setAttribute("aria-selected", active ? "true" : "false");
+        });
+        panels.forEach(function(panel) {
+          panel.hidden = panel.dataset.labPanel !== nextMode;
+        });
+        saveState();
+      }
+
+      function renderLessons() {
+        lessonsCards.forEach(function(card) {
+          const lessonId = card.dataset.lessonId;
+          const done = state.completedLessons.includes(lessonId);
+          card.classList.toggle("is-done", done);
+        });
+
+        lessonButtons.forEach(function(button) {
+          const lessonId = button.dataset.completeLesson;
+          const done = state.completedLessons.includes(lessonId);
+          button.disabled = done;
+          button.textContent = done ? "Completada" : "Marcar completada";
+        });
+
+        lessonsProgress.textContent = state.completedLessons.length + "/" + LESSON_IDS.length;
+      }
+
+      function renderPremium() {
+        const active = Boolean(state.premiumUnlocked);
+        premiumLock.hidden = active;
+        premiumContent.hidden = !active;
+        if (active) {
+          premiumStatus.textContent = state.premiumSource === "cloud" ? "Activa (verificada)" : "Activa";
+          return;
+        }
+
+        if (!getCurrentAuthUser()) {
+          premiumStatus.textContent = "Requiere sesión";
+          return;
+        }
+
+        premiumStatus.textContent = state.premiumPendingRequestId ? "En revisión" : "Pendiente";
+      }
+
+      function renderUser() {
+        const displayName = getSessionUserName();
+        userName.textContent = displayName;
+        if (getCurrentAuthUser()) {
+          userChip.textContent = "Comunidad activa: " + displayName;
+        } else {
+          userChip.textContent = "Comunidad activa: visitante (inicia sesión para premium)";
+        }
+      }
+
+      function renderStats() {
+        quizBest.textContent = String(Math.max(0, Number(state.quizBest) || 0)) + "%";
+        streakDays.textContent = state.streakDays + (state.streakDays === 1 ? " día" : " días");
+      }
+
+      function resetStatus(element) {
+        if (!element) {
+          return;
+        }
+        element.classList.remove("is-error", "is-success");
+      }
+
+      function setStatus(element, text, type) {
+        if (!element) {
+          return;
+        }
+        element.textContent = text;
+        resetStatus(element);
+        if (type === "error") {
+          element.classList.add("is-error");
+        }
+        if (type === "success") {
+          element.classList.add("is-success");
+        }
+      }
+
+      function buildPremiumPaymentPayload(provider) {
+        const authUser = getCurrentAuthUser();
+        const profile = getSessionUserProfile();
+        const premiumPrice = Number(languageConfig.premium.priceCop || 189000);
+        const paymentReference = createReference("LNGPAY");
+        const customerName = String(
+          profile.name ||
+          (authUser && authUser.displayName) ||
+          "Cliente Benko"
+        ).trim();
+        const customerEmail = String(
+          (authUser && authUser.email) ||
+          profile.email ||
+          globalConfig.channels?.reservationEmail ||
+          ""
+        ).trim();
+        const customerPhone = String(profile.phone || "").trim();
+        const customerCity = String(profile.city || "Cartagena").trim();
+
+        return {
+          reference: paymentReference,
+          type: "lengua-premium",
+          packageCode: "lengua-premium",
+          packageName: languageConfig.premium.productName,
+          description: "Acceso premium app de lengua palenquera",
+          total: premiumPrice,
+          currency: "COP",
+          name: customerName,
+          phone: customerPhone,
+          email: customerEmail,
+          city: customerCity,
+          items: [
+            {
+              id: languageConfig.premium.productId,
+              sku: languageConfig.premium.productId,
+              name: languageConfig.premium.productName,
+              price: premiumPrice,
+              quantity: 1
+            }
+          ]
+        };
+      }
+
+      async function createPremiumRequest(kind, payload) {
+        const db = getFirestoreInstance();
+        const authUser = await waitAuthUser();
+
+        if (!db || !authUser) {
+          throw new Error("Inicia sesión para registrar la solicitud premium.");
+        }
+
+        const profile = getSessionUserProfile();
+        const requestId = createReference("LNGREQ");
+        const requestDoc = {
+          id: requestId,
+          schemaVersion: 1,
+          userUid: authUser.uid,
+          userEmail: String(authUser.email || profile.email || "").toLowerCase(),
+          userName: String(profile.name || authUser.displayName || "").trim(),
+          tipoSolicitud: kind,
+          estado: "pendiente",
+          plan: "lengua-premium",
+          producto: languageConfig.premium.productName,
+          precio: Number(languageConfig.premium.priceCop || 189000),
+          moneda: "COP",
+          referenciaPago: String((payload && payload.reference) || (premiumOrderRefInput && premiumOrderRefInput.value) || "").trim(),
+          proveedor: String((payload && payload.provider) || "").toLowerCase(),
+          canal: "web-lengua-app",
+          origen: window.location.pathname || "/lengua-app.html",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        await db.collection(PREMIUM_REQUEST_COLLECTION).doc(requestId).set(requestDoc, { merge: false });
+
+        state.premiumPendingRequestId = requestId;
+        saveState();
+        renderPremium();
+        return requestId;
+      }
+
+      async function syncPremiumFromCloud(showStatusMessage) {
+        const db = getFirestoreInstance();
+        const authUser = await waitAuthUser();
+
+        if (!authUser) {
+          state.premiumUnlocked = false;
+          state.premiumSource = "guest";
+          saveState();
+          renderUser();
+          renderPremium();
+          if (showStatusMessage) {
+            setStatus(premiumStatusMessage, "Inicia sesión para verificar o activar tu acceso premium.", "error");
+          }
+          return false;
+        }
+
+        if (!db) {
+          if (showStatusMessage) {
+            setStatus(premiumStatusMessage, "No pudimos conectar con Firestore para validar el estado premium.", "error");
+          }
+          return false;
+        }
+
+        try {
+          const membershipSnapshot = await db.collection(PREMIUM_MEMBERSHIP_COLLECTION).doc(authUser.uid).get();
+          const membershipData = membershipSnapshot.exists ? (membershipSnapshot.data() || {}) : {};
+          const status = normalizeMembershipStatus(
+            membershipData.estado ||
+            membershipData.status ||
+            membershipData.membershipStatus
+          );
+
+          state.premiumUnlocked = isPremiumStatusActive(status);
+          state.premiumSource = state.premiumUnlocked ? "cloud" : "pending";
+          saveState();
+          renderUser();
+          renderPremium();
+
+          if (showStatusMessage) {
+            if (state.premiumUnlocked) {
+              setStatus(
+                premiumStatusMessage,
+                "Acceso premium activo y verificado. Ya puedes usar todos los módulos avanzados.",
+                "success"
+              );
+            } else {
+              setStatus(
+                premiumStatusMessage,
+                "Tu membresía premium aún no está activa. Si ya pagaste, reporta tu referencia o escribe al equipo.",
+                "error"
+              );
+            }
+          }
+
+          return state.premiumUnlocked;
+        } catch (error) {
+          if (showStatusMessage) {
+            setStatus(
+              premiumStatusMessage,
+              "No pudimos verificar tu estado premium ahora. Intenta nuevamente en unos segundos.",
+              "error"
+            );
+          }
+          return false;
+        }
+      }
+
+      async function launchPremiumWompi() {
+        const endpoint = (paymentConfig.wompi && paymentConfig.wompi.checkoutEndpoint) || "";
+        const fallback = (paymentConfig.wompi && paymentConfig.wompi.fallbackCheckoutUrl) || "";
+
+        if (!endpoint && fallback) {
+          window.open(fallback, "_blank");
+          setStatus(premiumStatusMessage, "Se abrió Wompi por enlace directo.", "success");
+          return;
+        }
+
+        if (!endpoint) {
+          setStatus(premiumStatusMessage, "Configura el endpoint de Wompi en config.js para activar este pago.", "error");
+          return;
+        }
+
+        const payload = buildPremiumPaymentPayload("wompi");
+        const response = await postJson(endpoint, payload);
+
+        if (!response.action || !response.fields) {
+          throw new Error("El backend no devolvió los datos necesarios de Wompi.");
+        }
+
+        createHiddenForm(response.action, response.fields);
+        await createPremiumRequest("checkout-wompi", payload);
+        setStatus(
+          premiumStatusMessage,
+          "Se abrió Wompi para pagar " + formatCOP(payload.total) + ". Cuando termines, pulsa Verificar acceso.",
+          "success"
+        );
+      }
+
+      async function launchPremiumMercadoPago() {
+        const endpoint = (paymentConfig.mercadopago && paymentConfig.mercadopago.preferenceEndpoint) || "";
+        const fallback = (paymentConfig.mercadopago && paymentConfig.mercadopago.fallbackCheckoutUrl) || "";
+
+        if (!endpoint && fallback) {
+          window.open(fallback, "_blank");
+          setStatus(premiumStatusMessage, "Se abrió Mercado Pago por enlace directo.", "success");
+          return;
+        }
+
+        if (!endpoint) {
+          setStatus(premiumStatusMessage, "Configura el endpoint de Mercado Pago en config.js para activar este pago.", "error");
+          return;
+        }
+
+        const payload = buildPremiumPaymentPayload("mercadopago");
+        const response = await postJson(endpoint, payload);
+        const initPoint = response.initPoint || response.init_point || response.sandboxInitPoint || response.sandbox_init_point;
+
+        if (!initPoint) {
+          throw new Error("El backend no devolvió un checkout válido de Mercado Pago.");
+        }
+
+        window.open(initPoint, "_blank");
+        await createPremiumRequest("checkout-mercadopago", payload);
+        setStatus(
+          premiumStatusMessage,
+          "Se abrió Mercado Pago para pagar " + formatCOP(payload.total) + ". Luego pulsa Verificar acceso.",
+          "success"
+        );
+      }
+
+      const state = Object.assign(
+        {
+          mode: "free",
+          completedLessons: [],
+          quizBest: 0,
+          premiumUnlocked: false,
+          premiumSource: "pending",
+          premiumPendingRequestId: "",
+          streakDays: 1,
+          lastPracticeDate: ""
+        },
+        readJsonStorage(STORAGE_KEY, {})
+      );
+
+      state.mode = normalizeMode(state.mode);
+      state.completedLessons = Array.isArray(state.completedLessons)
+        ? state.completedLessons.filter(function(id) { return LESSON_IDS.includes(id); })
+        : [];
+      state.premiumUnlocked = false;
+      state.premiumSource = "pending";
+
+      const todayKey = getTodayKey();
+      if (!state.lastPracticeDate) {
+        state.lastPracticeDate = todayKey;
+      } else if (state.lastPracticeDate !== todayKey) {
+        const dayDiff = getDayDiff(state.lastPracticeDate, todayKey);
+        if (dayDiff === 1) {
+          state.streakDays = Math.max(1, Number(state.streakDays) || 1) + 1;
+        } else if (dayDiff > 1) {
+          state.streakDays = 1;
+        }
+        state.lastPracticeDate = todayKey;
+      }
+
+      tabButtons.forEach(function(button) {
+        button.addEventListener("click", function() {
+          setMode(button.dataset.labMode);
+        });
+      });
+
+      modeButtons.forEach(function(button) {
+        button.addEventListener("click", function() {
+          setMode(button.dataset.goMode);
+          const firstPanel = document.querySelector('[data-lab-panel="' + normalizeMode(button.dataset.goMode) + '"]');
+          if (firstPanel) {
+            firstPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
+
+      lessonButtons.forEach(function(button) {
+        button.addEventListener("click", function() {
+          const lessonId = button.dataset.completeLesson;
+          if (!LESSON_IDS.includes(lessonId) || state.completedLessons.includes(lessonId)) {
+            return;
+          }
+          state.completedLessons.push(lessonId);
+          saveState();
+          renderLessons();
+        });
+      });
+
+      if (quizCheckButton) {
+        quizCheckButton.addEventListener("click", function() {
+          const selections = {
+            q1: (document.querySelector('input[name="lab-q1"]:checked') || {}).value || "",
+            q2: (document.querySelector('input[name="lab-q2"]:checked') || {}).value || "",
+            q3: (document.querySelector('input[name="lab-q3"]:checked') || {}).value || ""
+          };
+
+          if (!selections.q1 || !selections.q2 || !selections.q3) {
+            setStatus(quizStatus, "Responde las 3 preguntas para calificar el quiz.", "error");
+            return;
+          }
+
+          let score = 0;
+          Object.keys(QUIZ_ANSWERS).forEach(function(key) {
+            if (selections[key] === QUIZ_ANSWERS[key]) {
+              score += 1;
+            }
+          });
+
+          const percent = Math.round((score / 3) * 100);
+          state.quizBest = Math.max(Number(state.quizBest) || 0, percent);
+          saveState();
+          renderStats();
+
+          if (percent >= 80) {
+            setStatus(quizStatus, "Excelente: " + percent + "%. Tu comprensión va sólida.", "success");
+          } else if (percent >= 60) {
+            setStatus(quizStatus, "Buen avance: " + percent + "%. Repite una cápsula y vuelve a intentar.", "success");
+          } else {
+            setStatus(quizStatus, "Resultado: " + percent + "%. Vamos de nuevo, la constancia hace la diferencia.", "error");
+          }
+        });
+      }
+
+      if (premiumRefreshButton) {
+        premiumRefreshButton.addEventListener("click", function() {
+          syncPremiumFromCloud(true);
+        });
+      }
+
+      if (premiumRequestButton) {
+        premiumRequestButton.addEventListener("click", async function() {
+          try {
+            const user = await waitAuthUser();
+            if (!user) {
+              setStatus(premiumStatusMessage, "Inicia sesión para reportar tu compra premium.", "error");
+              return;
+            }
+
+            const requestId = await createPremiumRequest("revision-manual", {
+              reference: String((premiumOrderRefInput && premiumOrderRefInput.value) || "").trim()
+            });
+
+            setStatus(
+              premiumStatusMessage,
+              "Solicitud enviada (" + requestId + "). Nuestro equipo validará tu pago y activará el premium.",
+              "success"
+            );
+          } catch (error) {
+            setStatus(premiumStatusMessage, error.message || "No pudimos registrar la solicitud premium.", "error");
+          }
+        });
+      }
+
+      if (premiumPayWompiButton) {
+        premiumPayWompiButton.addEventListener("click", async function() {
+          try {
+            const user = await waitAuthUser();
+            if (!user) {
+              setStatus(premiumStatusMessage, "Inicia sesión primero para pagar y vincular premium a tu cuenta.", "error");
+              return;
+            }
+            await launchPremiumWompi();
+          } catch (error) {
+            setStatus(premiumStatusMessage, error.message || "No pudimos abrir Wompi.", "error");
+          }
+        });
+      }
+
+      if (premiumPayMercadoPagoButton) {
+        premiumPayMercadoPagoButton.addEventListener("click", async function() {
+          try {
+            const user = await waitAuthUser();
+            if (!user) {
+              setStatus(premiumStatusMessage, "Inicia sesión primero para pagar y vincular premium a tu cuenta.", "error");
+              return;
+            }
+            await launchPremiumMercadoPago();
+          } catch (error) {
+            setStatus(premiumStatusMessage, error.message || "No pudimos abrir Mercado Pago.", "error");
+          }
+        });
+      }
+
+      if (resetButton) {
+        resetButton.addEventListener("click", function() {
+          state.completedLessons = [];
+          state.quizBest = 0;
+          saveState();
+          renderLessons();
+          renderStats();
+          setStatus(quizStatus, "Progreso gratis reiniciado. Puedes empezar nuevamente.", "success");
+        });
+      }
+
+      setMode(state.mode);
+      renderUser();
+      renderLessons();
+      renderStats();
+      renderPremium();
+      saveState();
+      syncPremiumFromCloud(false);
+    });
+  </script>
+</body>
+</html>

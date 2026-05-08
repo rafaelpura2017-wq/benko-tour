@@ -167,6 +167,66 @@ service cloud.firestore {
         && validReservationMaps();
     }
 
+    function validPremiumMembershipRequest(requestId) {
+      return isSignedIn()
+        && request.resource.data.keys().hasAll([
+          'id',
+          'schemaVersion',
+          'userUid',
+          'userEmail',
+          'userName',
+          'tipoSolicitud',
+          'estado',
+          'plan',
+          'producto',
+          'precio',
+          'moneda',
+          'referenciaPago',
+          'proveedor',
+          'canal',
+          'origen',
+          'createdAt',
+          'updatedAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'id',
+          'schemaVersion',
+          'userUid',
+          'userEmail',
+          'userName',
+          'tipoSolicitud',
+          'estado',
+          'plan',
+          'producto',
+          'precio',
+          'moneda',
+          'referenciaPago',
+          'proveedor',
+          'canal',
+          'origen',
+          'createdAt',
+          'updatedAt'
+        ])
+        && request.resource.data.id == requestId
+        && request.resource.data.userUid == request.auth.uid
+        && request.resource.data.schemaVersion is int
+        && request.resource.data.schemaVersion >= 1
+        && stringMax(request.resource.data.userEmail, 160)
+        && stringMax(request.resource.data.userName, 120)
+        && oneOf(request.resource.data.tipoSolicitud, ['revision-manual', 'checkout-wompi', 'checkout-mercadopago'])
+        && request.resource.data.estado == 'pendiente'
+        && request.resource.data.plan == 'lengua-premium'
+        && stringBetween(request.resource.data.producto, 3, 140)
+        && nonNegativeNumber(request.resource.data.precio, 10000000)
+        && request.resource.data.moneda == 'COP'
+        && stringMax(request.resource.data.referenciaPago, 80)
+        && stringMax(request.resource.data.proveedor, 30)
+        && stringBetween(request.resource.data.canal, 3, 40)
+        && stringBetween(request.resource.data.origen, 1, 120)
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+    }
+
     match /usuarios/{userId} {
       allow read, write: if isOwner(userId);
     }
@@ -174,6 +234,17 @@ service cloud.firestore {
     match /solicitudes_reserva/{reservationId} {
       allow create: if validReservationRequest(reservationId);
       allow read, update, delete: if false;
+    }
+
+    match /membresias_lengua/{userId} {
+      allow read: if isOwner(userId);
+      allow create, update, delete: if false;
+    }
+
+    match /solicitudes_membresia_lengua/{requestId} {
+      allow create: if validPremiumMembershipRequest(requestId);
+      allow read: if isSignedIn() && resource.data.userUid == request.auth.uid;
+      allow update, delete: if false;
     }
   }
 }

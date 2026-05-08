@@ -25,5 +25,13 @@ window.BENKO_CONFIG = {
       preferenceEndpoint: isLocalEnvironment ? `${localApiBase}/payments/mercadopago/preference` : "",
       fallbackCheckoutUrl: ""
     }
+  },
+
+  languageApp: {
+    premium: {
+      productId: "lengua-premium",
+      productName: "Membresía premium lengua palenquera",
+      priceCop: 189000
+    }
   }
 };

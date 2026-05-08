@@ -46,6 +46,12 @@
       "short_name": "Lengua",
       "description": "Explorar diccionario y traductor",
       "url": "./lengua-palenquera.html"
+    },
+    {
+      "name": "App lengua (gratis + premium)",
+      "short_name": "App lengua",
+      "description": "Abrir la aplicación educativa de lengua palenquera",
+      "url": "./lengua-app.html"
     }
   ]
 }

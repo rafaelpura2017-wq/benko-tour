@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6e3524">
+  <meta name="description" content="App profesional para fortalecer la lengua palenquera con experiencia tipo ruta diaria, práctica guiada y progresión premium.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" href="../assets/images/brand/favicon-ph.png">
+  <link rel="apple-touch-icon" href="../assets/images/brand/apple-touch-icon-180.png">
+  <title>Palenque Lengua Viva | App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./app.css">
+  <script src="../config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="../firebase-config.js"></script>
+  <script src="../assets/data/lengua-palenquera-dictionary.js"></script>
+  <script src="./lessons-data.js"></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <div class="pv-app">
+    <div class="pv-shell">
+      <main class="pv-main">
+        <section class="pv-topbar">
+          <div class="pv-brand">
+            <img src="../assets/images/brand/logo-sello-ph.png" alt="Logo Palenque Lengua Viva" loading="eager" decoding="async">
+            <div>
+              <strong>Palenque Lengua Viva</strong>
+              <span>Aplicación de aprendizaje comunitario</span>
+            </div>
+          </div>
+          <div class="pv-actions">
+            <button class="pv-btn-ghost pv-install" id="install-app-btn" type="button">Instalar app</button>
+            <a class="pv-btn-ghost" href="../acceso.html#acceso">Iniciar sesión</a>
+            <a class="pv-btn-ghost" href="../index.html">Volver al sitio</a>
+          </div>
+        </section>
+
+        <section class="pv-card pv-onboarding" id="onboarding-card">
+          <span class="pv-pill">Bienvenida</span>
+          <h1>Aprende lengua palenquera con ritmo diario</h1>
+          <p>Configura tu perfil de estudio y empezamos con una ruta gamificada estilo app moderna.</p>
+          <div class="pv-grid">
+            <div class="pv-field">
+              <label for="profile-name">Tu nombre</label>
+              <input id="profile-name" type="text" placeholder="Ejemplo: Ana María">
+            </div>
+            <div class="pv-field">
+              <label for="daily-goal">Meta diaria</label>
+              <select id="daily-goal">
+                <option value="5">5 XP diarios (suave)</option>
+                <option value="10" selected>10 XP diarios (equilibrado)</option>
+                <option value="20">20 XP diarios (intensivo)</option>
+              </select>
+            </div>
+          </div>
+          <div class="pv-actions">
+            <button class="pv-btn" id="start-learning-btn" type="button">Comenzar mi ruta</button>
+            <button class="pv-btn-ghost" id="skip-onboarding-btn" type="button">Explorar primero</button>
+          </div>
+        </section>
+
+        <section class="pv-view is-active" id="view-home" data-view="home">
+          <article class="pv-card pv-hero">
+            <span class="pv-pill">Ruta formativa</span>
+            <h2>Del saludo cotidiano al dominio aplicado</h2>
+            <p>Completa lecciones, gana XP, cuida tus corazones y desbloquea la ruta premium validada con tu cuenta.</p>
+            <div class="pv-actions">
+              <button class="pv-btn" id="continue-last-btn" type="button">Continuar lección</button>
+              <button class="pv-btn-ghost" data-go-view="premium" type="button">Ver premium</button>
+            </div>
+          </article>
+
+          <article class="pv-card pv-course" id="course-map"></article>
+        </section>
+
+        <section class="pv-view" id="view-learn" data-view="learn">
+          <article class="pv-card pv-player">
+            <div class="pv-player-head">
+              <div>
+                <h3 id="lesson-title">Selecciona una lección</h3>
+                <p id="lesson-subtitle">Elige una ruta desde Inicio para comenzar.</p>
+              </div>
+              <span class="pv-chip" id="lesson-progress-chip">0/0</span>
+            </div>
+
+            <div class="pv-question" id="lesson-question-card">
+              <b id="question-prompt">Todavía no hay pregunta activa.</b>
+              <div class="pv-options" id="question-options"></div>
+              <div class="pv-feedback" id="question-feedback">Cuando inicies una lección verás aquí la retroalimentación.</div>
+            </div>
+
+            <div class="pv-actions">
+              <button class="pv-btn" id="next-question-btn" type="button" disabled>Siguiente</button>
+              <button class="pv-btn-ghost" id="finish-lesson-btn" type="button" disabled>Finalizar lección</button>
+            </div>
+          </article>
+        </section>
+
+        <section class="pv-view" id="view-dictionary" data-view="dictionary">
+          <article class="pv-card pv-dictionary">
+            <span class="pv-pill">Diccionario vivo</span>
+            <div class="pv-field">
+              <label for="dictionary-search">Buscar palabra o frase</label>
+              <input id="dictionary-search" type="text" placeholder="Ejemplo: kuchá, jundo, memoria">
+            </div>
+            <div class="pv-dictionary-list" id="dictionary-list"></div>
+          </article>
+        </section>
+
+        <section class="pv-view" id="view-premium" data-view="premium">
+          <article class="pv-card pv-premium">
+            <span class="pv-pill">Membresía premium</span>
+            <div class="pv-premium-status">
+              <b id="premium-state-title">Estado: pendiente</b>
+              <small id="premium-state-copy">Inicia sesión para validar tu acceso y sincronizar progreso.</small>
+            </div>
+
+            <div class="pv-grid">
+              <div class="pv-field">
+                <label for="premium-reference">Referencia de pago (opcional)</label>
+                <input id="premium-reference" type="text" placeholder="Ejemplo: LNGPAY-ABCD1234">
+              </div>
+            </div>
+
+            <div class="pv-actions">
+              <button class="pv-btn" id="premium-pay-wompi-btn" type="button">Pagar con Wompi</button>
+              <button class="pv-btn-ghost" id="premium-pay-mp-btn" type="button">Pagar con Mercado Pago</button>
+              <button class="pv-btn-ghost" id="premium-request-btn" type="button">Reportar pago</button>
+              <button class="pv-btn-ghost" id="premium-sync-btn" type="button">Verificar acceso</button>
+            </div>
+
+            <div class="pv-note" id="premium-note">
+              La activación premium se valida con Firestore en tu cuenta real.
+            </div>
+          </article>
+        </section>
+
+        <section class="pv-view" id="view-profile" data-view="profile">
+          <article class="pv-card pv-profile">
+            <span class="pv-pill">Perfil</span>
+            <div class="pv-kpi-grid">
+              <div class="pv-kpi"><b id="profile-name-kpi">Visitante</b><small>Nombre visible</small></div>
+              <div class="pv-kpi"><b id="profile-goal-kpi">10 XP</b><small>Meta diaria</small></div>
+              <div class="pv-kpi"><b id="profile-completed-kpi">0</b><small>Lecciones completadas</small></div>
+              <div class="pv-kpi"><b id="profile-premium-kpi">Pendiente</b><small>Estado premium</small></div>
+            </div>
+            <div class="pv-actions">
+              <button class="pv-btn-ghost" id="reset-progress-btn" type="button">Reiniciar progreso local</button>
+            </div>
+          </article>
+        </section>
+      </main>
+
+      <aside class="pv-side">
+        <section class="pv-topbar">
+          <div class="pv-stats">
+            <div class="pv-stat"><b id="xp-value">0 XP</b><small>Experiencia</small></div>
+            <div class="pv-stat"><b id="streak-value">1 día</b><small>Racha</small></div>
+            <div class="pv-stat"><b id="hearts-value">5 ❤</b><small>Corazones</small></div>
+          </div>
+          <div class="pv-note" id="daily-status-note">Hoy puedes comenzar con una lección corta para sostener tu ritmo.</div>
+        </section>
+
+        <section class="pv-card pv-profile">
+          <span class="pv-pill">Objetivo del día</span>
+          <p id="goal-progress-copy">0 / 10 XP</p>
+          <div class="pv-progress-bar"><span id="goal-progress-bar" style="width: 0%"></span></div>
+        </section>
+      </aside>
+    </div>
+
+    <nav class="pv-bottom-nav" aria-label="Navegación principal de la app">
+      <button class="pv-tab is-active" data-tab="home" type="button"><b>🏠</b><span>Inicio</span></button>
+      <button class="pv-tab" data-tab="learn" type="button"><b>🎯</b><span>Practicar</span></button>
+      <button class="pv-tab" data-tab="dictionary" type="button"><b>📚</b><span>Diccionario</span></button>
+      <button class="pv-tab" data-tab="premium" type="button"><b>💎</b><span>Premium</span></button>
+      <button class="pv-tab" data-tab="profile" type="button"><b>👤</b><span>Perfil</span></button>
+    </nav>
+  </div>
+</body>
+</html>

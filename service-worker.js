@@ -1,4 +1,4 @@
-const CACHE_VERSION = "benko-tour-cache-v2";
+const CACHE_VERSION = "benko-tour-cache-v4";
 const CORE_CACHE_URLS = [
   "./",
   "./index.html",
@@ -8,6 +8,7 @@ const CORE_CACHE_URLS = [
   "./experiencia.html",
   "./nosotros.html",
   "./lengua-palenquera.html",
+  "./lengua-app.html",
   "./moda.html",
   "./musica.html",
   "./otros.html",
@@ -19,6 +20,7 @@ const CORE_CACHE_URLS = [
   "./config.js",
   "./firebase-config.js",
   "./firebase-config.js?v=20260507-auth-ui",
+  "./assets/data/lengua-palenquera-dictionary.js",
   "./manifest.webmanifest",
   "./assets/images/brand/favicon-ph.png",
   "./assets/images/brand/pwa-icon-192.png",

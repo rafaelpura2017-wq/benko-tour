@@ -6,6 +6,9 @@ Landing page comercial para turismo cultural en San Basilio de Palenque, con res
 
 - `index.html`: estructura principal de la landing
 - `acceso.html`: página dedicada para iniciar sesión o crear cuenta
+- `lengua-palenquera.html`: página principal de lengua (diccionario + traductor)
+- `lengua-app.html`: app educativa de lengua con sesión gratis y sesión premium
+- `app-lengua/`: app independiente tipo producto móvil (PWA) enfocada solo en aprendizaje de lengua palenquera
 - `styles.css`: estilos visuales y responsive
 - `script.js`: lógica del formulario, carrito y llamadas al backend
 - `config.js`: configuración rápida del frontend
@@ -45,6 +48,34 @@ py -m http.server 5500
 Luego abre `http://localhost:5500/index.html`.
 
 Importante: para instalar y probar login social, no abras el HTML con `file://`; úsalo desde `localhost` o dominio HTTPS.
+
+## App de lengua (gratis + premium)
+
+- URL local: `http://localhost:5500/lengua-app.html`
+- Ruta gratis: lecciones base + mini quiz + progreso local.
+- Ruta premium: requiere sesión activa + verificación en Firestore.
+- Estado premium real se lee en: `membresias_lengua/{uid}` (solo lectura para cliente).
+- Solicitudes de revisión premium se crean en: `solicitudes_membresia_lengua/{requestId}`.
+- Pagos premium usan los mismos endpoints configurados en `config.js`:
+  - `payments.wompi.checkoutEndpoint`
+  - `payments.mercadopago.preferenceEndpoint`
+
+Para activar premium de forma automática después de pago:
+1. Confirmar pago en tu flujo operativo.
+2. Escribir/actualizar `membresias_lengua/{uid}` con `estado: "activa"` (o `pagada`/`vigente`).
+3. El usuario pulsa **Verificar acceso** en `lengua-app.html` y se desbloquea sin código manual.
+
+## App independiente (modo producto)
+
+- URL local: `http://localhost:5500/app-lengua/index.html`
+- Archivos base:
+  - `app-lengua/index.html`
+  - `app-lengua/app.css`
+  - `app-lengua/app.js`
+  - `app-lengua/lessons-data.js`
+  - `app-lengua/manifest.webmanifest`
+  - `app-lengua/sw.js`
+- Objetivo: separar la experiencia de la landing y trabajarla como aplicación profesional de aprendizaje (móvil primero, PWA instalable, progreso gamificado, premium validado con Firebase).
 
 ## Cómo correr el backend
 
