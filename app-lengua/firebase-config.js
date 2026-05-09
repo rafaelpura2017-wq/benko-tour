@@ -24,6 +24,10 @@ const firebaseConfig = {
 let auth;
 let db;
 let currentUser = null;
+let phoneRecaptchaVerifier = null;
+let phoneRecaptchaWidgetId = null;
+let phoneConfirmationResult = null;
+let phoneAuthContext = null;
 const MEMBER_LEVEL = 'Comunidad Benko';
 const DATA_SCHEMA_VERSION = 2;
 const TEMP_STORAGE_KEYS = {
@@ -55,6 +59,9 @@ document.addEventListener('DOMContentLoaded', function() {
       // Escuchar cambios de autenticación
       auth.onAuthStateChanged(function(user) {
         currentUser = user;
+        if (user) {
+          clearPhoneAuthState();
+        }
         actualizarUIUsuario(user);
       });
       
@@ -164,6 +171,124 @@ function validatePhoneNumber(value) {
     value: phone,
     digits
   };
+}
+
+function normalizeCountryCode(value) {
+  const normalized = sanitizeText(value || '+57').replace(/\s/g, '');
+  const rawDigits = normalized.replace(/\D/g, '');
+
+  if (!rawDigits) {
+    return {
+      valid: false,
+      code: 'client/invalid-country-code',
+      message: 'Selecciona un código de país válido.'
+    };
+  }
+
+  return {
+    valid: true,
+    value: `+${rawDigits}`
+  };
+}
+
+function composePhoneE164(countryCode, phoneValue) {
+  const countryCheck = normalizeCountryCode(countryCode);
+
+  if (!countryCheck.valid) {
+    return countryCheck;
+  }
+
+  const localDigits = sanitizeText(phoneValue).replace(/\D/g, '');
+
+  if (!localDigits) {
+    return {
+      valid: false,
+      code: 'client/missing-phone',
+      message: 'Escribe un número de teléfono para enviar el código.'
+    };
+  }
+
+  const fullNumber = `${countryCheck.value}${localDigits}`;
+  const phoneCheck = validatePhoneNumber(fullNumber);
+
+  if (!phoneCheck.valid) {
+    return phoneCheck;
+  }
+
+  return {
+    valid: true,
+    value: fullNumber,
+    digits: phoneCheck.digits,
+    countryCode: countryCheck.value
+  };
+}
+
+function clearPhoneAuthState(options = {}) {
+  phoneConfirmationResult = null;
+  phoneAuthContext = null;
+
+  if (options.clearRecaptcha && phoneRecaptchaVerifier) {
+    try {
+      phoneRecaptchaVerifier.clear();
+    } catch (_) {
+      // noop
+    }
+    phoneRecaptchaVerifier = null;
+    phoneRecaptchaWidgetId = null;
+  }
+}
+
+async function ensurePhoneRecaptcha(recaptchaContainerId = 'firebase-recaptcha-container') {
+  if (!auth) {
+    return {
+      success: false,
+      error: 'El sistema de autenticación aún no está listo.',
+      errorCode: 'client/auth-not-ready'
+    };
+  }
+
+  if (phoneRecaptchaVerifier) {
+    return {
+      success: true,
+      verifier: phoneRecaptchaVerifier
+    };
+  }
+
+  const containerId = sanitizeText(recaptchaContainerId, 'firebase-recaptcha-container');
+  const containerElement = document.getElementById(containerId);
+
+  if (!containerElement) {
+    return {
+      success: false,
+      error: 'No encontramos el contenedor de verificación para enviar el SMS.',
+      errorCode: 'client/phone-recaptcha-container-missing'
+    };
+  }
+
+  try {
+    phoneRecaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+      containerId,
+      {
+        size: 'invisible'
+      },
+      auth
+    );
+
+    phoneRecaptchaWidgetId = await phoneRecaptchaVerifier.render();
+
+    return {
+      success: true,
+      verifier: phoneRecaptchaVerifier
+    };
+  } catch (error) {
+    phoneRecaptchaVerifier = null;
+    phoneRecaptchaWidgetId = null;
+    return {
+      success: false,
+      error: traducirErrorFirebase(error?.code) || error?.message || 'No pudimos iniciar la validación anti-spam.',
+      errorCode: error?.code || 'client/recaptcha-init-failed'
+    };
+  }
 }
 
 function validatePasswordStrength(value) {
@@ -1019,6 +1144,190 @@ async function iniciarSesion(email, password) {
   }
 }
 
+async function enviarCodigoTelefono(request = {}) {
+  if (!auth) {
+    return {
+      success: false,
+      error: 'El sistema de autenticación aún no está listo.',
+      errorCode: 'client/auth-not-ready'
+    };
+  }
+
+  const phoneCheck = composePhoneE164(
+    request.countryCode || request.codigoPais || '+57',
+    request.phone || request.telefono || ''
+  );
+
+  if (!phoneCheck.valid) {
+    return {
+      success: false,
+      error: phoneCheck.message,
+      errorCode: phoneCheck.code
+    };
+  }
+
+  const recaptchaResult = await ensurePhoneRecaptcha(
+    request.recaptchaContainerId || request.recaptchaId || 'firebase-recaptcha-container'
+  );
+
+  if (!recaptchaResult.success) {
+    return recaptchaResult;
+  }
+
+  try {
+    const confirmationResult = await auth.signInWithPhoneNumber(
+      phoneCheck.value,
+      recaptchaResult.verifier
+    );
+
+    phoneConfirmationResult = confirmationResult;
+    phoneAuthContext = {
+      phone: phoneCheck.value,
+      countryCode: phoneCheck.countryCode,
+      localPhone: sanitizeText(request.phone || request.telefono || ''),
+      profileHints: {
+        nombre: sanitizeText(request.profileHints?.nombre || request.nombre || ''),
+        ciudad: sanitizeText(request.profileHints?.ciudad || request.ciudad || ''),
+        idioma: sanitizeText(request.profileHints?.idioma || request.idioma || 'Español'),
+        recogida: sanitizeText(request.profileHints?.recogida || request.recogida || '')
+      }
+    };
+
+    return {
+      success: true,
+      phone: phoneCheck.value,
+      message: `Código enviado a ${phoneCheck.value}.`
+    };
+  } catch (error) {
+    if (typeof window !== 'undefined' && window.grecaptcha && typeof phoneRecaptchaWidgetId === 'number') {
+      try {
+        window.grecaptcha.reset(phoneRecaptchaWidgetId);
+      } catch (_) {
+        // noop
+      }
+    }
+
+    return {
+      success: false,
+      error: traducirErrorFirebase(error?.code) || error?.message || 'No pudimos enviar el código por SMS.',
+      errorCode: error?.code
+    };
+  }
+}
+
+async function verificarCodigoTelefono(code, profileHints = {}) {
+  if (!auth) {
+    return {
+      success: false,
+      error: 'El sistema de autenticación aún no está listo.',
+      errorCode: 'client/auth-not-ready'
+    };
+  }
+
+  if (!phoneConfirmationResult || typeof phoneConfirmationResult.confirm !== 'function') {
+    return {
+      success: false,
+      error: 'Primero debes solicitar el código de verificación.',
+      errorCode: 'client/phone-code-not-requested'
+    };
+  }
+
+  const cleanCode = sanitizeText(code).replace(/\s/g, '');
+
+  if (!cleanCode || cleanCode.length < 4) {
+    return {
+      success: false,
+      error: 'Ingresa el código que llegó por SMS.',
+      errorCode: 'client/missing-verification-code'
+    };
+  }
+
+  try {
+    const userCredential = await phoneConfirmationResult.confirm(cleanCode);
+    const user = userCredential?.user || auth.currentUser;
+
+    if (!user) {
+      return {
+        success: false,
+        error: 'No pudimos recuperar la sesión luego de verificar el código.',
+        errorCode: 'client/phone-auth-missing-user'
+      };
+    }
+
+    await user.reload();
+    currentUser = auth.currentUser || user;
+
+    if (!db) {
+      return {
+        success: true,
+        user: currentUser,
+        datos: null,
+        mensaje: 'Código verificado. Sesión iniciada.'
+      };
+    }
+
+    const userRef = db.collection(COLLECTION_KEYS.users).doc(currentUser.uid);
+    const snapshot = await userRef.get();
+    const mergedHints = {
+      ...(phoneAuthContext?.profileHints || {}),
+      ...(profileHints || {}),
+      telefono: phoneAuthContext?.phone || sanitizeText(profileHints.telefono || profileHints.phone || ''),
+      phone: phoneAuthContext?.phone || sanitizeText(profileHints.telefono || profileHints.phone || '')
+    };
+
+    if (!snapshot.exists) {
+      await userRef.set(buildUserDocument(currentUser, currentUser.email || '', mergedHints), { merge: true });
+    }
+
+    const refreshedSnapshot = await userRef.get();
+    const baseData = normalizeUserData(refreshedSnapshot.data(), currentUser);
+    const mergedData = normalizeUserData({
+      ...baseData,
+      nombre: sanitizeText(mergedHints.nombre || baseData.nombre || currentUser.displayName || 'Usuario'),
+      telefono: sanitizeText(phoneAuthContext?.phone || mergedHints.telefono || baseData.telefono),
+      email: sanitizeText(baseData.email || currentUser.email || ''),
+      cuenta: {
+        ...(baseData.cuenta || {}),
+        estado: 'Verificada',
+        emailVerificado: Boolean(currentUser.emailVerified),
+        origen: 'phone-sms'
+      }
+    }, currentUser);
+
+    await userRef.set(buildUserMergePayload(mergedData, currentUser, {
+      ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp(),
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }), { merge: true });
+
+    clearPhoneAuthState();
+
+    return {
+      success: true,
+      user: currentUser,
+      datos: {
+        ...mergedData,
+        progreso: {
+          perfilCompleto: calculateProfileCompletion(mergedData)
+        }
+      },
+      mensaje: 'Código verificado. Sesión iniciada correctamente.'
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: traducirErrorFirebase(error?.code) || error?.message || 'No pudimos validar el código.',
+      errorCode: error?.code
+    };
+  }
+}
+
+function cancelarFlujoTelefono() {
+  clearPhoneAuthState({ clearRecaptcha: true });
+  return {
+    success: true
+  };
+}
+
 function buildSocialProvider(providerKey = '') {
   const normalizedKey = sanitizeText(providerKey).toLowerCase();
 
@@ -1449,12 +1758,17 @@ function traducirErrorFirebase(codigo) {
     'client/missing-password': 'Escribe tu contraseña para continuar.',
     'client/invalid-phone': 'El número de teléfono no parece válido.',
     'client/invalid-email-format': 'El correo electrónico no tiene un formato válido.',
+    'client/invalid-country-code': 'Selecciona un código de país válido.',
     'client/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
     'client/weak-password-format': 'La contraseña debe tener al menos 8 caracteres e incluir letras y números.',
     'client/auth-not-ready': 'El sistema de autenticación aún no está listo. Intenta nuevamente en unos segundos.',
     'client/provider-not-supported': 'Este proveedor no está disponible todavía en Benko Tour.',
     'client/provider-missing-email': 'La cuenta del proveedor no entregó un correo válido.',
     'client/social-auth-missing-user': 'No pudimos completar el inicio con proveedor.',
+    'client/phone-recaptcha-container-missing': 'No encontramos el módulo de seguridad para enviar el código SMS.',
+    'client/phone-code-not-requested': 'Primero debes solicitar el código de verificación.',
+    'client/missing-verification-code': 'Ingresa el código de verificación que llegó por SMS.',
+    'client/phone-auth-missing-user': 'No pudimos recuperar la sesión del teléfono.',
     'auth/email-already-in-use': 'Este correo ya está registrado. Intenta iniciar sesión.',
     'auth/invalid-email': 'El correo electrónico no es válido.',
     'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
@@ -1469,6 +1783,16 @@ function traducirErrorFirebase(codigo) {
     'auth/popup-blocked': 'Tu navegador bloqueó la ventana de acceso. Habilita popups e intenta de nuevo.',
     'auth/cancelled-popup-request': 'Se canceló la ventana de acceso. Intenta nuevamente.',
     'auth/operation-not-allowed': 'Este proveedor aún no está activado en Firebase.',
+    'auth/missing-phone-number': 'Debes escribir un número de teléfono válido.',
+    'auth/invalid-phone-number': 'El número debe tener formato internacional válido (ejemplo: +57...).',
+    'auth/captcha-check-failed': 'No pasó la validación de seguridad. Intenta de nuevo.',
+    'auth/invalid-app-credential': 'Falló la validación de seguridad de la app. Recarga e intenta otra vez.',
+    'auth/code-expired': 'El código expiró. Solicita uno nuevo.',
+    'auth/invalid-verification-code': 'El código ingresado es incorrecto.',
+    'auth/missing-verification-code': 'Escribe el código de verificación.',
+    'auth/session-expired': 'La sesión del código expiró. Solicita uno nuevo.',
+    'auth/quota-exceeded': 'Se alcanzó el límite de envíos SMS. Intenta más tarde.',
+    'auth/credential-already-in-use': 'Ese número ya está asociado a otra cuenta.',
     'auth/unauthorized-domain': 'Este dominio no está autorizado en Firebase Authentication.',
     'auth/operation-not-supported-in-this-environment': 'Este entorno no permite acceso social en esta URL. Abre la página desde localhost o un dominio HTTPS autorizado en Firebase.',
     'auth/account-exists-with-different-credential': 'Este correo ya existe con otro método de acceso. Inicia con ese método y luego enlaza el proveedor.'
@@ -1616,6 +1940,9 @@ async function migrarReservasTemporales() {
 window.authFirebase = {
   registrar: registrarUsuario,
   login: iniciarSesion,
+  enviarCodigoTelefono: enviarCodigoTelefono,
+  verificarCodigoTelefono: verificarCodigoTelefono,
+  cancelarFlujoTelefono: cancelarFlujoTelefono,
   loginConProveedor: iniciarSesionConProveedor,
   logout: cerrarSesion,
   deleteAccount: eliminarCuentaActual,

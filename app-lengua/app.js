@@ -7,7 +7,7 @@
   const MAX_HEARTS = 5;
   const PASS_THRESHOLD = 0.67;
   const XP_PER_CORRECT = 4;
-  const ALLOWED_VIEWS = ["home", "learn", "dictionary", "premium", "profile", "admin"];
+  const ALLOWED_VIEWS = ["home", "explore", "learn", "dictionary", "premium", "profile", "admin"];
   const ALLOWED_LEVELS = ["A1", "A2", "B1"];
 
   const data = window.BENKO_LENGUA_APP_DATA || { units: [] };
@@ -64,9 +64,17 @@
     authUserName: document.getElementById("auth-user-name"),
     authUserEmail: document.getElementById("auth-user-email"),
     authNote: document.getElementById("auth-note"),
+    authPhoneInput: document.getElementById("auth-phone-input"),
+    authCountryCode: document.getElementById("auth-country-code"),
+    authTermsCheck: document.getElementById("auth-terms-check"),
+    authPhoneNextButton: document.getElementById("auth-phone-next-btn"),
+    authCodeWrap: document.getElementById("auth-code-wrap"),
+    authCodeInput: document.getElementById("auth-code-input"),
+    authVerifyCodeButton: document.getElementById("auth-verify-code-btn"),
+    authResendCodeButton: document.getElementById("auth-resend-code-btn"),
     authGoogleButton: document.getElementById("auth-google-btn"),
+    authAppleButton: document.getElementById("auth-apple-btn"),
     authFacebookButton: document.getElementById("auth-facebook-btn"),
-    authMicrosoftButton: document.getElementById("auth-microsoft-btn"),
     authLogoutButton: document.getElementById("auth-logout-btn"),
 
     xpValue: document.getElementById("xp-value"),
@@ -135,6 +143,7 @@
   let lessonSession = null;
   let questionAudioElement = null;
   let authWatchAttached = false;
+  let lastPhoneLoginRequest = null;
 
   const state = Object.assign(
     {
@@ -534,6 +543,44 @@
     }
   }
 
+  function setAuthCodeVisible(isVisible) {
+    if (!elements.authCodeWrap) {
+      return;
+    }
+    elements.authCodeWrap.hidden = !isVisible;
+  }
+
+  function setButtonPending(button, pending, pendingText, idleText) {
+    if (!button) {
+      return;
+    }
+
+    if (!button.dataset.idleText) {
+      button.dataset.idleText = sanitizeText(button.textContent, idleText || "");
+    }
+
+    const defaultIdleText = idleText || button.dataset.idleText;
+    button.disabled = Boolean(pending);
+    button.textContent = pending ? sanitizeText(pendingText, defaultIdleText) : defaultIdleText;
+  }
+
+  async function resetPhoneVerificationUI(options) {
+    const shouldCancelRemote = !options || options.cancelRemote !== false;
+    setAuthCodeVisible(false);
+    if (elements.authCodeInput) {
+      elements.authCodeInput.value = "";
+    }
+    lastPhoneLoginRequest = null;
+
+    if (shouldCancelRemote && window.authFirebase && typeof window.authFirebase.cancelarFlujoTelefono === "function") {
+      try {
+        await window.authFirebase.cancelarFlujoTelefono();
+      } catch (_) {
+        // noop
+      }
+    }
+  }
+
   function setPremiumNote(message, type) {
     elements.premiumNote.textContent = message;
     elements.premiumNote.classList.remove("is-success", "is-error");
@@ -593,6 +640,11 @@
     const email = sanitizeText(user && user.email, "");
 
     if (user) {
+      setAuthCodeVisible(false);
+      if (elements.authCodeInput) {
+        elements.authCodeInput.value = "";
+      }
+      lastPhoneLoginRequest = null;
       if (elements.authUserName) {
         elements.authUserName.textContent = displayName || "Cuenta conectada";
       }
@@ -843,7 +895,7 @@
       return;
     }
 
-    const shouldShow = !state.onboardingDone && state.activeView === "home";
+    const shouldShow = !state.onboardingDone && state.activeView === "explore";
     elements.onboardingCard.hidden = !shouldShow;
     if (!shouldShow) {
       return;
@@ -1358,6 +1410,7 @@
 
     const providerLabel = {
       google: "Google",
+      apple: "Apple",
       facebook: "Facebook",
       microsoft: "Microsoft"
     }[providerKey] || providerKey;
@@ -1397,6 +1450,7 @@
       } else if (typeof firebase !== "undefined" && typeof firebase.auth === "function") {
         await firebase.auth().signOut();
       }
+      await resetPhoneVerificationUI();
       setAuthNote("Sesión cerrada correctamente.", "success");
       updateAuthUI();
       updateAdminAccessUI();
@@ -1599,14 +1653,14 @@
       updateOnboardingVisibility();
       updateProfilePanel();
       updateTopStats();
-      setActiveView("home");
+      setActiveView("learn");
     });
 
     elements.skipOnboardingButton.addEventListener("click", function() {
       state.onboardingDone = true;
       saveState();
       updateOnboardingVisibility();
-      setActiveView("home");
+      setActiveView("learn");
     });
   }
 
@@ -1704,21 +1758,177 @@
   }
 
   function wireAuth() {
+    async function requestPhoneCode(isResend) {
+      if (!window.authFirebase || typeof window.authFirebase.enviarCodigoTelefono !== "function") {
+        setAuthNote("No encontramos el módulo OTP cargado. Recarga la app.", "error");
+        return;
+      }
+
+      const country = sanitizeText(elements.authCountryCode && elements.authCountryCode.value, "+57");
+      const rawPhone = sanitizeText(elements.authPhoneInput && elements.authPhoneInput.value);
+      const phoneDigits = rawPhone.replace(/\D/g, "");
+      const acceptedTerms = !!(elements.authTermsCheck && elements.authTermsCheck.checked);
+
+      if (!acceptedTerms) {
+        setAuthNote("Debes aceptar los términos para continuar.", "error");
+        return;
+      }
+
+      if (phoneDigits.length < 8) {
+        setAuthNote("Ingresa un número válido para continuar.", "error");
+        return;
+      }
+
+      setButtonPending(elements.authPhoneNextButton, true, "Enviando...", "Siguiente");
+      setButtonPending(elements.authResendCodeButton, true, "Reenviando...", "Reenviar código");
+      setButtonPending(elements.authVerifyCodeButton, false, "Verificando...", "Verificar");
+
+      const result = await window.authFirebase.enviarCodigoTelefono({
+        countryCode: country,
+        phone: rawPhone,
+        recaptchaContainerId: "firebase-recaptcha-container",
+        profileHints: {
+          nombre: sanitizeText(state.profileName)
+        }
+      });
+
+      setButtonPending(elements.authPhoneNextButton, false, "Enviando...", "Siguiente");
+      setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
+
+      if (!result || !result.success) {
+        setAuthNote((result && result.error) || "No pudimos enviar el código por SMS.", "error");
+        return;
+      }
+
+      lastPhoneLoginRequest = {
+        countryCode: country,
+        phone: rawPhone
+      };
+
+      setAuthCodeVisible(true);
+      if (elements.authCodeInput) {
+        elements.authCodeInput.focus();
+      }
+
+      setAuthNote(
+        (result.message || "Código enviado por SMS.") + (isResend ? " Revisa tu último mensaje." : ""),
+        "success"
+      );
+    }
+
+    async function verifyPhoneCode() {
+      if (!window.authFirebase || typeof window.authFirebase.verificarCodigoTelefono !== "function") {
+        setAuthNote("No encontramos el módulo OTP cargado. Recarga la app.", "error");
+        return;
+      }
+
+      const code = sanitizeText(elements.authCodeInput && elements.authCodeInput.value);
+      if (!code) {
+        setAuthNote("Ingresa el código que llegó por SMS.", "error");
+        return;
+      }
+
+      setButtonPending(elements.authVerifyCodeButton, true, "Verificando...", "Verificar");
+      setButtonPending(elements.authPhoneNextButton, true, "Enviando...", "Siguiente");
+      setButtonPending(elements.authResendCodeButton, true, "Reenviando...", "Reenviar código");
+
+      const result = await window.authFirebase.verificarCodigoTelefono(code, {
+        nombre: sanitizeText(state.profileName)
+      });
+
+      setButtonPending(elements.authVerifyCodeButton, false, "Verificando...", "Verificar");
+      setButtonPending(elements.authPhoneNextButton, false, "Enviando...", "Siguiente");
+      setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
+
+      if (!result || !result.success) {
+        setAuthNote((result && result.error) || "Código inválido. Intenta nuevamente.", "error");
+        return;
+      }
+
+      const signedUser = result.user || getAuthUser();
+      if (
+        signedUser &&
+        sanitizeText(state.profileName, "Visitante") === "Visitante" &&
+        sanitizeText(signedUser.displayName)
+      ) {
+        state.profileName = sanitizeText(signedUser.displayName);
+        saveState();
+      }
+
+      await resetPhoneVerificationUI({ cancelRemote: false });
+      updateOnboardingVisibility();
+      updateProfilePanel();
+      updateAuthUI();
+      updateAdminAccessUI();
+      syncPremiumFromCloud(false);
+      setAuthNote(result.mensaje || "Código verificado. Sesión iniciada.", "success");
+    }
+
+    if (elements.authPhoneNextButton) {
+      elements.authPhoneNextButton.addEventListener("click", function() {
+        requestPhoneCode(false).catch(function() {
+          setButtonPending(elements.authPhoneNextButton, false, "Enviando...", "Siguiente");
+          setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
+          setAuthNote("No pudimos enviar el código por SMS.", "error");
+        });
+      });
+    }
+
+    if (elements.authVerifyCodeButton) {
+      elements.authVerifyCodeButton.addEventListener("click", function() {
+        verifyPhoneCode().catch(function() {
+          setButtonPending(elements.authVerifyCodeButton, false, "Verificando...", "Verificar");
+          setButtonPending(elements.authPhoneNextButton, false, "Enviando...", "Siguiente");
+          setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
+          setAuthNote("No pudimos verificar el código en este momento.", "error");
+        });
+      });
+    }
+
+    if (elements.authResendCodeButton) {
+      elements.authResendCodeButton.addEventListener("click", function() {
+        if (!lastPhoneLoginRequest) {
+          setAuthNote("Primero solicita un código con tu número.", "error");
+          return;
+        }
+
+        requestPhoneCode(true).catch(function() {
+          setButtonPending(elements.authPhoneNextButton, false, "Enviando...", "Siguiente");
+          setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
+          setAuthNote("No pudimos reenviar el código por SMS.", "error");
+        });
+      });
+    }
+
+    if (elements.authCodeInput) {
+      elements.authCodeInput.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          verifyPhoneCode().catch(function() {
+            setButtonPending(elements.authVerifyCodeButton, false, "Verificando...", "Verificar");
+            setButtonPending(elements.authPhoneNextButton, false, "Enviando...", "Siguiente");
+            setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
+            setAuthNote("No pudimos verificar el código en este momento.", "error");
+          });
+        }
+      });
+    }
+
     elements.authGoogleButton.addEventListener("click", function() {
       loginWithProvider("google").catch(function() {
         setAuthNote("No se pudo iniciar con Google.", "error");
       });
     });
 
-    elements.authFacebookButton.addEventListener("click", function() {
-      loginWithProvider("facebook").catch(function() {
-        setAuthNote("No se pudo iniciar con Facebook.", "error");
+    elements.authAppleButton.addEventListener("click", function() {
+      loginWithProvider("apple").catch(function() {
+        setAuthNote("No se pudo iniciar con Apple.", "error");
       });
     });
 
-    elements.authMicrosoftButton.addEventListener("click", function() {
-      loginWithProvider("microsoft").catch(function() {
-        setAuthNote("No se pudo iniciar con Microsoft.", "error");
+    elements.authFacebookButton.addEventListener("click", function() {
+      loginWithProvider("facebook").catch(function() {
+        setAuthNote("No se pudo iniciar con Facebook.", "error");
       });
     });
 
@@ -1882,10 +2092,9 @@
 
     setActiveLevelFilter(state.cefrFilter || "all");
 
-    const hashView = resolveView((window.location.hash || "").replace("#", ""));
-    const initialView = hashView !== "home" || window.location.hash === "#home"
-      ? hashView
-      : resolveView(state.activeView || "home");
+    const hashRaw = window.location.hash || "";
+    const hashView = resolveView(hashRaw.replace("#", ""));
+    const initialView = hashRaw ? hashView : "home";
 
     if (initialView === "admin" && !canUseAdminPanel()) {
       setActiveView("home", true);

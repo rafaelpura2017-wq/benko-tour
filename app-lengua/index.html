@@ -58,19 +58,73 @@
         </section>
 
         <section class="pv-card pv-auth-strip">
-          <div class="pv-auth-row">
+          <div class="pv-auth-header">
+            <span class="pv-pill pv-auth-promo">Acceso rápido</span>
             <div class="pv-auth-session">
               <strong id="auth-user-name">Invitado</strong>
               <small id="auth-user-email">Inicia sesión para sincronizar progreso, premium y admin.</small>
             </div>
-            <div class="pv-actions pv-auth-actions">
-              <button class="pv-btn-ghost" id="auth-google-btn" type="button">Google</button>
-              <button class="pv-btn-ghost" id="auth-facebook-btn" type="button">Facebook</button>
-              <button class="pv-btn-ghost" id="auth-microsoft-btn" type="button">Microsoft</button>
-              <button class="pv-btn-ghost" id="auth-logout-btn" type="button" hidden>Cerrar sesión</button>
-            </div>
           </div>
+
+          <div class="pv-auth-phone">
+            <h3>Ingresa tu celular</h3>
+            <div class="pv-auth-phone-row">
+              <select id="auth-country-code" aria-label="Código de país">
+                <option value="+57" selected>+57</option>
+                <option value="+1">+1</option>
+                <option value="+52">+52</option>
+                <option value="+34">+34</option>
+              </select>
+              <input id="auth-phone-input" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="300 123 4567">
+            </div>
+            <label class="pv-auth-terms" for="auth-terms-check">
+              <input id="auth-terms-check" type="checkbox" checked>
+              <span>He leído y acepto los <a href="../acceso.html#acceso">Términos y Condiciones</a>.</span>
+            </label>
+            <button class="pv-btn pv-auth-next" id="auth-phone-next-btn" type="button">Siguiente</button>
+            <div class="pv-auth-code" id="auth-code-wrap" hidden>
+              <label for="auth-code-input">Código de verificación</label>
+              <div class="pv-auth-code-row">
+                <input id="auth-code-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Ejemplo: 123456">
+                <button class="pv-btn" id="auth-verify-code-btn" type="button">Verificar</button>
+              </div>
+              <button class="pv-btn-ghost pv-auth-resend-btn" id="auth-resend-code-btn" type="button">Reenviar código</button>
+            </div>
+            <div id="firebase-recaptcha-container" class="pv-recaptcha-anchor" aria-hidden="true"></div>
+          </div>
+
+          <div class="pv-auth-divider"><span>o</span></div>
+
+          <div class="pv-auth-social">
+            <button class="pv-btn-ghost pv-social-btn pv-social-google" id="auth-google-btn" type="button">
+              <span class="pv-social-icon" aria-hidden="true">G</span>
+              <span class="pv-social-label">Iniciar sesión con Google</span>
+            </button>
+            <button class="pv-btn-ghost pv-social-btn pv-social-apple" id="auth-apple-btn" type="button">
+              <span class="pv-social-icon" aria-hidden="true"></span>
+              <span class="pv-social-label">Iniciar sesión con Apple</span>
+            </button>
+            <button class="pv-btn-ghost pv-social-btn pv-social-facebook" id="auth-facebook-btn" type="button">
+              <span class="pv-social-icon" aria-hidden="true">f</span>
+              <span class="pv-social-label">Iniciar sesión con Facebook</span>
+            </button>
+            <button class="pv-btn-ghost pv-social-btn pv-social-logout" id="auth-logout-btn" type="button" hidden>Cerrar sesión</button>
+          </div>
+
           <div class="pv-note" id="auth-note">Autenticación social lista para activar comunidad, progreso y premium.</div>
+        </section>
+
+        <section class="pv-view is-active" id="view-home" data-view="home">
+          <article class="pv-card pv-start-clean">
+            <span class="pv-pill">Inicio</span>
+            <h2>Comienza sin distracciones</h2>
+            <p>Accede y entra al módulo que quieras desde el menú: lecciones, juegos, comunidad y perfil.</p>
+            <div class="pv-actions pv-start-actions">
+              <button class="pv-btn" data-go-view="learn" type="button">Ir a Lecciones</button>
+              <button class="pv-btn-ghost" data-go-view="dictionary" type="button">Ir a Juegos</button>
+              <button class="pv-btn-ghost" data-go-view="explore" type="button">Ver sesión completa</button>
+            </div>
+          </article>
         </section>
 
         <section class="pv-card pv-onboarding" id="onboarding-card">
@@ -118,7 +172,7 @@
           </div>
         </section>
 
-        <section class="pv-view is-active" id="view-home" data-view="home">
+        <section class="pv-view" id="view-explore" data-view="explore">
           <article class="pv-card pv-hero">
             <div class="pv-hero-stage">
               <div class="pv-hero-copy">
