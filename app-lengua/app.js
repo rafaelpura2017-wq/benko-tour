@@ -67,6 +67,7 @@
     authPhoneInput: document.getElementById("auth-phone-input"),
     authCountryCode: document.getElementById("auth-country-code"),
     authTermsCheck: document.getElementById("auth-terms-check"),
+    authSmsConsentCheck: document.getElementById("auth-sms-consent-check"),
     authPhoneNextButton: document.getElementById("auth-phone-next-btn"),
     authCodeWrap: document.getElementById("auth-code-wrap"),
     authCodeInput: document.getElementById("auth-code-input"),
@@ -560,8 +561,13 @@
     }
 
     const defaultIdleText = idleText || button.dataset.idleText;
+    button.dataset.pending = pending ? "true" : "false";
     button.disabled = Boolean(pending);
     button.textContent = pending ? sanitizeText(pendingText, defaultIdleText) : defaultIdleText;
+
+    if (button === elements.authPhoneNextButton && !pending) {
+      refreshAuthSubmitState();
+    }
   }
 
   async function resetPhoneVerificationUI(options) {
@@ -579,6 +585,24 @@
         // noop
       }
     }
+  }
+
+  function canSubmitPhoneVerification() {
+    const acceptedTerms = Boolean(elements.authTermsCheck && elements.authTermsCheck.checked);
+    const acceptedSmsConsent = Boolean(elements.authSmsConsentCheck && elements.authSmsConsentCheck.checked);
+    const rawPhone = sanitizeText(elements.authPhoneInput && elements.authPhoneInput.value);
+    const phoneDigits = rawPhone.replace(/\D/g, "");
+    return acceptedTerms && acceptedSmsConsent && phoneDigits.length >= 8;
+  }
+
+  function refreshAuthSubmitState() {
+    if (!elements.authPhoneNextButton) {
+      return;
+    }
+
+    const lockedByPending = Boolean(elements.authPhoneNextButton.dataset.pending === "true");
+    const allowed = canSubmitPhoneVerification();
+    elements.authPhoneNextButton.disabled = lockedByPending || !allowed;
   }
 
   function setPremiumNote(message, type) {
@@ -665,6 +689,8 @@
         elements.authLogoutButton.hidden = true;
       }
     }
+
+    refreshAuthSubmitState();
   }
 
   function canUseAdminPanel() {
@@ -1768,14 +1794,23 @@
       const rawPhone = sanitizeText(elements.authPhoneInput && elements.authPhoneInput.value);
       const phoneDigits = rawPhone.replace(/\D/g, "");
       const acceptedTerms = !!(elements.authTermsCheck && elements.authTermsCheck.checked);
+      const acceptedSmsConsent = !!(elements.authSmsConsentCheck && elements.authSmsConsentCheck.checked);
 
       if (!acceptedTerms) {
-        setAuthNote("Debes aceptar los términos para continuar.", "error");
+        setAuthNote("Debes aceptar Términos y Política de Privacidad para continuar.", "error");
+        refreshAuthSubmitState();
+        return;
+      }
+
+      if (!acceptedSmsConsent) {
+        setAuthNote("Debes autorizar el envío de código SMS para validar el acceso.", "error");
+        refreshAuthSubmitState();
         return;
       }
 
       if (phoneDigits.length < 8) {
         setAuthNote("Ingresa un número válido para continuar.", "error");
+        refreshAuthSubmitState();
         return;
       }
 
@@ -1789,6 +1824,12 @@
         recaptchaContainerId: "firebase-recaptcha-container",
         profileHints: {
           nombre: sanitizeText(state.profileName)
+        },
+        legalAcceptance: {
+          termsAccepted: true,
+          privacyAccepted: true,
+          smsConsent: true,
+          acceptedAt: new Date().toISOString()
         }
       });
 
@@ -1796,7 +1837,11 @@
       setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
 
       if (!result || !result.success) {
-        setAuthNote((result && result.error) || "No pudimos enviar el código por SMS.", "error");
+        const fallbackError = "No pudimos enviar el código por SMS.";
+        const codeLabel = sanitizeText(result && result.errorCode);
+        const baseMessage = sanitizeText(result && result.error, fallbackError);
+        const composedMessage = codeLabel ? `${baseMessage} (${codeLabel})` : baseMessage;
+        setAuthNote(composedMessage, "error");
         return;
       }
 
@@ -1828,12 +1873,28 @@
         return;
       }
 
+      if (!elements.authTermsCheck || !elements.authTermsCheck.checked) {
+        setAuthNote("Debes aceptar Términos y Política de Privacidad para completar el acceso.", "error");
+        return;
+      }
+
+      if (!elements.authSmsConsentCheck || !elements.authSmsConsentCheck.checked) {
+        setAuthNote("Debes mantener activo el consentimiento de SMS para validar el código.", "error");
+        return;
+      }
+
       setButtonPending(elements.authVerifyCodeButton, true, "Verificando...", "Verificar");
       setButtonPending(elements.authPhoneNextButton, true, "Enviando...", "Siguiente");
       setButtonPending(elements.authResendCodeButton, true, "Reenviando...", "Reenviar código");
 
       const result = await window.authFirebase.verificarCodigoTelefono(code, {
-        nombre: sanitizeText(state.profileName)
+        nombre: sanitizeText(state.profileName),
+        legalAcceptance: {
+          termsAccepted: Boolean(elements.authTermsCheck && elements.authTermsCheck.checked),
+          privacyAccepted: Boolean(elements.authTermsCheck && elements.authTermsCheck.checked),
+          smsConsent: Boolean(elements.authSmsConsentCheck && elements.authSmsConsentCheck.checked),
+          acceptedAt: new Date().toISOString()
+        }
       });
 
       setButtonPending(elements.authVerifyCodeButton, false, "Verificando...", "Verificar");
@@ -1841,7 +1902,11 @@
       setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
 
       if (!result || !result.success) {
-        setAuthNote((result && result.error) || "Código inválido. Intenta nuevamente.", "error");
+        const fallbackError = "Código inválido. Intenta nuevamente.";
+        const codeLabel = sanitizeText(result && result.errorCode);
+        const baseMessage = sanitizeText(result && result.error, fallbackError);
+        const composedMessage = codeLabel ? `${baseMessage} (${codeLabel})` : baseMessage;
+        setAuthNote(composedMessage, "error");
         return;
       }
 
@@ -1914,6 +1979,30 @@
       });
     }
 
+    if (elements.authPhoneInput) {
+      elements.authPhoneInput.addEventListener("input", function() {
+        refreshAuthSubmitState();
+      });
+    }
+
+    if (elements.authCountryCode) {
+      elements.authCountryCode.addEventListener("change", function() {
+        refreshAuthSubmitState();
+      });
+    }
+
+    if (elements.authTermsCheck) {
+      elements.authTermsCheck.addEventListener("change", function() {
+        refreshAuthSubmitState();
+      });
+    }
+
+    if (elements.authSmsConsentCheck) {
+      elements.authSmsConsentCheck.addEventListener("change", function() {
+        refreshAuthSubmitState();
+      });
+    }
+
     elements.authGoogleButton.addEventListener("click", function() {
       loginWithProvider("google").catch(function() {
         setAuthNote("No se pudo iniciar con Google.", "error");
@@ -1956,6 +2045,8 @@
         syncPremiumFromCloud(false);
       });
     }
+
+    refreshAuthSubmitState();
   }
 
   function wireAdmin() {

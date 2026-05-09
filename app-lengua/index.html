@@ -13,11 +13,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./app.css">
-  <script src="./config.js" onerror="this.onerror=null;this.src='../config.js';"></script>
+  <script src="./config.js?v=20260509a" onerror="this.onerror=null;this.src='../config.js?v=20260509a';"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="./firebase-config.js" onerror="this.onerror=null;this.src='../firebase-config.js';"></script>
+  <script src="./firebase-config.js?v=20260509a" onerror="this.onerror=null;this.src='../firebase-config.js?v=20260509a';"></script>
   <script src="./assets/data/lengua-palenquera-dictionary.js" onerror="this.onerror=null;this.src='../assets/data/lengua-palenquera-dictionary.js';"></script>
   <script src="./lessons-data.js"></script>
   <script src="./app.js" defer></script>
@@ -78,10 +78,17 @@
               <input id="auth-phone-input" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="300 123 4567">
             </div>
             <label class="pv-auth-terms" for="auth-terms-check">
-              <input id="auth-terms-check" type="checkbox" checked>
-              <span>He leído y acepto los <a href="../acceso.html#acceso">Términos y Condiciones</a>.</span>
+              <input id="auth-terms-check" type="checkbox">
+              <span>
+                Acepto los <a href="./terminos.html#terminos" target="_blank" rel="noopener noreferrer">Términos y Condiciones</a>
+                y la <a href="./terminos.html#privacidad" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.
+              </span>
             </label>
-            <button class="pv-btn pv-auth-next" id="auth-phone-next-btn" type="button">Siguiente</button>
+            <label class="pv-auth-terms pv-auth-terms-soft" for="auth-sms-consent-check">
+              <input id="auth-sms-consent-check" type="checkbox">
+              <span>Autorizo recibir un código de verificación por SMS para validar mi acceso.</span>
+            </label>
+            <button class="pv-btn pv-auth-next" id="auth-phone-next-btn" type="button" disabled>Siguiente</button>
             <div class="pv-auth-code" id="auth-code-wrap" hidden>
               <label for="auth-code-input">Código de verificación</label>
               <div class="pv-auth-code-row">

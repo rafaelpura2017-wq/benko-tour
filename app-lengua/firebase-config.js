@@ -291,6 +291,24 @@ async function ensurePhoneRecaptcha(recaptchaContainerId = 'firebase-recaptcha-c
   }
 }
 
+function resolveFirebaseErrorMessage(error, fallbackMessage = 'Ha ocurrido un error. Intenta de nuevo.') {
+  const fallbackText = sanitizeText(fallbackMessage, 'Ha ocurrido un error. Intenta de nuevo.');
+  const rawCode = sanitizeText(error?.code || '');
+  const rawMessage = sanitizeText(error?.message || '');
+  const translated = rawCode ? traducirErrorFirebase(rawCode) : '';
+  const isGenericTranslation = translated === 'Ha ocurrido un error. Intenta de nuevo.';
+
+  let finalMessage = translated && !isGenericTranslation
+    ? translated
+    : (rawMessage || fallbackText);
+
+  if (rawCode && finalMessage.indexOf(rawCode) === -1) {
+    finalMessage = `${finalMessage} (${rawCode})`;
+  }
+
+  return finalMessage;
+}
+
 function validatePasswordStrength(value) {
   const password = String(value || '');
 
@@ -1153,6 +1171,19 @@ async function enviarCodigoTelefono(request = {}) {
     };
   }
 
+  const runtimeProtocol = sanitizeText(window?.location?.protocol || '').toLowerCase();
+  const runtimeHost = sanitizeText(window?.location?.hostname || '').toLowerCase();
+  const isHttpsOrigin = runtimeProtocol === 'https:';
+  const isLocalhostOrigin = runtimeHost === 'localhost' || runtimeHost === '127.0.0.1';
+
+  if (!isHttpsOrigin && !isLocalhostOrigin) {
+    return {
+      success: false,
+      error: 'Para enviar códigos SMS debes abrir la app en un dominio HTTPS público autorizado en Firebase Authentication.',
+      errorCode: 'client/phone-auth-https-required'
+    };
+  }
+
   const phoneCheck = composePhoneE164(
     request.countryCode || request.codigoPais || '+57',
     request.phone || request.telefono || ''
@@ -1190,6 +1221,12 @@ async function enviarCodigoTelefono(request = {}) {
         ciudad: sanitizeText(request.profileHints?.ciudad || request.ciudad || ''),
         idioma: sanitizeText(request.profileHints?.idioma || request.idioma || 'Español'),
         recogida: sanitizeText(request.profileHints?.recogida || request.recogida || '')
+      },
+      legalAcceptance: {
+        termsAccepted: Boolean(request.legalAcceptance?.termsAccepted),
+        privacyAccepted: Boolean(request.legalAcceptance?.privacyAccepted),
+        smsConsent: Boolean(request.legalAcceptance?.smsConsent),
+        acceptedAt: sanitizeText(request.legalAcceptance?.acceptedAt || '')
       }
     };
 
@@ -1199,6 +1236,7 @@ async function enviarCodigoTelefono(request = {}) {
       message: `Código enviado a ${phoneCheck.value}.`
     };
   } catch (error) {
+    console.error('Error al enviar código SMS:', error);
     if (typeof window !== 'undefined' && window.grecaptcha && typeof phoneRecaptchaWidgetId === 'number') {
       try {
         window.grecaptcha.reset(phoneRecaptchaWidgetId);
@@ -1209,7 +1247,7 @@ async function enviarCodigoTelefono(request = {}) {
 
     return {
       success: false,
-      error: traducirErrorFirebase(error?.code) || error?.message || 'No pudimos enviar el código por SMS.',
+      error: resolveFirebaseErrorMessage(error, 'No pudimos enviar el código por SMS.'),
       errorCode: error?.code
     };
   }
@@ -1272,7 +1310,11 @@ async function verificarCodigoTelefono(code, profileHints = {}) {
       ...(phoneAuthContext?.profileHints || {}),
       ...(profileHints || {}),
       telefono: phoneAuthContext?.phone || sanitizeText(profileHints.telefono || profileHints.phone || ''),
-      phone: phoneAuthContext?.phone || sanitizeText(profileHints.telefono || profileHints.phone || '')
+      phone: phoneAuthContext?.phone || sanitizeText(profileHints.telefono || profileHints.phone || ''),
+      legalAcceptance: {
+        ...(phoneAuthContext?.legalAcceptance || {}),
+        ...(profileHints?.legalAcceptance || {})
+      }
     };
 
     if (!snapshot.exists) {
@@ -1294,9 +1336,20 @@ async function verificarCodigoTelefono(code, profileHints = {}) {
       }
     }, currentUser);
 
+    const legalAcceptance = mergedHints.legalAcceptance || {};
+    const acceptedAtClient = sanitizeText(legalAcceptance.acceptedAt || new Date().toISOString());
+    const legalPayload = {
+      termsAccepted: Boolean(legalAcceptance.termsAccepted),
+      privacyAccepted: Boolean(legalAcceptance.privacyAccepted),
+      smsConsent: Boolean(legalAcceptance.smsConsent),
+      acceptedAtClient,
+      acceptedAtServer: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
     await userRef.set(buildUserMergePayload(mergedData, currentUser, {
       ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp(),
-      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp(),
+      legal: legalPayload
     }), { merge: true });
 
     clearPhoneAuthState();
@@ -1315,7 +1368,7 @@ async function verificarCodigoTelefono(code, profileHints = {}) {
   } catch (error) {
     return {
       success: false,
-      error: traducirErrorFirebase(error?.code) || error?.message || 'No pudimos validar el código.',
+      error: resolveFirebaseErrorMessage(error, 'No pudimos validar el código.'),
       errorCode: error?.code
     };
   }
@@ -1769,6 +1822,7 @@ function traducirErrorFirebase(codigo) {
     'client/phone-code-not-requested': 'Primero debes solicitar el código de verificación.',
     'client/missing-verification-code': 'Ingresa el código de verificación que llegó por SMS.',
     'client/phone-auth-missing-user': 'No pudimos recuperar la sesión del teléfono.',
+    'client/phone-auth-https-required': 'La verificación por SMS requiere dominio HTTPS autorizado en Firebase.',
     'auth/email-already-in-use': 'Este correo ya está registrado. Intenta iniciar sesión.',
     'auth/invalid-email': 'El correo electrónico no es válido.',
     'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
@@ -1783,6 +1837,13 @@ function traducirErrorFirebase(codigo) {
     'auth/popup-blocked': 'Tu navegador bloqueó la ventana de acceso. Habilita popups e intenta de nuevo.',
     'auth/cancelled-popup-request': 'Se canceló la ventana de acceso. Intenta nuevamente.',
     'auth/operation-not-allowed': 'Este proveedor aún no está activado en Firebase.',
+    'auth/app-not-authorized': 'Esta URL no está autorizada para Firebase Auth. Revisa dominios autorizados y restricciones del API key.',
+    'auth/argument-error': 'Error de configuración en la solicitud de autenticación.',
+    'auth/invalid-app-credential': 'La validación de seguridad de la app falló. Intenta de nuevo desde una URL autorizada.',
+    'auth/missing-app-credential': 'No se pudo generar credencial de verificación de la app.',
+    'auth/invalid-api-key': 'La API key de Firebase no es válida o no está habilitada para este dominio/origen. Revisa restricciones de la key y dominios autorizados.',
+    'auth/web-storage-unsupported': 'Este navegador no permite el almacenamiento requerido para autenticar.',
+    'auth/internal-error': 'Firebase devolvió un error interno. Intenta de nuevo en unos minutos.',
     'auth/missing-phone-number': 'Debes escribir un número de teléfono válido.',
     'auth/invalid-phone-number': 'El número debe tener formato internacional válido (ejemplo: +57...).',
     'auth/captcha-check-failed': 'No pasó la validación de seguridad. Intenta de nuevo.',

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#052e25">
+  <title>Kumaina | Términos y Privacidad</title>
+  <style>
+    :root {
+      --bg: #041c17;
+      --card: #0a3028;
+      --text: #f6eddc;
+      --muted: #c3d0c8;
+      --gold: #efbc44;
+      --stroke: rgba(239, 188, 68, 0.24);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 90% 8%, rgba(239, 188, 68, 0.15), transparent 33%),
+        linear-gradient(180deg, #05261f, #041c17);
+      color: var(--text);
+      padding: 18px;
+    }
+    main {
+      max-width: 880px;
+      margin: 0 auto;
+      display: grid;
+      gap: 14px;
+    }
+    .card {
+      border: 1px solid var(--stroke);
+      border-radius: 16px;
+      background: rgba(10, 48, 40, 0.88);
+      padding: 16px;
+    }
+    h1, h2 {
+      margin: 0 0 10px;
+      line-height: 1.2;
+    }
+    h1 { font-size: clamp(1.35rem, 1.05rem + 1.2vw, 1.9rem); }
+    h2 { font-size: clamp(1.1rem, 0.95rem + 0.6vw, 1.35rem); color: var(--gold); }
+    p, li {
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 0 0 10px;
+    }
+    ul { margin: 0; padding-left: 18px; }
+    a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+    a:hover { text-decoration: underline; }
+    .meta {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .back {
+      display: inline-flex;
+      width: fit-content;
+      padding: 9px 12px;
+      border: 1px solid var(--stroke);
+      border-radius: 999px;
+      background: rgba(4, 29, 24, 0.7);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="back" href="./index.html">Volver a la app</a>
+    <section class="card">
+      <h1>Kumaina - Términos y Política de Privacidad</h1>
+      <p class="meta">Última actualización: 9 de mayo de 2026</p>
+      <p>Este documento regula el uso de Kumaina y explica cómo tratamos tus datos al usar acceso con teléfono, autenticación social, progreso y módulos de aprendizaje.</p>
+    </section>
+
+    <section class="card" id="terminos">
+      <h2>Términos y Condiciones</h2>
+      <ul>
+        <li>Debes usar la plataforma de forma legal y respetuosa con la comunidad.</li>
+        <li>Eres responsable de la veracidad del número de teléfono y cuenta usada para ingresar.</li>
+        <li>Kumaina puede suspender acceso ante uso fraudulento, abuso de SMS o suplantación.</li>
+        <li>Las funciones premium pueden requerir validación de pago y revisión administrativa.</li>
+        <li>El contenido cultural y educativo se ofrece para aprendizaje y preservación lingüística.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="privacidad">
+      <h2>Política de Privacidad</h2>
+      <ul>
+        <li>Guardamos datos mínimos de perfil para operar tu cuenta (nombre, teléfono, progreso y configuración).</li>
+        <li>Cuando inicias por teléfono, registramos consentimiento legal y verificación por SMS.</li>
+        <li>Los datos se almacenan en Firebase/Firestore del proyecto BENKO TOUR.</li>
+        <li>No compartimos tus datos personales con terceros para venta comercial.</li>
+        <li>Puedes solicitar actualización o eliminación de tu cuenta desde soporte.</li>
+      </ul>
+      <p>Contacto de soporte: <a href="mailto:rafaelpura2017@gmail.com">rafaelpura2017@gmail.com</a></p>
+    </section>
+  </main>
+</body>
+</html>

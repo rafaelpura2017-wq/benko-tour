@@ -403,6 +403,15 @@ svg {
   color: var(--ivory);
 }
 
+.pv-auth-terms-soft {
+  padding-top: 2px;
+  border-top: 1px dashed rgba(239, 188, 68, 0.2);
+}
+
+.pv-auth-terms-soft span {
+  color: color-mix(in srgb, var(--muted) 85%, white 15%);
+}
+
 .pv-auth-next {
   width: 100%;
 }

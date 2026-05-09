@@ -1,7 +1,8 @@
-const CACHE_NAME = "palenque-lengua-v2";
+const CACHE_NAME = "palenque-lengua-v4";
 const APP_FILES = [
   "./",
   "./index.html",
+  "./terminos.html",
   "./app.css",
   "./app.js",
   "./lessons-data.js",
