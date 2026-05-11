@@ -9,6 +9,8 @@
   const XP_PER_CORRECT = 4;
   const ALLOWED_VIEWS = ["home", "explore", "learn", "dictionary", "premium", "profile", "admin"];
   const ALLOWED_LEVELS = ["A1", "A2", "B1"];
+  const ACCESS_PAGE_FILE = "index.html";
+  const DASHBOARD_PAGE_FILE = "dashboard.html";
 
   const data = window.BENKO_LENGUA_APP_DATA || { units: [] };
   const dictionaryPayload = window.benkoPalenqueraDictionary || {};
@@ -64,9 +66,29 @@
     authUserName: document.getElementById("auth-user-name"),
     authUserEmail: document.getElementById("auth-user-email"),
     authNote: document.getElementById("auth-note"),
+    authLoginWrap: document.getElementById("auth-login-wrap"),
+    authRegisterWrap: document.getElementById("auth-register-wrap"),
+    authEmailInput: document.getElementById("auth-email-input"),
+    authLoginEmailFeedback: document.getElementById("auth-login-email-feedback"),
+    authPasswordInput: document.getElementById("auth-password-input"),
+    authLoginPasswordFeedback: document.getElementById("auth-login-password-feedback"),
+    authEmailSubmitButton: document.getElementById("auth-email-submit-btn"),
+    authForgotButton: document.getElementById("auth-forgot-btn"),
+    authOpenRegisterButton: document.getElementById("auth-open-register-btn"),
+    authBackLoginButton: document.getElementById("auth-back-login-btn"),
+    authRegisterNameInput: document.getElementById("auth-register-name"),
+    authRegisterNameFeedback: document.getElementById("auth-register-name-feedback"),
+    authRegisterPhoneInput: document.getElementById("auth-register-phone"),
+    authRegisterPhoneFeedback: document.getElementById("auth-register-phone-feedback"),
+    authRegisterEmailInput: document.getElementById("auth-register-email"),
+    authRegisterEmailFeedback: document.getElementById("auth-register-email-feedback"),
+    authRegisterPasswordInput: document.getElementById("auth-register-password"),
+    authRegisterPasswordFeedback: document.getElementById("auth-register-password-feedback"),
+    authRegisterSubmitButton: document.getElementById("auth-register-submit-btn"),
+    authTermsLoginCheck: document.getElementById("auth-terms-login-check"),
+    authTermsRegisterCheck: document.getElementById("auth-terms-register-check"),
     authPhoneInput: document.getElementById("auth-phone-input"),
     authCountryCode: document.getElementById("auth-country-code"),
-    authTermsCheck: document.getElementById("auth-terms-check"),
     authSmsConsentCheck: document.getElementById("auth-sms-consent-check"),
     authPhoneNextButton: document.getElementById("auth-phone-next-btn"),
     authCodeWrap: document.getElementById("auth-code-wrap"),
@@ -80,6 +102,7 @@
 
     xpValue: document.getElementById("xp-value"),
     streakValue: document.getElementById("streak-value"),
+    streakValueInline: document.getElementById("streak-value-inline"),
     heartsValue: document.getElementById("hearts-value"),
     dailyStatusNote: document.getElementById("daily-status-note"),
     goalProgressCopy: document.getElementById("goal-progress-copy"),
@@ -145,6 +168,11 @@
   let questionAudioElement = null;
   let authWatchAttached = false;
   let lastPhoneLoginRequest = null;
+  let lastKnownAuthUid = "";
+  let authMode = "login";
+  let authTransitionLayer = null;
+  let authTransitionTimer = null;
+  let authTransitionFallbackTimer = null;
 
   const state = Object.assign(
     {
@@ -275,6 +303,170 @@
   function resolveView(value) {
     const view = sanitizeText(value).toLowerCase();
     return ALLOWED_VIEWS.includes(view) ? view : "home";
+  }
+
+  function getCurrentPath() {
+    return sanitizeText(window.location.pathname).toLowerCase();
+  }
+
+  function getAppBasePath() {
+    const pathname = window.location.pathname || "/";
+    const lastSlash = pathname.lastIndexOf("/");
+    if (lastSlash < 0) {
+      return "/";
+    }
+    return pathname.slice(0, lastSlash + 1) || "/";
+  }
+
+  function getCanonicalOrigin() {
+    return window.location.origin;
+  }
+
+  function isDashboardPage() {
+    const path = getCurrentPath();
+    return /\/dashboard(?:\.html|\/index(?:\.html)?)?\/?$/.test(path);
+  }
+
+  function buildPageUrl(fileName, viewName) {
+    const view = resolveView(viewName || "explore");
+    const origin = getCanonicalOrigin();
+    const basePath = getAppBasePath();
+    return origin + basePath + sanitizeText(fileName) + "#" + view;
+  }
+
+  function buildDashboardPageUrl(viewName, preferCleanUrl) {
+    const dashboardPath = preferCleanUrl ? "dashboard" : DASHBOARD_PAGE_FILE;
+    return buildPageUrl(dashboardPath, viewName);
+  }
+
+  function redirectToDashboard(viewName, options) {
+    const settings = options || {};
+    const targetView = resolveView(viewName || "explore");
+    if (isDashboardPage()) {
+      setActiveView(targetView);
+      hideAuthTransition();
+      return;
+    }
+
+    const useCleanUrl = settings.forceHtml ? false : settings.preferCleanUrl !== false;
+    window.location.replace(buildDashboardPageUrl(targetView, useCleanUrl));
+  }
+
+  function redirectToAccess() {
+    if (!isDashboardPage()) {
+      return;
+    }
+    window.location.replace(buildPageUrl(ACCESS_PAGE_FILE, "home"));
+  }
+
+  function ensureAuthTransitionLayer() {
+    if (authTransitionLayer || !document.body) {
+      return authTransitionLayer;
+    }
+
+    const layer = document.createElement("div");
+    layer.className = "pv-auth-transition";
+    layer.setAttribute("aria-hidden", "true");
+    layer.innerHTML =
+      "<div class=\"pv-auth-transition-card\" role=\"status\" aria-live=\"polite\">" +
+      "<span class=\"pv-auth-transition-chip\">KUMAINA</span>" +
+      "<div class=\"pv-auth-transition-icon\" aria-hidden=\"true\">✓</div>" +
+      "<h2 class=\"pv-auth-transition-title\">Entrando a tu panel...</h2>" +
+      "<p class=\"pv-auth-transition-copy\">Estamos preparando tus lecciones, juegos y cultura viva.</p>" +
+      "<button class=\"pv-auth-transition-cta\" type=\"button\" data-auth-transition-cta>Entrar ahora</button>" +
+      "<div class=\"pv-auth-transition-track\"><span></span></div>" +
+      "<div class=\"pv-auth-transition-dots\" aria-hidden=\"true\"><i></i><i></i><i></i></div>" +
+      "</div>";
+
+    document.body.appendChild(layer);
+    authTransitionLayer = layer;
+    return authTransitionLayer;
+  }
+
+  function showAuthTransition(title, copy, tone) {
+    if (isDashboardPage()) {
+      return;
+    }
+
+    const layer = ensureAuthTransitionLayer();
+    if (!layer) {
+      return;
+    }
+
+    const titleEl = layer.querySelector(".pv-auth-transition-title");
+    const copyEl = layer.querySelector(".pv-auth-transition-copy");
+    if (titleEl) {
+      titleEl.textContent = sanitizeText(title, "Entrando a tu panel...");
+    }
+    if (copyEl) {
+      copyEl.textContent = sanitizeText(copy, "Estamos preparando tus lecciones, juegos y cultura viva.");
+    }
+
+    layer.classList.toggle("is-success", sanitizeText(tone).toLowerCase() === "success");
+    layer.classList.add("is-visible");
+    document.body.classList.add("pv-lock-scroll");
+  }
+
+  function hideAuthTransition() {
+    if (!authTransitionLayer) {
+      return;
+    }
+
+    authTransitionLayer.classList.remove("is-visible");
+    document.body.classList.remove("pv-lock-scroll");
+  }
+
+  function setAuthTransitionAction(viewName) {
+    const layer = ensureAuthTransitionLayer();
+    if (!layer) {
+      return;
+    }
+    const button = layer.querySelector("[data-auth-transition-cta]");
+    if (!button) {
+      return;
+    }
+    const targetView = resolveView(viewName || "explore");
+    button.onclick = function() {
+      redirectToDashboard(targetView, { forceHtml: true });
+    };
+  }
+
+  function clearAuthTransitionTimers() {
+    if (authTransitionTimer) {
+      window.clearTimeout(authTransitionTimer);
+      authTransitionTimer = null;
+    }
+    if (authTransitionFallbackTimer) {
+      window.clearTimeout(authTransitionFallbackTimer);
+      authTransitionFallbackTimer = null;
+    }
+  }
+
+  function runDashboardTransition(viewName, options) {
+    const transition = options || {};
+    const targetView = resolveView(viewName || "explore");
+    if (isDashboardPage()) {
+      setActiveView(targetView);
+      return;
+    }
+
+    clearAuthTransitionTimers();
+    setAuthTransitionAction(targetView);
+
+    showAuthTransition(
+      sanitizeText(transition.title, "Entrando a tu panel..."),
+      sanitizeText(transition.copy, "Kumaina está sincronizando tu progreso para continuar donde quedaste."),
+      transition.tone
+    );
+
+    authTransitionTimer = window.setTimeout(function() {
+      redirectToDashboard(targetView, { preferCleanUrl: true });
+      authTransitionFallbackTimer = window.setTimeout(function() {
+        if (!isDashboardPage()) {
+          redirectToDashboard(targetView, { forceHtml: true });
+        }
+      }, 1700);
+    }, Math.max(480, Number(transition.delayMs || 760)));
   }
 
   function renderWordOfDay() {
@@ -454,6 +646,9 @@
   function updateTopStats() {
     elements.xpValue.textContent = Math.max(0, Number(state.xp || 0)) + " XP";
     elements.streakValue.textContent = state.streakDays + (state.streakDays === 1 ? " día" : " días");
+    if (elements.streakValueInline) {
+      elements.streakValueInline.textContent = elements.streakValue.textContent;
+    }
     elements.heartsValue.textContent = Math.max(0, Number(state.hearts || 0)) + " ❤";
 
     const goalProgress = getCurrentGoalProgress();
@@ -544,6 +739,32 @@
     }
   }
 
+  function enrichAuthErrorMessage(baseMessage, errorCode) {
+    const code = sanitizeText(errorCode).toLowerCase();
+    const origin = sanitizeText(window.location.origin);
+
+    if (
+      code === "auth/invalid-api-key" ||
+      code === "auth/app-not-authorized" ||
+      code === "auth/unauthorized-domain"
+    ) {
+      return (
+        sanitizeText(baseMessage, "No se pudo iniciar sesión.") +
+        " Origen actual: " + origin +
+        ". Usa https://benko-tour.web.app y valida en Firebase: Authentication > Settings > Authorized domains (benko-tour.web.app y benko-tour.firebaseapp.com)."
+      );
+    }
+
+    if (code === "auth/operation-not-allowed") {
+      return (
+        sanitizeText(baseMessage, "Este método no está habilitado.") +
+        " Activa en Firebase Authentication > Sign-in method el proveedor que estás usando (Google, Phone, etc.)."
+      );
+    }
+
+    return sanitizeText(baseMessage, "Ha ocurrido un error. Intenta de nuevo.");
+  }
+
   function setAuthCodeVisible(isVisible) {
     if (!elements.authCodeWrap) {
       return;
@@ -565,7 +786,10 @@
     button.disabled = Boolean(pending);
     button.textContent = pending ? sanitizeText(pendingText, defaultIdleText) : defaultIdleText;
 
-    if (button === elements.authPhoneNextButton && !pending) {
+    if (
+      (button === elements.authPhoneNextButton || button === elements.authEmailSubmitButton || button === elements.authRegisterSubmitButton) &&
+      !pending
+    ) {
       refreshAuthSubmitState();
     }
   }
@@ -587,22 +811,147 @@
     }
   }
 
-  function canSubmitPhoneVerification() {
-    const acceptedTerms = Boolean(elements.authTermsCheck && elements.authTermsCheck.checked);
-    const acceptedSmsConsent = Boolean(elements.authSmsConsentCheck && elements.authSmsConsentCheck.checked);
-    const rawPhone = sanitizeText(elements.authPhoneInput && elements.authPhoneInput.value);
-    const phoneDigits = rawPhone.replace(/\D/g, "");
-    return acceptedTerms && acceptedSmsConsent && phoneDigits.length >= 8;
+  function getEmailValidation(value) {
+    const email = sanitizeText(value).toLowerCase();
+    if (!email) {
+      return { valid: false, empty: true, message: "Escribe tu correo electrónico." };
+    }
+    const isValid = /\S+@\S+\.\S+/.test(email);
+    return {
+      valid: isValid,
+      empty: false,
+      message: isValid ? "Correo válido." : "Correo inválido. Revisa el formato (ej: nombre@dominio.com)."
+    };
   }
 
-  function refreshAuthSubmitState() {
-    if (!elements.authPhoneNextButton) {
+  function getPasswordValidation(value) {
+    const password = String(value || "");
+    if (!password) {
+      return { valid: false, empty: true, message: "Escribe tu contraseña." };
+    }
+    const isStrong = password.length >= 8 && /[A-Za-z]/.test(password) && /\d/.test(password);
+    return {
+      valid: isStrong,
+      empty: false,
+      message: isStrong ? "Contraseña segura." : "Debe tener 8+ caracteres con letras y números."
+    };
+  }
+
+  function getNameValidation(value) {
+    const fullName = sanitizeText(value);
+    if (!fullName) {
+      return { valid: false, empty: true, message: "Escribe tu nombre completo." };
+    }
+    const isValid = fullName.length >= 3;
+    return {
+      valid: isValid,
+      empty: false,
+      message: isValid ? "Nombre correcto." : "El nombre debe tener al menos 3 caracteres."
+    };
+  }
+
+  function getPhoneValidation(value) {
+    const phone = sanitizeText(value);
+    if (!phone) {
+      return { valid: false, empty: true, message: "Escribe tu número celular." };
+    }
+    const digits = phone.replace(/\D/g, "");
+    const isValid = digits.length >= 10;
+    return {
+      valid: isValid,
+      empty: false,
+      message: isValid ? "Celular válido." : "El celular debe tener al menos 10 dígitos."
+    };
+  }
+
+  function setAuthFieldState(inputEl, feedbackEl, validation) {
+    if (!inputEl) {
       return;
     }
 
-    const lockedByPending = Boolean(elements.authPhoneNextButton.dataset.pending === "true");
-    const allowed = canSubmitPhoneVerification();
-    elements.authPhoneNextButton.disabled = lockedByPending || !allowed;
+    const status = validation && !validation.empty ? (validation.valid ? "valid" : "invalid") : "neutral";
+    inputEl.classList.remove("is-valid", "is-invalid");
+    if (status === "valid") {
+      inputEl.classList.add("is-valid");
+    }
+    if (status === "invalid") {
+      inputEl.classList.add("is-invalid");
+    }
+
+    if (feedbackEl) {
+      feedbackEl.classList.remove("is-valid", "is-invalid");
+      if (status === "valid") {
+        feedbackEl.classList.add("is-valid");
+      }
+      if (status === "invalid") {
+        feedbackEl.classList.add("is-invalid");
+      }
+      feedbackEl.textContent = sanitizeText(validation && validation.message);
+    }
+  }
+
+  function refreshAuthValidationUI() {
+    const loginEmailValidation = getEmailValidation(elements.authEmailInput && elements.authEmailInput.value);
+    const loginPasswordValidation = getPasswordValidation(elements.authPasswordInput && elements.authPasswordInput.value);
+    const registerNameValidation = getNameValidation(elements.authRegisterNameInput && elements.authRegisterNameInput.value);
+    const registerPhoneValidation = getPhoneValidation(elements.authRegisterPhoneInput && elements.authRegisterPhoneInput.value);
+    const registerEmailValidation = getEmailValidation(elements.authRegisterEmailInput && elements.authRegisterEmailInput.value);
+    const registerPasswordValidation = getPasswordValidation(elements.authRegisterPasswordInput && elements.authRegisterPasswordInput.value);
+
+    setAuthFieldState(elements.authEmailInput, elements.authLoginEmailFeedback, loginEmailValidation);
+    setAuthFieldState(elements.authPasswordInput, elements.authLoginPasswordFeedback, loginPasswordValidation);
+    setAuthFieldState(elements.authRegisterNameInput, elements.authRegisterNameFeedback, registerNameValidation);
+    setAuthFieldState(elements.authRegisterPhoneInput, elements.authRegisterPhoneFeedback, registerPhoneValidation);
+    setAuthFieldState(elements.authRegisterEmailInput, elements.authRegisterEmailFeedback, registerEmailValidation);
+    setAuthFieldState(elements.authRegisterPasswordInput, elements.authRegisterPasswordFeedback, registerPasswordValidation);
+  }
+
+  function canSubmitLoginAccess() {
+    const acceptedTerms = Boolean(elements.authTermsLoginCheck && elements.authTermsLoginCheck.checked);
+    const emailValidation = getEmailValidation(elements.authEmailInput && elements.authEmailInput.value);
+    const passwordValidation = getPasswordValidation(elements.authPasswordInput && elements.authPasswordInput.value);
+    return acceptedTerms && emailValidation.valid && passwordValidation.valid;
+  }
+
+  function canSubmitRegisterAccess() {
+    const acceptedTerms = Boolean(elements.authTermsRegisterCheck && elements.authTermsRegisterCheck.checked);
+    const nameValidation = getNameValidation(elements.authRegisterNameInput && elements.authRegisterNameInput.value);
+    const phoneValidation = getPhoneValidation(elements.authRegisterPhoneInput && elements.authRegisterPhoneInput.value);
+    const emailValidation = getEmailValidation(elements.authRegisterEmailInput && elements.authRegisterEmailInput.value);
+    const passwordValidation = getPasswordValidation(elements.authRegisterPasswordInput && elements.authRegisterPasswordInput.value);
+    return acceptedTerms && nameValidation.valid && phoneValidation.valid && emailValidation.valid && passwordValidation.valid;
+  }
+
+  function setAuthMode(nextMode) {
+    const normalizedMode = nextMode === "register" ? "register" : "login";
+    authMode = normalizedMode;
+
+    if (elements.authLoginWrap) {
+      elements.authLoginWrap.hidden = normalizedMode !== "login";
+    }
+
+    if (elements.authRegisterWrap) {
+      elements.authRegisterWrap.hidden = normalizedMode !== "register";
+    }
+
+    refreshAuthValidationUI();
+    refreshAuthSubmitState();
+  }
+
+  function refreshAuthSubmitState() {
+    refreshAuthValidationUI();
+
+    if (elements.authEmailSubmitButton) {
+      const loginPending = Boolean(elements.authEmailSubmitButton.dataset.pending === "true");
+      const canLogin = canSubmitLoginAccess();
+      elements.authEmailSubmitButton.disabled = loginPending || !canLogin;
+    }
+
+    if (elements.authRegisterSubmitButton) {
+      const registerPending = Boolean(elements.authRegisterSubmitButton.dataset.pending === "true");
+      const canRegister = canSubmitRegisterAccess();
+      elements.authRegisterSubmitButton.disabled = registerPending || !canRegister;
+    }
   }
 
   function setPremiumNote(message, type) {
@@ -693,6 +1042,62 @@
     refreshAuthSubmitState();
   }
 
+  function applyPostLoginEntry(user, options) {
+    if (!user) {
+      return;
+    }
+
+    const config = options || {};
+
+    const userDisplayName = sanitizeText(user.displayName, "");
+    let changed = false;
+
+    if (sanitizeText(state.profileName, "Visitante") === "Visitante" && userDisplayName) {
+      state.profileName = userDisplayName;
+      changed = true;
+    }
+
+    if (!state.onboardingDone) {
+      state.onboardingDone = true;
+      changed = true;
+    }
+
+    if (changed) {
+      saveState();
+    }
+
+    updateOnboardingVisibility();
+    updateProfilePanel();
+    updateTopStats();
+    updateAuthUI();
+    updateAdminAccessUI();
+
+    const requestedView = sanitizeText(config.preferredView, "");
+    const preferredView = requestedView
+      ? resolveView(requestedView)
+      : (state.activeView === "home" ? "explore" : state.activeView);
+
+    if (isDashboardPage()) {
+      setActiveView(preferredView);
+      setAuthNote(
+        sanitizeText(config.dashboardMessage, "Sesión iniciada. Ya puedes continuar tu ruta de aprendizaje."),
+        "success"
+      );
+      return;
+    }
+
+    setAuthNote(
+      sanitizeText(config.accessMessage, "Sesión iniciada. Redirigiendo a tu panel..."),
+      "success"
+    );
+    runDashboardTransition(preferredView, {
+      title: sanitizeText(config.transitionTitle, "Entrando a tu panel..."),
+      copy: sanitizeText(config.transitionCopy, "Kumaina está sincronizando tu progreso para continuar donde quedaste."),
+      delayMs: config.transitionDelayMs || 760,
+      tone: sanitizeText(config.transitionTone)
+    });
+  }
+
   function canUseAdminPanel() {
     const user = getAuthUser();
     if (!user) {
@@ -720,7 +1125,7 @@
     }
 
     if (!canUseAdmin && state.activeView === "admin") {
-      setActiveView("home");
+      setActiveView("explore");
     }
 
     if (!elements.adminNote) {
@@ -1447,7 +1852,13 @@
     });
 
     if (!result || !result.success) {
-      setAuthNote((result && result.error) || "No se pudo iniciar sesión con " + providerLabel + ".", "error");
+      setAuthNote(
+        enrichAuthErrorMessage(
+          (result && result.error) || ("No se pudo iniciar sesión con " + providerLabel + "."),
+          result && result.errorCode
+        ),
+        "error"
+      );
       return;
     }
 
@@ -1462,9 +1873,13 @@
       saveState();
     }
 
-    updateOnboardingVisibility();
-    updateProfilePanel();
-    updateAuthUI();
+    applyPostLoginEntry(user, { preferredView: "explore" });
+    if (!user && (state.activeView === "home" || state.activeView === "explore")) {
+      state.onboardingDone = true;
+      saveState();
+      updateOnboardingVisibility();
+      setActiveView("explore");
+    }
     setAuthNote(result.mensaje || ("Sesión iniciada con " + providerLabel + "."), "success");
     syncPremiumFromCloud(false);
   }
@@ -1481,6 +1896,7 @@
       updateAuthUI();
       updateAdminAccessUI();
       syncPremiumFromCloud(false);
+      redirectToAccess();
     } catch (_) {
       setAuthNote("No pudimos cerrar sesión ahora. Intenta de nuevo.", "error");
     }
@@ -1784,17 +2200,20 @@
   }
 
   function wireAuth() {
-    async function requestPhoneCode(isResend) {
-      if (!window.authFirebase || typeof window.authFirebase.enviarCodigoTelefono !== "function") {
-        setAuthNote("No encontramos el módulo OTP cargado. Recarga la app.", "error");
+    function isUserNotFoundError(code) {
+      const normalizedCode = sanitizeText(code).toLowerCase();
+      return normalizedCode === "auth/user-not-found" || normalizedCode === "client/user-not-found";
+    }
+
+    async function submitEmailAccess() {
+      if (!window.authFirebase || typeof window.authFirebase.login !== "function" || typeof window.authFirebase.registrar !== "function") {
+        setAuthNote("No encontramos el módulo de autenticación. Recarga la app.", "error");
         return;
       }
 
-      const country = sanitizeText(elements.authCountryCode && elements.authCountryCode.value, "+57");
-      const rawPhone = sanitizeText(elements.authPhoneInput && elements.authPhoneInput.value);
-      const phoneDigits = rawPhone.replace(/\D/g, "");
-      const acceptedTerms = !!(elements.authTermsCheck && elements.authTermsCheck.checked);
-      const acceptedSmsConsent = !!(elements.authSmsConsentCheck && elements.authSmsConsentCheck.checked);
+      const email = sanitizeText(elements.authEmailInput && elements.authEmailInput.value).toLowerCase();
+      const password = String((elements.authPasswordInput && elements.authPasswordInput.value) || "");
+      const acceptedTerms = Boolean(elements.authTermsLoginCheck && elements.authTermsLoginCheck.checked);
 
       if (!acceptedTerms) {
         setAuthNote("Debes aceptar Términos y Política de Privacidad para continuar.", "error");
@@ -1802,228 +2221,331 @@
         return;
       }
 
-      if (!acceptedSmsConsent) {
-        setAuthNote("Debes autorizar el envío de código SMS para validar el acceso.", "error");
+      if (!email || !email.includes("@")) {
+        setAuthNote("Escribe un correo válido para continuar.", "error");
         refreshAuthSubmitState();
         return;
       }
 
-      if (phoneDigits.length < 8) {
-        setAuthNote("Ingresa un número válido para continuar.", "error");
+      if (password.length < 8) {
+        setAuthNote("La contraseña debe tener al menos 8 caracteres.", "error");
         refreshAuthSubmitState();
         return;
       }
 
-      setButtonPending(elements.authPhoneNextButton, true, "Enviando...", "Siguiente");
-      setButtonPending(elements.authResendCodeButton, true, "Reenviando...", "Reenviar código");
-      setButtonPending(elements.authVerifyCodeButton, false, "Verificando...", "Verificar");
+      setButtonPending(elements.authEmailSubmitButton, true, "Entrando...", "Entrar");
 
-      const result = await window.authFirebase.enviarCodigoTelefono({
-        countryCode: country,
-        phone: rawPhone,
-        recaptchaContainerId: "firebase-recaptcha-container",
-        profileHints: {
-          nombre: sanitizeText(state.profileName)
-        },
-        legalAcceptance: {
-          termsAccepted: true,
-          privacyAccepted: true,
-          smsConsent: true,
-          acceptedAt: new Date().toISOString()
+      let loginResult = null;
+      try {
+        loginResult = await window.authFirebase.login(email, password);
+      } catch (_) {
+        loginResult = {
+          success: false,
+          error: "No se pudo iniciar sesión en este momento.",
+          errorCode: "client/login-failed"
+        };
+      }
+
+      if (loginResult && loginResult.success) {
+        const authUser = loginResult.user || getAuthUser();
+        applyPostLoginEntry(authUser, {
+          preferredView: "explore",
+          accessMessage: "¡Bienvenido de nuevo! Entrando a tu panel...",
+          dashboardMessage: "Sesión iniciada. Continuemos tu ruta de aprendizaje.",
+          transitionTitle: "¡Bienvenido de nuevo!",
+          transitionCopy: "Estamos recuperando tu progreso y tus módulos activos.",
+          transitionDelayMs: 820,
+          transitionTone: "success"
+        });
+        setAuthNote(loginResult.mensaje || "Sesión iniciada correctamente.", "success");
+        syncPremiumFromCloud(false);
+        setButtonPending(elements.authEmailSubmitButton, false, "Entrando...", "Entrar");
+        return;
+      }
+
+      if (isUserNotFoundError(loginResult && loginResult.errorCode)) {
+        setAuthNote("No encontramos esa cuenta. Usa la opción «Crear cuenta» para registrarte.", "error");
+        setButtonPending(elements.authEmailSubmitButton, false, "Entrando...", "Entrar");
+        setAuthMode("register");
+        if (elements.authRegisterEmailInput && !sanitizeText(elements.authRegisterEmailInput.value)) {
+          elements.authRegisterEmailInput.value = email;
         }
-      });
-
-      setButtonPending(elements.authPhoneNextButton, false, "Enviando...", "Siguiente");
-      setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
-
-      if (!result || !result.success) {
-        const fallbackError = "No pudimos enviar el código por SMS.";
-        const codeLabel = sanitizeText(result && result.errorCode);
-        const baseMessage = sanitizeText(result && result.error, fallbackError);
-        const composedMessage = codeLabel ? `${baseMessage} (${codeLabel})` : baseMessage;
-        setAuthNote(composedMessage, "error");
         return;
-      }
-
-      lastPhoneLoginRequest = {
-        countryCode: country,
-        phone: rawPhone
-      };
-
-      setAuthCodeVisible(true);
-      if (elements.authCodeInput) {
-        elements.authCodeInput.focus();
       }
 
       setAuthNote(
-        (result.message || "Código enviado por SMS.") + (isResend ? " Revisa tu último mensaje." : ""),
-        "success"
+        enrichAuthErrorMessage(
+          (loginResult && loginResult.error) || "No se pudo iniciar sesión.",
+          loginResult && loginResult.errorCode
+        ),
+        "error"
       );
+      setButtonPending(elements.authEmailSubmitButton, false, "Entrando...", "Entrar");
     }
 
-    async function verifyPhoneCode() {
-      if (!window.authFirebase || typeof window.authFirebase.verificarCodigoTelefono !== "function") {
-        setAuthNote("No encontramos el módulo OTP cargado. Recarga la app.", "error");
+    async function createBasicAccount() {
+      if (!window.authFirebase || typeof window.authFirebase.registrar !== "function") {
+        setAuthNote("No encontramos el módulo de registro. Recarga la app.", "error");
         return;
       }
 
-      const code = sanitizeText(elements.authCodeInput && elements.authCodeInput.value);
-      if (!code) {
-        setAuthNote("Ingresa el código que llegó por SMS.", "error");
+      const fullName = sanitizeText(elements.authRegisterNameInput && elements.authRegisterNameInput.value);
+      const phone = sanitizeText(elements.authRegisterPhoneInput && elements.authRegisterPhoneInput.value);
+      const email = sanitizeText(elements.authRegisterEmailInput && elements.authRegisterEmailInput.value).toLowerCase();
+      const password = String((elements.authRegisterPasswordInput && elements.authRegisterPasswordInput.value) || "");
+      const acceptedTerms = Boolean(elements.authTermsRegisterCheck && elements.authTermsRegisterCheck.checked);
+
+      if (!acceptedTerms) {
+        setAuthNote("Debes aceptar Términos y Política de Privacidad para crear la cuenta.", "error");
+        refreshAuthSubmitState();
         return;
       }
 
-      if (!elements.authTermsCheck || !elements.authTermsCheck.checked) {
-        setAuthNote("Debes aceptar Términos y Política de Privacidad para completar el acceso.", "error");
+      if (fullName.length < 3) {
+        setAuthNote("Escribe tu nombre completo para crear la cuenta.", "error");
+        refreshAuthSubmitState();
         return;
       }
 
-      if (!elements.authSmsConsentCheck || !elements.authSmsConsentCheck.checked) {
-        setAuthNote("Debes mantener activo el consentimiento de SMS para validar el código.", "error");
+      if (phone.replace(/\D/g, "").length < 10) {
+        setAuthNote("Escribe un celular válido para crear la cuenta.", "error");
+        refreshAuthSubmitState();
         return;
       }
 
-      setButtonPending(elements.authVerifyCodeButton, true, "Verificando...", "Verificar");
-      setButtonPending(elements.authPhoneNextButton, true, "Enviando...", "Siguiente");
-      setButtonPending(elements.authResendCodeButton, true, "Reenviando...", "Reenviar código");
-
-      const result = await window.authFirebase.verificarCodigoTelefono(code, {
-        nombre: sanitizeText(state.profileName),
-        legalAcceptance: {
-          termsAccepted: Boolean(elements.authTermsCheck && elements.authTermsCheck.checked),
-          privacyAccepted: Boolean(elements.authTermsCheck && elements.authTermsCheck.checked),
-          smsConsent: Boolean(elements.authSmsConsentCheck && elements.authSmsConsentCheck.checked),
-          acceptedAt: new Date().toISOString()
-        }
-      });
-
-      setButtonPending(elements.authVerifyCodeButton, false, "Verificando...", "Verificar");
-      setButtonPending(elements.authPhoneNextButton, false, "Enviando...", "Siguiente");
-      setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
-
-      if (!result || !result.success) {
-        const fallbackError = "Código inválido. Intenta nuevamente.";
-        const codeLabel = sanitizeText(result && result.errorCode);
-        const baseMessage = sanitizeText(result && result.error, fallbackError);
-        const composedMessage = codeLabel ? `${baseMessage} (${codeLabel})` : baseMessage;
-        setAuthNote(composedMessage, "error");
+      if (!email || !email.includes("@")) {
+        setAuthNote("Escribe un correo válido para crear la cuenta.", "error");
+        refreshAuthSubmitState();
         return;
       }
 
-      const signedUser = result.user || getAuthUser();
-      if (
-        signedUser &&
-        sanitizeText(state.profileName, "Visitante") === "Visitante" &&
-        sanitizeText(signedUser.displayName)
-      ) {
-        state.profileName = sanitizeText(signedUser.displayName);
+      if (password.length < 8) {
+        setAuthNote("La contraseña debe tener al menos 8 caracteres.", "error");
+        refreshAuthSubmitState();
+        return;
+      }
+
+      setButtonPending(elements.authRegisterSubmitButton, true, "Creando cuenta...", "Crear cuenta");
+
+      let registerResult = null;
+      try {
+        registerResult = await window.authFirebase.registrar(email, password, {
+          nombre: fullName,
+          telefono: phone,
+          phone: phone,
+          legalAcceptance: {
+            termsAccepted: true,
+            privacyAccepted: true,
+            acceptedAt: new Date().toISOString()
+          }
+        });
+      } catch (_) {
+        registerResult = {
+          success: false,
+          error: "No se pudo crear la cuenta en este momento.",
+          errorCode: "client/register-failed"
+        };
+      }
+
+      if (!registerResult || !registerResult.success) {
+        setAuthNote(
+          enrichAuthErrorMessage(
+            (registerResult && registerResult.error) || "No se pudo crear la cuenta.",
+            registerResult && registerResult.errorCode
+          ),
+          "error"
+        );
+        setButtonPending(elements.authRegisterSubmitButton, false, "Creando cuenta...", "Crear cuenta");
+        return;
+      }
+
+      if (sanitizeText(state.profileName, "Visitante") === "Visitante" || !sanitizeText(state.profileName)) {
+        state.profileName = fullName;
         saveState();
       }
 
-      await resetPhoneVerificationUI({ cancelRemote: false });
-      updateOnboardingVisibility();
-      updateProfilePanel();
-      updateAuthUI();
-      updateAdminAccessUI();
+      const createdUser = registerResult.user || getAuthUser();
+      applyPostLoginEntry(createdUser, {
+        preferredView: "explore",
+        accessMessage: "Cuenta creada con éxito. Entrando a tu panel...",
+        dashboardMessage: "Cuenta creada y sesión activa.",
+        transitionTitle: "¡Cuenta creada con éxito!",
+        transitionCopy: "Tu perfil básico ya está guardado. Estamos preparando tu primera ruta.",
+        transitionDelayMs: 1280,
+        transitionTone: "success"
+      });
+      const createdMessage = registerResult.verificationSent
+        ? "Cuenta creada. Revisa tu correo para verificarla."
+        : "Cuenta creada correctamente.";
+      setAuthNote(createdMessage, "success");
       syncPremiumFromCloud(false);
-      setAuthNote(result.mensaje || "Código verificado. Sesión iniciada.", "success");
+      setButtonPending(elements.authRegisterSubmitButton, false, "Creando cuenta...", "Crear cuenta");
     }
 
-    if (elements.authPhoneNextButton) {
-      elements.authPhoneNextButton.addEventListener("click", function() {
-        requestPhoneCode(false).catch(function() {
-          setButtonPending(elements.authPhoneNextButton, false, "Enviando...", "Siguiente");
-          setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
-          setAuthNote("No pudimos enviar el código por SMS.", "error");
+    async function sendPasswordReset() {
+      if (!window.authFirebase || typeof window.authFirebase.resetPassword !== "function") {
+        setAuthNote("No encontramos el módulo de recuperación de contraseña.", "error");
+        return;
+      }
+
+      const email = sanitizeText(elements.authEmailInput && elements.authEmailInput.value).toLowerCase();
+      if (!email || !email.includes("@")) {
+        setAuthNote("Escribe tu correo primero para enviarte el enlace de recuperación.", "error");
+        return;
+      }
+
+      const result = await window.authFirebase.resetPassword(email);
+      if (!result || !result.success) {
+        setAuthNote(
+          enrichAuthErrorMessage(
+            (result && result.error) || "No pudimos enviar el correo de recuperación.",
+            result && result.errorCode
+          ),
+          "error"
+        );
+        return;
+      }
+
+      setAuthNote(result.mensaje || "Te enviamos un enlace de recuperación a tu correo.", "success");
+    }
+
+    if (elements.authEmailSubmitButton) {
+      elements.authEmailSubmitButton.addEventListener("click", function() {
+        submitEmailAccess().catch(function() {
+          setButtonPending(elements.authEmailSubmitButton, false, "Entrando...", "Entrar");
+          setAuthNote("No se pudo completar el acceso en este momento.", "error");
         });
       });
     }
 
-    if (elements.authVerifyCodeButton) {
-      elements.authVerifyCodeButton.addEventListener("click", function() {
-        verifyPhoneCode().catch(function() {
-          setButtonPending(elements.authVerifyCodeButton, false, "Verificando...", "Verificar");
-          setButtonPending(elements.authPhoneNextButton, false, "Enviando...", "Siguiente");
-          setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
-          setAuthNote("No pudimos verificar el código en este momento.", "error");
+    if (elements.authRegisterSubmitButton) {
+      elements.authRegisterSubmitButton.addEventListener("click", function() {
+        createBasicAccount().catch(function() {
+          setButtonPending(elements.authRegisterSubmitButton, false, "Creando cuenta...", "Crear cuenta");
+          setAuthNote("No se pudo crear la cuenta en este momento.", "error");
         });
       });
     }
 
-    if (elements.authResendCodeButton) {
-      elements.authResendCodeButton.addEventListener("click", function() {
-        if (!lastPhoneLoginRequest) {
-          setAuthNote("Primero solicita un código con tu número.", "error");
-          return;
-        }
-
-        requestPhoneCode(true).catch(function() {
-          setButtonPending(elements.authPhoneNextButton, false, "Enviando...", "Siguiente");
-          setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
-          setAuthNote("No pudimos reenviar el código por SMS.", "error");
+    if (elements.authForgotButton) {
+      elements.authForgotButton.addEventListener("click", function() {
+        sendPasswordReset().catch(function() {
+          setAuthNote("No pudimos enviar el enlace de recuperación ahora.", "error");
         });
       });
     }
 
-    if (elements.authCodeInput) {
-      elements.authCodeInput.addEventListener("keydown", function(event) {
+    if (elements.authEmailInput) {
+      elements.authEmailInput.addEventListener("input", function() {
+        refreshAuthSubmitState();
+      });
+    }
+
+    if (elements.authPasswordInput) {
+      elements.authPasswordInput.addEventListener("input", function() {
+        refreshAuthSubmitState();
+      });
+      elements.authPasswordInput.addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
           event.preventDefault();
-          verifyPhoneCode().catch(function() {
-            setButtonPending(elements.authVerifyCodeButton, false, "Verificando...", "Verificar");
-            setButtonPending(elements.authPhoneNextButton, false, "Enviando...", "Siguiente");
-            setButtonPending(elements.authResendCodeButton, false, "Reenviando...", "Reenviar código");
-            setAuthNote("No pudimos verificar el código en este momento.", "error");
-          });
+          if (elements.authEmailSubmitButton && !elements.authEmailSubmitButton.disabled) {
+            elements.authEmailSubmitButton.click();
+          }
         }
       });
     }
 
-    if (elements.authPhoneInput) {
-      elements.authPhoneInput.addEventListener("input", function() {
+    if (elements.authRegisterNameInput) {
+      elements.authRegisterNameInput.addEventListener("input", function() {
         refreshAuthSubmitState();
       });
     }
 
-    if (elements.authCountryCode) {
-      elements.authCountryCode.addEventListener("change", function() {
+    if (elements.authRegisterPhoneInput) {
+      elements.authRegisterPhoneInput.addEventListener("input", function() {
         refreshAuthSubmitState();
       });
     }
 
-    if (elements.authTermsCheck) {
-      elements.authTermsCheck.addEventListener("change", function() {
+    if (elements.authRegisterEmailInput) {
+      elements.authRegisterEmailInput.addEventListener("input", function() {
         refreshAuthSubmitState();
       });
     }
 
-    if (elements.authSmsConsentCheck) {
-      elements.authSmsConsentCheck.addEventListener("change", function() {
+    if (elements.authRegisterPasswordInput) {
+      elements.authRegisterPasswordInput.addEventListener("input", function() {
+        refreshAuthSubmitState();
+      });
+      elements.authRegisterPasswordInput.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          if (elements.authRegisterSubmitButton && !elements.authRegisterSubmitButton.disabled) {
+            elements.authRegisterSubmitButton.click();
+          }
+        }
+      });
+    }
+
+    if (elements.authTermsLoginCheck) {
+      elements.authTermsLoginCheck.addEventListener("change", function() {
         refreshAuthSubmitState();
       });
     }
 
-    elements.authGoogleButton.addEventListener("click", function() {
-      loginWithProvider("google").catch(function() {
-        setAuthNote("No se pudo iniciar con Google.", "error");
+    if (elements.authTermsRegisterCheck) {
+      elements.authTermsRegisterCheck.addEventListener("change", function() {
+        refreshAuthSubmitState();
       });
-    });
+    }
 
-    elements.authAppleButton.addEventListener("click", function() {
-      loginWithProvider("apple").catch(function() {
-        setAuthNote("No se pudo iniciar con Apple.", "error");
+    if (elements.authOpenRegisterButton) {
+      elements.authOpenRegisterButton.addEventListener("click", function() {
+        setAuthMode("register");
+        if (elements.authRegisterEmailInput && !sanitizeText(elements.authRegisterEmailInput.value)) {
+          elements.authRegisterEmailInput.value = sanitizeText(elements.authEmailInput && elements.authEmailInput.value).toLowerCase();
+        }
       });
-    });
+    }
 
-    elements.authFacebookButton.addEventListener("click", function() {
-      loginWithProvider("facebook").catch(function() {
-        setAuthNote("No se pudo iniciar con Facebook.", "error");
+    if (elements.authBackLoginButton) {
+      elements.authBackLoginButton.addEventListener("click", function() {
+        setAuthMode("login");
+        if (elements.authEmailInput && !sanitizeText(elements.authEmailInput.value)) {
+          elements.authEmailInput.value = sanitizeText(elements.authRegisterEmailInput && elements.authRegisterEmailInput.value).toLowerCase();
+        }
       });
-    });
+    }
 
-    elements.authLogoutButton.addEventListener("click", function() {
-      logoutUser();
-    });
+    if (elements.authGoogleButton) {
+      elements.authGoogleButton.addEventListener("click", function() {
+        loginWithProvider("google").catch(function() {
+          setAuthNote("No se pudo iniciar con Google.", "error");
+        });
+      });
+    }
+
+    if (elements.authAppleButton) {
+      elements.authAppleButton.addEventListener("click", function() {
+        loginWithProvider("apple").catch(function() {
+          setAuthNote("No se pudo iniciar con Apple.", "error");
+        });
+      });
+    }
+
+    if (elements.authFacebookButton) {
+      elements.authFacebookButton.addEventListener("click", function() {
+        loginWithProvider("facebook").catch(function() {
+          setAuthNote("No se pudo iniciar con Facebook.", "error");
+        });
+      });
+    }
+
+    if (elements.authLogoutButton) {
+      elements.authLogoutButton.addEventListener("click", function() {
+        logoutUser();
+      });
+    }
 
     if (
       !authWatchAttached &&
@@ -2034,19 +2556,33 @@
     ) {
       authWatchAttached = true;
       firebase.auth().onAuthStateChanged(function(user) {
+        const uid = sanitizeText(user && user.uid, "");
+        const isNewLogin = Boolean(uid) && uid !== lastKnownAuthUid;
+        lastKnownAuthUid = uid;
+
+        if (!user && isDashboardPage()) {
+          redirectToAccess();
+          return;
+        }
+
         if (user && sanitizeText(state.profileName, "Visitante") === "Visitante" && sanitizeText(user.displayName)) {
           state.profileName = sanitizeText(user.displayName);
           saveState();
           updateOnboardingVisibility();
           updateProfilePanel();
         }
+
+        if (isNewLogin) {
+          applyPostLoginEntry(user, { preferredView: "explore" });
+        }
+
         updateAuthUI();
         updateAdminAccessUI();
         syncPremiumFromCloud(false);
       });
     }
 
-    refreshAuthSubmitState();
+    setAuthMode("login");
   }
 
   function wireAdmin() {
@@ -2149,7 +2685,13 @@
       return;
     }
 
-    navigator.serviceWorker.register("./sw.js").catch(function() {
+    navigator.serviceWorker.register("./sw.js?v=20260511q", { updateViaCache: "none" }).then(function(registration) {
+      if (registration && typeof registration.update === "function") {
+        registration.update().catch(function() {
+          // noop
+        });
+      }
+    }).catch(function() {
       // noop
     });
   }
@@ -2181,16 +2723,42 @@
     renderWordOfDay();
     hydrateLessonUIWithoutSession();
 
+    waitAuthUser(isDashboardPage() ? 2600 : 1200).then(function(user) {
+      if (isDashboardPage()) {
+        hideAuthTransition();
+        if (!user) {
+          redirectToAccess();
+          return;
+        }
+        if (state.activeView === "home") {
+          setActiveView("explore");
+        }
+        return;
+      }
+
+      if (user) {
+        runDashboardTransition("explore");
+      }
+    }).catch(function() {
+      // noop
+    });
+
     setActiveLevelFilter(state.cefrFilter || "all");
 
     const hashRaw = window.location.hash || "";
     const hashView = resolveView(hashRaw.replace("#", ""));
-    const initialView = hashRaw ? hashView : "home";
+    const hasAuthenticatedUser = Boolean(getAuthUser());
+    const defaultView = isDashboardPage() && hasAuthenticatedUser ? "explore" : "home";
+    const initialView = hashRaw ? hashView : defaultView;
 
     if (initialView === "admin" && !canUseAdminPanel()) {
       setActiveView("home", true);
     } else {
-      setActiveView(initialView, true);
+      const normalizedInitialView =
+        hasAuthenticatedUser && initialView === "home"
+          ? "explore"
+          : initialView;
+      setActiveView(normalizedInitialView, true);
     }
 
     saveState();

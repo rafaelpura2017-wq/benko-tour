@@ -6,10 +6,31 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "redirects": [
+      {
+        "source": "/app-lengua",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/app-lengua/index.html",
+        "destination": "/",
+        "type": 301
+      }
+    ],
     "cleanUrls": true,
     "headers": [
       {
         "source": "/index.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/dashboard.html",
         "headers": [
           {
             "key": "Cache-Control",

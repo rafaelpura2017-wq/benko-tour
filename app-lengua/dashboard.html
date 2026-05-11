@@ -8,7 +8,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" href="./assets/images/brand/favicon-ph.png">
   <link rel="apple-touch-icon" href="./assets/images/brand/apple-touch-icon-180.png">
-  <title>Kumaina | Lengua Palenquera</title>
+  <title>Kumaina | Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
   <script src="./lessons-data.js?v=20260511q"></script>
   <script src="./app.js?v=20260511q" defer></script>
 </head>
-<body class="pv-mode-access">
+<body class="pv-mode-dashboard">
   <div class="pv-splash" id="pv-splash" aria-hidden="true">
     <div class="pv-splash-inner">
       <img src="./assets/images/brand/logo-sello-ph.png" onerror="this.onerror=null;this.src='../assets/images/brand/logo-sello-ph.png';" alt="Logo Kumaina" class="pv-splash-logo" loading="eager" decoding="async">
@@ -51,8 +51,8 @@
             <button class="pv-btn-ghost pv-install" id="install-app-btn" type="button">Instalar app</button>
             <button class="pv-btn-ghost" id="playstore-btn" type="button" hidden>Google Play</button>
             <button class="pv-btn-ghost" id="apk-download-btn" type="button" hidden>Descargar APK (beta)</button>
-            <a class="pv-btn-ghost" href="../acceso.html#acceso">Centro de acceso</a>
-            <a class="pv-btn-ghost" href="../index.html">Volver al sitio</a>
+            <a class="pv-btn-ghost" href="./index.html">Cambiar cuenta</a>
+            <a class="pv-btn-ghost" href="../index.html">Sitio principal</a>
           </div>
           <small class="pv-distribution-note" id="distribution-note">Instala la app desde el navegador mientras publicamos en Google Play.</small>
         </section>
@@ -199,40 +199,92 @@
         </section>
 
         <section class="pv-view" id="view-explore" data-view="explore">
-          <article class="pv-card pv-hero">
-            <div class="pv-hero-stage">
-              <div class="pv-hero-copy">
-                <span class="pv-pill">Slogan oficial</span>
-                <h2>Aprende. Vive. Fortalece.</h2>
-                <p>Primera app premium para aprender, preservar y globalizar la lengua palenquera con tecnología cultural inmersiva.</p>
-              </div>
-              <div class="pv-hero-visual">
-                <img src="./assets/images/catalog/moda/moda-18.jpg" onerror="this.onerror=null;this.src='../assets/images/catalog/moda/moda-18.jpg';" alt="Escena cultural palenquera" loading="lazy" decoding="async">
-              </div>
-            </div>
-
-            <div class="pv-hero-progress">
-              <article class="pv-hero-progress-card">
-                <p>Tu progreso</p>
-                <b id="hero-level-value">Nivel 1 · Semilla</b>
-                <div class="pv-hero-progress-track"><span id="hero-progress-bar" style="width: 0%"></span></div>
-                <small id="hero-progress-value">0%</small>
+          <article class="pv-card pv-master-layout">
+            <div class="pv-master-grid">
+              <article class="pv-master-brand">
+                <img src="./assets/images/brand/logo-sello-ph.png" onerror="this.onerror=null;this.src='../assets/images/brand/logo-sello-ph.png';" alt="Kumaina" loading="lazy" decoding="async">
+                <h2>KUMAINA</h2>
+                <small>Lengua Palenquera</small>
+                <h3>Aprende. Vive. Fortalece.</h3>
+                <p>La primera app completa para aprender, preservar y compartir la lengua palenquera.</p>
+                <div class="pv-master-quote">
+                  <p>Nuestra lengua.</p>
+                  <p>Nuestra historia.</p>
+                  <b>Nuestro futuro.</b>
+                </div>
               </article>
-              <article class="pv-hero-progress-card">
-                <p>Sigue aprendiendo</p>
-                <b id="hero-next-lesson">Saludos y presentaciones</b>
-                <small id="hero-next-meta">Lección 1/5</small>
-              </article>
-            </div>
 
-            <div class="pv-actions">
-              <button class="pv-btn" id="continue-last-btn" type="button">Continuar</button>
-              <button class="pv-btn-ghost" data-go-view="learn" type="button">Ver lecciones</button>
+              <article class="pv-master-phone">
+                <header class="pv-master-phone-head">
+                  <div>
+                    <p>¡Buen día, Kumaina!</p>
+                    <small>Sigue tu camino, sigue aprendiendo.</small>
+                  </div>
+                  <span class="pv-chip">🔥 <b id="streak-value-inline">7 días</b></span>
+                </header>
+
+                <div class="pv-master-phone-hero">
+                  <img src="./assets/images/catalog/moda/moda-18.jpg" onerror="this.onerror=null;this.src='../assets/images/catalog/moda/moda-18.jpg';" alt="Escena cultural palenquera" loading="lazy" decoding="async">
+                </div>
+
+                <article class="pv-master-progress">
+                  <p>Tu progreso</p>
+                  <b id="hero-level-value">Nivel 1 · Semilla</b>
+                  <div class="pv-hero-progress-track"><span id="hero-progress-bar" style="width: 0%"></span></div>
+                  <small id="hero-progress-value">0%</small>
+                </article>
+
+                <article class="pv-master-next">
+                  <div>
+                    <p>Continúa aprendiendo</p>
+                    <b id="hero-next-lesson">Saludos y presentaciones</b>
+                    <small id="hero-next-meta">Lección 1/5</small>
+                  </div>
+                  <button class="pv-btn" id="continue-last-btn" type="button">Continuar</button>
+                </article>
+              </article>
+
+              <article class="pv-master-right">
+                <h3>TODO EN UNA SOLA APP</h3>
+                <div class="pv-module-grid">
+                  <button class="pv-module-card" type="button" data-go-view="learn"><b>Lecciones</b><small>Aprende paso a paso</small></button>
+                  <button class="pv-module-card" type="button" data-go-view="dictionary"><b>Juegos</b><small>Aprende jugando</small></button>
+                  <button class="pv-module-card" type="button" data-go-view="dictionary"><b>Traductor</b><small>Traduce al instante</small></button>
+                  <button class="pv-module-card" type="button" data-go-view="dictionary"><b>Diccionario</b><small>Palabras y ejemplos</small></button>
+                  <button class="pv-module-card" type="button" data-go-view="dictionary"><b>Habla</b><small>Practica pronunciación</small></button>
+                  <button class="pv-module-card" type="button" data-go-view="premium"><b>Comunidad</b><small>Comparte y conecta</small></button>
+                </div>
+
+                <div class="pv-master-plan">
+                  <h4>GRATIS Y PREMIUM</h4>
+                  <div class="pv-master-plan-grid">
+                    <article class="pv-master-plan-card">
+                      <strong>Gratis</strong>
+                      <ul>
+                        <li>Lecciones básicas</li>
+                        <li>Juegos limitados</li>
+                        <li>Diccionario básico</li>
+                        <li>Traductor limitado</li>
+                      </ul>
+                    </article>
+                    <article class="pv-master-plan-card is-premium">
+                      <strong>Premium</strong>
+                      <ul>
+                        <li>Traductor ilimitado</li>
+                        <li>Lecciones avanzadas</li>
+                        <li>Juegos completos</li>
+                        <li>Modo offline + IA de voz</li>
+                      </ul>
+                    </article>
+                  </div>
+                  <button class="pv-btn" data-go-view="premium" type="button">Hazte Premium</button>
+                </div>
+              </article>
             </div>
           </article>
 
           <article class="pv-card pv-levels">
-            <span class="pv-pill">Niveles CEFR</span>
+            <span class="pv-pill">Ruta de aprendizaje</span>
             <div class="pv-level-chip-group">
               <button class="pv-level-chip is-active" data-level-filter="all" type="button">Todos</button>
               <button class="pv-level-chip" data-level-filter="A1" type="button">A1</button>
@@ -241,6 +293,19 @@
             </div>
             <div class="pv-note" id="level-progress-note">Progreso por nivel pendiente de cálculo.</div>
           </article>
+
+          <section class="pv-screen-grid">
+            <article class="pv-screen-card"><b>1. Lecciones</b><small>Básico, intermedio y avanzado.</small></article>
+            <article class="pv-screen-card"><b>2. Juegos</b><small>Memoria, trivia y palabra oculta.</small></article>
+            <article class="pv-screen-card"><b>3. Traductor</b><small>Español ↔ Palenquero en tiempo real.</small></article>
+            <article class="pv-screen-card"><b>4. Diccionario</b><small>Definiciones, cultura y ejemplo de uso.</small></article>
+            <article class="pv-screen-card"><b>5. Habla</b><small>Escucha, repite y mejora pronunciación.</small></article>
+            <article class="pv-screen-card"><b>6. Comunidad</b><small>Publicaciones, grupos y eventos.</small></article>
+            <article class="pv-screen-card"><b>7. Perfil</b><small>Racha, nivel, puntos y palabras guardadas.</small></article>
+            <article class="pv-screen-card"><b>8. Logros</b><small>Insignias y progreso por objetivos.</small></article>
+            <article class="pv-screen-card"><b>9. Ruta</b><small>Seguimiento visual de tu avance.</small></article>
+            <article class="pv-screen-card"><b>10. Suscripción</b><small>Comparador y activación premium.</small></article>
+          </section>
 
           <section class="pv-home-grid">
             <article class="pv-card pv-home-card">
@@ -268,20 +333,6 @@
               <h3>Desafío diario</h3>
               <p class="pv-home-desc">Completa 1 lección + 1 juego para mantener tu racha y desbloquear bonificación XP.</p>
               <span class="pv-chip">Recompensa: +25 XP</span>
-            </article>
-
-            <article class="pv-card pv-home-card">
-              <h3>Cultura destacada</h3>
-              <p class="pv-home-desc">Historias ancestrales, música tradicional y personajes que sostienen nuestra memoria colectiva.</p>
-              <span class="pv-chip">Modo documental</span>
-            </article>
-
-            <article class="pv-card pv-home-card">
-              <h3>Eventos de comunidad</h3>
-              <p class="pv-home-desc">Retos semanales, clubes culturales y encuentros en vivo para practicar entre usuarios.</p>
-              <div class="pv-actions">
-                <button class="pv-btn-ghost" data-go-view="premium" type="button">Ver comunidad</button>
-              </div>
             </article>
           </section>
 
@@ -334,6 +385,23 @@
             </div>
           </article>
 
+          <article class="pv-card pv-translator-preview">
+            <span class="pv-pill">Traductor IA</span>
+            <div class="pv-grid">
+              <div class="pv-field">
+                <label for="translator-input-es">Español</label>
+                <textarea id="translator-input-es" placeholder="Ejemplo: ¿Cómo estás?"></textarea>
+              </div>
+              <div class="pv-field">
+                <label for="translator-output-pal">Palenquero</label>
+                <textarea id="translator-output-pal" placeholder="Kumó bo tan?" readonly></textarea>
+              </div>
+            </div>
+            <div class="pv-actions">
+              <button class="pv-btn-ghost" type="button">Traducir ahora</button>
+            </div>
+          </article>
+
           <article class="pv-card pv-dictionary">
             <span class="pv-pill">Diccionario vivo</span>
             <div class="pv-field">
@@ -341,6 +409,16 @@
               <input id="dictionary-search" type="text" placeholder="Ejemplo: kuchá, jundo, memoria">
             </div>
             <div class="pv-dictionary-list" id="dictionary-list"></div>
+          </article>
+
+          <article class="pv-card pv-habla-preview">
+            <span class="pv-pill">Habla</span>
+            <h3>Práctica de pronunciación</h3>
+            <p>Escucha la frase, repítela y recibe guía para mejorar tu acento palenquero.</p>
+            <div class="pv-habla-wave" aria-hidden="true">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <button class="pv-btn" type="button">Iniciar práctica de voz</button>
           </article>
         </section>
 
@@ -410,6 +488,28 @@
 
             <div class="pv-actions">
               <button class="pv-btn-ghost" id="reset-progress-btn" type="button">Reiniciar progreso local</button>
+            </div>
+          </article>
+
+          <article class="pv-card pv-achievement-panel">
+            <span class="pv-pill">Logros</span>
+            <h3>Mis insignias</h3>
+            <div class="pv-achievement-list">
+              <article><b>Explorador experto</b><small>Alcanza nivel 5</small></article>
+              <article><b>Aprendiz dedicado</b><small>Completa 10 lecciones</small></article>
+              <article><b>Racha de 7 días</b><small>Practica toda la semana</small></article>
+              <article><b>Guardián de palabras</b><small>Aprende 50 términos</small></article>
+            </div>
+          </article>
+
+          <article class="pv-card pv-route-panel">
+            <span class="pv-pill">Ruta de aprendizaje</span>
+            <div class="pv-route-list">
+              <article class="is-done"><b>Saludos</b><small>Completado</small></article>
+              <article class="is-done"><b>Palabras esenciales</b><small>Completado</small></article>
+              <article class="is-progress"><b>En la comunidad</b><small>En progreso · 65%</small></article>
+              <article><b>Mi familia</b><small>Bloqueado</small></article>
+              <article><b>Comida y hogar</b><small>Bloqueado</small></article>
             </div>
           </article>
         </section>

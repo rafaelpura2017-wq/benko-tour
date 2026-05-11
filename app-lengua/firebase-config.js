@@ -10,14 +10,14 @@
  * 6. Copia los valores de firebaseConfig y reemplaza los de abajo
  */
 
-// Configuración de Firebase - ACTIVADA
+// Configuración base de Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyCgjZ6q9rk5k65HxreQ5vekIYebiCv4Tlk",
+  apiKey: "AIzaSyAkWG0qKMp7Zkc6NR0v_cz4p0YVOyydUIY",
   authDomain: "benko-tour.firebaseapp.com",
   projectId: "benko-tour",
   storageBucket: "benko-tour.firebasestorage.app",
   messagingSenderId: "179919843386",
-  appId: "1:179919843386:web:37d887ee1972ba98c48503"
+  appId: "1:179919843386:web:f7199796f012abebc48503"
 };
 
 // Variable global para Firebase
@@ -1008,7 +1008,10 @@ async function guardarCarritoUsuario(items = []) {
 async function registrarUsuario(email, password, datos = {}) {
   try {
     const emailCheck = validateEmailAddress(email);
-    const phoneCheck = validatePhoneNumber(datos.telefono || datos.phone);
+    const rawPhone = sanitizeText(datos.telefono || datos.phone);
+    const phoneCheck = rawPhone
+      ? validatePhoneNumber(rawPhone)
+      : { valid: true, value: '' };
     const passwordCheck = validatePasswordStrength(password);
 
     if (!emailCheck.valid) {
@@ -1019,7 +1022,7 @@ async function registrarUsuario(email, password, datos = {}) {
       };
     }
 
-    if (!phoneCheck.valid) {
+    if (rawPhone && !phoneCheck.valid) {
       return {
         success: false,
         error: phoneCheck.message,
@@ -1040,8 +1043,7 @@ async function registrarUsuario(email, password, datos = {}) {
     const userRef = db.collection(COLLECTION_KEYS.users).doc(user.uid);
     const payload = buildUserDocument(user, emailCheck.value, {
       ...datos,
-      telefono: phoneCheck.value,
-      phone: phoneCheck.value
+      ...(rawPhone ? { telefono: phoneCheck.value, phone: phoneCheck.value } : {})
     });
     let verificationSent = false;
 
@@ -1462,27 +1464,9 @@ async function iniciarSesionConProveedor(providerKey, profileHints = {}) {
 
   const { provider, key: normalizedProviderKey, label } = providerResult;
 
-  if (normalizedProviderKey === 'google') {
-    try {
-      await auth.signInWithRedirect(provider);
-      return {
-        success: true,
-        pendingRedirect: true,
-        provider: normalizedProviderKey,
-        providerLabel: label,
-        mensaje: 'Te estamos redirigiendo a Google para completar el acceso.'
-      };
-    } catch (redirectError) {
-      console.error('Error al iniciar redirección con Google:', redirectError);
-      return {
-        success: false,
-        error: traducirErrorFirebase(redirectError.code) || redirectError.message,
-        errorCode: redirectError.code
-      };
-    }
-  }
-
   try {
+    // Flujo principal: popup (mejor experiencia en escritorio y navegador normal).
+    // Si el entorno no lo soporta o el popup se bloquea, hacemos fallback a redirect más abajo.
     const userCredential = await auth.signInWithPopup(provider);
     const user = userCredential?.user || auth.currentUser;
 

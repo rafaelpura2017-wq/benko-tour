@@ -3,8 +3,8 @@
   "short_name": "Lengua Viva",
   "description": "App para fortalecer la lengua palenquera con práctica diaria, progreso gamificado y membresía premium.",
   "lang": "es-CO",
-  "start_url": "/app-lengua/index.html",
-  "scope": "/app-lengua/",
+  "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#f4efe4",
@@ -28,19 +28,19 @@
       "name": "Continuar lección",
       "short_name": "Lección",
       "description": "Abrir práctica diaria",
-      "url": "/app-lengua/index.html#learn"
+      "url": "/dashboard.html#learn"
     },
     {
       "name": "Abrir diccionario",
       "short_name": "Diccionario",
       "description": "Consultar palabras palenqueras",
-      "url": "/app-lengua/index.html#dictionary"
+      "url": "/dashboard.html#dictionary"
     },
     {
       "name": "Premium",
       "short_name": "Premium",
       "description": "Ver estado y pagos premium",
-      "url": "/app-lengua/index.html#premium"
+      "url": "/dashboard.html#premium"
     }
   ]
 }
