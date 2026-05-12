@@ -294,6 +294,44 @@
             <div class="pv-note" id="level-progress-note">Progreso por nivel pendiente de cálculo.</div>
           </article>
 
+          <article class="pv-card pv-focus-card">
+            <div class="pv-focus-head">
+              <span class="pv-pill">Hoy en Kumaina</span>
+              <span class="pv-chip" id="home-focus-rank">Semilla</span>
+            </div>
+            <h3 id="home-focus-title">Siguiente paso recomendado</h3>
+            <p id="home-focus-meta">Completa una lección para fortalecer tu ruta diaria.</p>
+
+            <div class="pv-focus-checklist">
+              <article class="pv-focus-item" id="home-mission-lesson">
+                <span>1</span>
+                <div>
+                  <b>Lección guiada</b>
+                  <small>Completa una lección de tu ruta.</small>
+                </div>
+              </article>
+              <article class="pv-focus-item" id="home-mission-game">
+                <span>2</span>
+                <div>
+                  <b>Juego rápido</b>
+                  <small>Refuerza vocabulario con un reto corto.</small>
+                </div>
+              </article>
+              <article class="pv-focus-item" id="home-mission-goal">
+                <span>3</span>
+                <div>
+                  <b>Meta diaria</b>
+                  <small>Alcanza tu objetivo de XP del día.</small>
+                </div>
+              </article>
+            </div>
+
+            <div class="pv-actions">
+              <button class="pv-btn" id="home-focus-primary-btn" data-go-view="learn" type="button">Abrir lección</button>
+              <button class="pv-btn-ghost" id="home-focus-secondary-btn" data-go-view="dictionary" type="button">Practicar en juegos</button>
+            </div>
+          </article>
+
           <section class="pv-screen-grid">
             <article class="pv-screen-card"><b>1. Lecciones</b><small>Básico, intermedio y avanzado.</small></article>
             <article class="pv-screen-card"><b>2. Juegos</b><small>Memoria, trivia y palabra oculta.</small></article>
@@ -349,6 +387,47 @@
               <span class="pv-chip" id="lesson-progress-chip">0/0</span>
             </div>
 
+            <article class="pv-learn-intro" id="learn-overview-card">
+              <div class="pv-learn-kpis">
+                <span class="pv-chip" id="learn-kpi-progress">0/0 completadas</span>
+                <span class="pv-chip" id="learn-kpi-goal">Meta 0/10 XP</span>
+                <span class="pv-chip" id="learn-kpi-hearts">❤ 5</span>
+              </div>
+              <p id="learn-overview-note">Selecciona una lección para iniciar tu ruta.</p>
+              <div class="pv-actions">
+                <button class="pv-btn" id="learn-continue-btn" type="button">Continuar ruta</button>
+                <button class="pv-btn-ghost" id="learn-reset-filters-btn" type="button">Limpiar filtros</button>
+              </div>
+            </article>
+
+            <div class="pv-learn-tools">
+              <div class="pv-grid pv-learn-controls">
+                <div class="pv-field">
+                  <label for="learn-search-input">Buscar lección</label>
+                  <input id="learn-search-input" type="text" placeholder="Ejemplo: saludos, familia, música">
+                </div>
+                <div class="pv-field">
+                  <label for="learn-sort-select">Ordenar</label>
+                  <select id="learn-sort-select">
+                    <option value="recommended" selected>Recomendadas</option>
+                    <option value="levelAsc">Nivel: A1 → B1</option>
+                    <option value="levelDesc">Nivel: B1 → A1</option>
+                    <option value="xpDesc">Más XP primero</option>
+                    <option value="xpAsc">Menos XP primero</option>
+                  </select>
+                </div>
+                <div class="pv-field pv-field-inline">
+                  <label class="pv-check-inline" for="learn-pending-only">
+                    <input id="learn-pending-only" type="checkbox">
+                    Solo pendientes
+                  </label>
+                </div>
+              </div>
+
+              <div class="pv-note" id="learn-list-note">Preparando lista de lecciones...</div>
+              <div class="pv-learn-list" id="learn-lesson-list"></div>
+            </div>
+
             <div class="pv-question" id="lesson-question-card">
               <b id="question-prompt">Todavía no hay pregunta activa.</b>
               <div class="pv-question-tools">
@@ -369,46 +448,127 @@
           <article class="pv-card pv-games">
             <span class="pv-pill">Game Center</span>
             <h3>Módulo de juegos</h3>
-            <p class="pv-games-copy">Practica jugando: memoria visual, palabra oculta, karaoke cultural y más.</p>
+            <p class="pv-games-copy">Practica jugando: memoria visual, palabra oculta, escucha activa y desafíos culturales.</p>
             <article class="pv-game-featured">
               <div>
                 <b>¡Aprende jugando!</b>
-                <small>Refuerza tu conocimiento mientras te diviertes.</small>
+                <small>Elige un modo, suma XP y mantén tu racha diaria.</small>
               </div>
-              <span>Mis logros</span>
+              <span id="game-best-pill">Mejor racha: 0</span>
             </article>
-            <div class="pv-game-grid">
-              <article class="pv-game-card"><b>Palabra oculta</b><small>Descubre términos clave.</small></article>
-              <article class="pv-game-card"><b>Trivia palenquera</b><small>Historia y cultura en retos rápidos.</small></article>
-              <article class="pv-game-card"><b>Escucha y responde</b><small>Entrena comprensión oral.</small></article>
-              <article class="pv-game-card"><b>Ordena la frase</b><small>Construye expresiones reales.</small></article>
+            <div class="pv-game-grid" id="quick-games-grid" role="tablist" aria-label="Modos de juego">
+              <button class="pv-game-card pv-game-card-btn is-active" data-game-mode="hidden-word" type="button"><b>Palabra oculta</b><small>Descubre términos clave.</small></button>
+              <button class="pv-game-card pv-game-card-btn" data-game-mode="trivia" type="button"><b>Trivia palenquera</b><small>Historia y cultura en retos rápidos.</small></button>
+              <button class="pv-game-card pv-game-card-btn" data-game-mode="listening" type="button"><b>Escucha y responde</b><small>Entrena comprensión oral.</small></button>
+              <button class="pv-game-card pv-game-card-btn" data-game-mode="meaning" type="button"><b>Ordena la frase</b><small>Relaciona palabra y significado.</small></button>
             </div>
+
+            <article class="pv-game-panel" id="quick-game-panel">
+              <div class="pv-game-panel-head">
+                <div>
+                  <b id="game-current-title">Palabra oculta</b>
+                  <small id="game-current-copy">Descubre la palabra correcta y refuerza vocabulario.</small>
+                </div>
+                <div class="pv-game-kpis">
+                  <span id="game-score-chip">Puntos: 0</span>
+                  <span id="game-streak-chip">Racha: 0</span>
+                </div>
+              </div>
+              <div class="pv-game-question" id="game-question">Pulsa un modo para empezar el reto.</div>
+              <div class="pv-game-session">
+                <div class="pv-game-session-head">
+                  <span id="game-mode-chip">Modo: Palabra oculta</span>
+                  <span id="game-round-chip">Retos: 0</span>
+                  <span id="game-accuracy-chip">Precisión: 0%</span>
+                  <span id="game-xp-chip">XP juegos: 0</span>
+                </div>
+                <div class="pv-progress-bar pv-game-progress">
+                  <span id="game-accuracy-bar" style="width: 0%"></span>
+                </div>
+              </div>
+              <div class="pv-game-options" id="game-options"></div>
+              <div class="pv-actions pv-game-panel-actions">
+                <button class="pv-btn" id="game-next-btn" type="button">Siguiente reto</button>
+                <button class="pv-btn-ghost" id="game-listen-btn" type="button">Escuchar pista</button>
+                <button class="pv-btn-ghost" id="game-restart-btn" type="button">Reiniciar racha</button>
+              </div>
+              <div class="pv-note" id="game-status-note">Cada acierto suma XP para tu meta diaria.</div>
+            </article>
           </article>
 
-          <article class="pv-card pv-translator-preview">
-            <span class="pv-pill">Traductor IA</span>
-            <div class="pv-grid">
+          <article class="pv-card pv-translator">
+            <span class="pv-pill">Traductor vivo</span>
+            <div class="pv-translator-head">
+              <div>
+                <h3>Traductor Palenquero</h3>
+                <p>Traduce frases entre español y palenquero con apoyo del diccionario.</p>
+              </div>
+              <button class="pv-icon-btn pv-translator-swap" id="translator-swap-btn" type="button" aria-label="Cambiar dirección">⇄</button>
+            </div>
+            <div class="pv-translator-direction" id="translator-direction-label">Español → Palenquero</div>
+            <div class="pv-grid pv-translator-grid">
               <div class="pv-field">
-                <label for="translator-input-es">Español</label>
+                <label for="translator-input-es" id="translator-source-label">Español</label>
                 <textarea id="translator-input-es" placeholder="Ejemplo: ¿Cómo estás?"></textarea>
               </div>
               <div class="pv-field">
-                <label for="translator-output-pal">Palenquero</label>
-                <textarea id="translator-output-pal" placeholder="Kumó bo tan?" readonly></textarea>
+                <label for="translator-output-pal" id="translator-target-label">Palenquero</label>
+                <textarea id="translator-output-pal" placeholder="Aquí verás la traducción" readonly></textarea>
               </div>
             </div>
-            <div class="pv-actions">
-              <button class="pv-btn-ghost" type="button">Traducir ahora</button>
+            <div class="pv-actions pv-translator-actions">
+              <button class="pv-btn" id="translator-run-btn" type="button">Traducir</button>
+              <button class="pv-btn-ghost" id="translator-clear-btn" type="button">Limpiar</button>
+              <button class="pv-btn-ghost" id="translator-copy-btn" type="button">Copiar</button>
+              <button class="pv-btn-ghost" id="translator-speak-btn" type="button">Escuchar</button>
             </div>
+            <div class="pv-translator-quick" id="translator-quick-chips"></div>
+            <div class="pv-translator-history" id="translator-recent-list"></div>
+            <div class="pv-note" id="translator-note">Traduce frases entre español y palenquero con apoyo del diccionario.</div>
           </article>
 
           <article class="pv-card pv-dictionary">
             <span class="pv-pill">Diccionario vivo</span>
-            <div class="pv-field">
-              <label for="dictionary-search">Buscar palabra o frase</label>
-              <input id="dictionary-search" type="text" placeholder="Ejemplo: kuchá, jundo, memoria">
+            <div class="pv-grid pv-dictionary-tools">
+              <div class="pv-field">
+                <label for="dictionary-search">Buscar palabra o frase</label>
+                <input id="dictionary-search" type="text" placeholder="Ejemplo: kuchá, jundo, memoria">
+              </div>
+              <div class="pv-field">
+                <label for="dictionary-favorites-only">Mostrar</label>
+                <select id="dictionary-favorites-only">
+                  <option value="all">Todo el diccionario</option>
+                  <option value="favorites">Solo guardadas</option>
+                </select>
+              </div>
             </div>
-            <div class="pv-dictionary-list" id="dictionary-list"></div>
+
+            <div class="pv-dictionary-theme-list" id="dictionary-theme-filters"></div>
+            <div class="pv-note" id="dictionary-results-note">Explora términos, traducciones y contexto cultural.</div>
+
+            <div class="pv-dictionary-layout">
+              <div class="pv-dictionary-list" id="dictionary-list"></div>
+
+              <article class="pv-dictionary-detail" id="dictionary-detail-card">
+                <div class="pv-dictionary-detail-head">
+                  <div>
+                    <b id="dictionary-detail-term">Selecciona una palabra</b>
+                    <small id="dictionary-detail-translation">Traducción y contexto</small>
+                  </div>
+                  <div class="pv-dictionary-detail-actions">
+                    <button class="pv-icon-btn" id="dictionary-speak-btn" type="button" aria-label="Escuchar pronunciación">🔊</button>
+                    <button class="pv-icon-btn" id="dictionary-copy-btn" type="button" aria-label="Copiar término">⎘</button>
+                    <button class="pv-icon-btn" id="dictionary-favorite-btn" type="button" aria-label="Guardar favorito">☆</button>
+                  </div>
+                </div>
+                <p id="dictionary-detail-description">Aquí verás significado, uso y categoría cultural de la palabra seleccionada.</p>
+                <div class="pv-dictionary-tags" id="dictionary-detail-tags"></div>
+                <div class="pv-dictionary-meta">
+                  <span id="dictionary-detail-theme">Tema</span>
+                  <span id="dictionary-detail-sources">Fuente</span>
+                </div>
+              </article>
+            </div>
           </article>
 
           <article class="pv-card pv-habla-preview">
@@ -425,20 +585,94 @@
         <section class="pv-view" id="view-premium" data-view="premium">
           <article class="pv-card pv-community">
             <span class="pv-pill">Comunidad</span>
-            <h3>Conecta, comparte y compite</h3>
-            <p>Feed social, retos semanales, rankings y clubes para vivir la lengua en colectivo.</p>
-            <div class="pv-community-list">
-              <article class="pv-community-item">
-                <b>Reto semanal</b>
-                <small>Publica un audio corto con una frase palenquera.</small>
+            <h3>Conecta, comparte y aprende con tu gente</h3>
+            <p>Publicaciones culturales, retos semanales y eventos vivos para practicar la lengua en comunidad.</p>
+
+            <div class="pv-community-overview" id="community-overview">
+              <article class="pv-community-kpi"><b id="community-kpi-posts">0</b><small>Publicaciones</small></article>
+              <article class="pv-community-kpi"><b id="community-kpi-challenges">0</b><small>Retos activos</small></article>
+              <article class="pv-community-kpi"><b id="community-kpi-events">0</b><small>Eventos</small></article>
+              <article class="pv-community-kpi"><b id="community-kpi-engagement">0</b><small>Interacciones</small></article>
+            </div>
+
+            <div class="pv-community-filters" role="tablist" aria-label="Filtro comunidad">
+              <button class="pv-community-chip is-active" data-community-filter="all" type="button">Todo</button>
+              <button class="pv-community-chip" data-community-filter="post" type="button">Publicaciones</button>
+              <button class="pv-community-chip" data-community-filter="challenge" type="button">Retos</button>
+              <button class="pv-community-chip" data-community-filter="event" type="button">Eventos</button>
+            </div>
+
+            <div class="pv-community-quick" id="community-quick-actions">
+              <button class="pv-community-shortcut" data-community-template="phrase" type="button">Compartir frase</button>
+              <button class="pv-community-shortcut" data-community-template="progress" type="button">Reportar avance</button>
+              <button class="pv-community-shortcut" data-community-template="challenge" type="button">Proponer reto</button>
+              <button class="pv-community-shortcut" data-community-template="event" type="button">Invitar a evento</button>
+            </div>
+
+            <div class="pv-community-compose">
+              <label for="community-post-input">Comparte algo en palenquero o español</label>
+              <div class="pv-grid pv-community-toolbar">
+                <div class="pv-field">
+                  <label for="community-post-type">Tipo</label>
+                  <select id="community-post-type">
+                    <option value="post">Publicación</option>
+                    <option value="challenge">Reto</option>
+                    <option value="event">Evento</option>
+                  </select>
+                </div>
+                <div class="pv-field">
+                  <label for="community-sort">Ordenar feed</label>
+                  <select id="community-sort">
+                    <option value="recent">Más reciente</option>
+                    <option value="popular">Más popular</option>
+                  </select>
+                </div>
+              </div>
+              <textarea id="community-post-input" placeholder="Ejemplo: ¡Hoy aprendí 'Senda bien' y lo practiqué con mi familia!"></textarea>
+              <small id="community-post-counter">0 / 220</small>
+              <div class="pv-actions">
+                <button class="pv-btn" id="community-post-btn" type="button">Publicar</button>
+              </div>
+            </div>
+
+            <div class="pv-note" id="community-note">Publica avances, preguntas o frases para aprender entre todos.</div>
+
+            <article class="pv-community-highlights">
+              <div class="pv-community-highlights-head">
+                <b>Lo más activo hoy</b>
+                <button class="pv-btn-ghost pv-community-refresh" id="community-refresh-btn" type="button">Actualizar</button>
+              </div>
+              <div class="pv-community-highlights-list" id="community-highlights-list">
+                <article class="pv-community-highlight-item"><small>Cargando actividad...</small></article>
+              </div>
+            </article>
+
+            <div class="pv-community-side-grid">
+              <article class="pv-community-side-card">
+                <div class="pv-community-side-head">
+                  <b>Grupos culturales</b>
+                  <small id="community-groups-joined-count">0 / 0 unidos</small>
+                </div>
+                <div class="pv-community-groups-list" id="community-groups-list">
+                  <article class="pv-community-mini-item"><small>Cargando grupos...</small></article>
+                </div>
               </article>
-              <article class="pv-community-item">
-                <b>Club cultural</b>
-                <small>Foro activo: refranes, gastronomía y música tradicional.</small>
+
+              <article class="pv-community-side-card">
+                <div class="pv-community-side-head">
+                  <b>Agenda viva</b>
+                  <small id="community-events-joined-count">0 / 0 asistirán</small>
+                </div>
+                <div class="pv-community-events-list" id="community-events-list">
+                  <article class="pv-community-mini-item"><small>Cargando eventos...</small></article>
+                </div>
               </article>
+            </div>
+
+            <div class="pv-community-feed" id="community-feed-list">
               <article class="pv-community-item">
-                <b>Ranking vivo</b>
-                <small>Top de rachas, XP y logros de la semana.</small>
+                <b>Comunidad Kumaina</b>
+                <small>Cargando publicaciones...</small>
               </article>
             </div>
           </article>
@@ -448,6 +682,14 @@
             <div class="pv-premium-status">
               <b id="premium-state-title">Estado: pendiente</b>
               <small id="premium-state-copy">Inicia sesión para validar tu acceso y sincronizar progreso.</small>
+            </div>
+
+            <div class="pv-premium-cycle">
+              <div class="pv-community-filters" role="tablist" aria-label="Tipo de plan premium">
+                <button class="pv-community-chip is-active" id="premium-cycle-monthly" data-premium-cycle="monthly" type="button">Mensual</button>
+                <button class="pv-community-chip" id="premium-cycle-annual" data-premium-cycle="annual" type="button">Anual</button>
+              </div>
+              <div class="pv-note" id="premium-plan-note">Plan actual: <b id="premium-plan-price">$0 COP</b></div>
             </div>
 
             <div class="pv-grid">
@@ -484,6 +726,47 @@
               <span class="pv-rank-chip">Guardián</span>
               <span class="pv-rank-chip">Maestro</span>
               <span class="pv-rank-chip">Raíz ancestral</span>
+            </div>
+
+            <div class="pv-profile-settings">
+              <h3 class="pv-profile-title">Cuenta y preferencias</h3>
+              <div class="pv-grid">
+                <div class="pv-field">
+                  <label for="profile-edit-name">Nombre visible</label>
+                  <input id="profile-edit-name" type="text" placeholder="Ejemplo: Ana María">
+                </div>
+                <div class="pv-field">
+                  <label for="profile-edit-goal">Meta diaria</label>
+                  <select id="profile-edit-goal">
+                    <option value="5">5 XP diarios (suave)</option>
+                    <option value="10" selected>10 XP diarios (equilibrado)</option>
+                    <option value="20">20 XP diarios (intensivo)</option>
+                  </select>
+                </div>
+                <div class="pv-field">
+                  <label for="profile-edit-city">Ciudad</label>
+                  <input id="profile-edit-city" type="text" placeholder="Ejemplo: Cartagena">
+                </div>
+                <div class="pv-field">
+                  <label for="profile-edit-phone">Teléfono</label>
+                  <input id="profile-edit-phone" type="tel" inputmode="numeric" placeholder="+57 3001234567">
+                </div>
+              </div>
+
+              <div class="pv-kpi-grid">
+                <div class="pv-kpi"><b id="profile-email-kpi">Sin correo</b><small>Correo de acceso</small></div>
+                <div class="pv-kpi"><b id="profile-session-kpi">Invitado</b><small>Estado de sesión</small></div>
+                <div class="pv-kpi"><b id="profile-city-kpi">Sin ciudad</b><small>Ciudad</small></div>
+                <div class="pv-kpi"><b id="profile-phone-kpi">Sin teléfono</b><small>Teléfono</small></div>
+              </div>
+
+              <div class="pv-actions pv-profile-actions">
+                <button class="pv-btn" id="profile-save-btn" type="button">Guardar cambios</button>
+                <button class="pv-btn-ghost" id="profile-reset-password-btn" type="button">Recuperar contraseña</button>
+                <button class="pv-btn-ghost pv-btn-danger" id="profile-logout-btn" type="button">Cerrar sesión</button>
+              </div>
+
+              <div class="pv-note" id="profile-note">Aquí podrás administrar tu cuenta y preferencias de aprendizaje.</div>
             </div>
 
             <div class="pv-actions">
