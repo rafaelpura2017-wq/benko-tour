@@ -615,7 +615,37 @@ svg {
   line-height: 1.35;
 }
 
-.pv-auth-switch {
+.pv-auth-register-cta {
+  margin-top: 2px;
+  display: grid;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(239, 188, 68, 0.2);
+}
+
+.pv-auth-register-copy {
+  color: color-mix(in srgb, var(--muted) 84%, white 16%);
+  font-size: 0.82rem;
+}
+
+.pv-auth-create-account-btn {
+  width: 100%;
+  min-height: 44px;
+  justify-content: center;
+  border-color: rgba(239, 188, 68, 0.32);
+  background: rgba(239, 188, 68, 0.1);
+  color: var(--ivory);
+  font-weight: 800;
+}
+
+.pv-auth-create-account-btn:hover {
+  border-color: rgba(239, 188, 68, 0.6);
+  background: rgba(239, 188, 68, 0.18);
+  transform: translateY(-1px);
+}
+
+.pv-auth-switch,
+.pv-auth-back-login-btn {
   justify-self: start;
   border: 0;
   background: transparent;
@@ -629,7 +659,8 @@ svg {
   padding: 0;
 }
 
-.pv-auth-switch:hover {
+.pv-auth-switch:hover,
+.pv-auth-back-login-btn:hover {
   color: #ffe3a1;
 }
 
@@ -1709,6 +1740,7 @@ svg {
 
 .pv-lesson-actions {
   display: grid;
+  gap: 6px;
 }
 
 .pv-lesson-go {
@@ -1729,6 +1761,32 @@ svg {
 
 .pv-lesson-go.is-locked-btn {
   background: linear-gradient(140deg, #9b6b2b 0%, #6b4619 100%);
+}
+
+.pv-lesson-fav {
+  border: 1px solid rgba(24, 25, 18, 0.18);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #664b1e;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 4px 10px rgba(24, 20, 13, 0.12);
+}
+
+.pv-lesson-fav.is-active {
+  color: #f0b93d;
+  background: rgba(20, 43, 35, 0.95);
+  border-color: rgba(239, 188, 68, 0.42);
+}
+
+.pv-lesson.is-favorite {
+  box-shadow: inset 0 0 0 1px rgba(239, 188, 68, 0.34), 0 8px 20px rgba(24, 20, 13, 0.12);
 }
 
 .pv-lesson.is-done {
@@ -1912,6 +1970,45 @@ svg {
   margin: 0;
   font-family: var(--title-font);
   color: var(--ivory);
+}
+
+.pv-module-switcher {
+  border: 1px solid rgba(239, 188, 68, 0.28);
+  background: linear-gradient(145deg, rgba(5, 36, 30, 0.82), rgba(4, 26, 22, 0.86));
+  display: grid;
+  gap: 10px;
+}
+
+.pv-module-switch {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pv-module-switch-btn {
+  border: 1px solid rgba(239, 188, 68, 0.3);
+  border-radius: 999px;
+  min-height: 38px;
+  padding: 0 10px;
+  background: rgba(7, 40, 33, 0.72);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.pv-module-switch-btn:hover {
+  border-color: rgba(239, 188, 68, 0.52);
+  transform: translateY(-1px);
+}
+
+.pv-module-switch-btn.is-active {
+  background: linear-gradient(145deg, #efbc44 0%, #c9942d 100%);
+  color: #1a1c17;
+  border-color: rgba(239, 188, 68, 0.72);
+  box-shadow: 0 0 0 1px rgba(239, 188, 68, 0.25) inset;
 }
 
 .pv-games-copy,
@@ -2768,6 +2865,75 @@ svg {
   font-weight: 700;
 }
 
+.pv-profile-setup {
+  border: 1px solid rgba(239, 188, 68, 0.26);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(140deg, rgba(13, 70, 53, 0.42), rgba(4, 28, 23, 0.78));
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.pv-profile-setup-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.pv-profile-setup-head b {
+  color: var(--ivory);
+  font-size: 0.84rem;
+}
+
+.pv-profile-setup h3 {
+  margin: 0;
+  color: var(--ivory);
+  font-family: var(--title-font);
+  font-size: 1.02rem;
+}
+
+.pv-profile-setup p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.pv-profile-setup-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 7px;
+}
+
+.pv-profile-setup-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: color-mix(in srgb, var(--muted) 85%, white 15%);
+  font-size: 0.86rem;
+}
+
+.pv-profile-setup-list li::before {
+  content: "○";
+  color: rgba(239, 188, 68, 0.74);
+  font-weight: 700;
+}
+
+.pv-profile-setup-list li.is-done {
+  color: #d8f5e7;
+}
+
+.pv-profile-setup-list li.is-done::before {
+  content: "✓";
+  color: #88e0b6;
+}
+
+.pv-profile-setup-actions {
+  align-items: stretch;
+}
+
 .pv-profile-settings {
   border: 1px solid var(--stroke-soft);
   border-radius: var(--radius-lg);
@@ -3018,6 +3184,15 @@ svg {
 
   .pv-master-next .pv-btn {
     width: 100%;
+  }
+
+  .pv-module-switch {
+    grid-template-columns: 1fr;
+  }
+
+  .pv-module-switch-btn {
+    min-height: 40px;
+    font-size: 0.88rem;
   }
 
   .pv-lesson {

@@ -18,6 +18,7 @@
   const dictionaryPayload = window.benkoPalenqueraDictionary || {};
   const dictionaryEntries = Array.isArray(dictionaryPayload.entries) ? dictionaryPayload.entries : [];
   const GAME_MODES = ["hidden-word", "trivia", "listening", "meaning"];
+  const STUDY_HUB_TABS = ["games", "translator", "dictionary"];
 
   const appConfig = window.BENKO_CONFIG || {};
   const paymentConfig = appConfig.payments || {};
@@ -139,10 +140,12 @@
     learnKpiProgress: document.getElementById("learn-kpi-progress"),
     learnKpiGoal: document.getElementById("learn-kpi-goal"),
     learnKpiHearts: document.getElementById("learn-kpi-hearts"),
+    learnKpiSaved: document.getElementById("learn-kpi-saved"),
     learnOverviewNote: document.getElementById("learn-overview-note"),
     learnContinueButton: document.getElementById("learn-continue-btn"),
     learnResetFiltersButton: document.getElementById("learn-reset-filters-btn"),
     learnPendingOnly: document.getElementById("learn-pending-only"),
+    learnFavoritesOnly: document.getElementById("learn-favorites-only"),
     learnSearchInput: document.getElementById("learn-search-input"),
     learnSortSelect: document.getElementById("learn-sort-select"),
     learnListNote: document.getElementById("learn-list-note"),
@@ -242,6 +245,14 @@
     profileEditGoalSelect: document.getElementById("profile-edit-goal"),
     profileEditCityInput: document.getElementById("profile-edit-city"),
     profileEditPhoneInput: document.getElementById("profile-edit-phone"),
+    profileSetupCard: document.getElementById("profile-setup-card"),
+    profileSetupProgress: document.getElementById("profile-setup-progress"),
+    profileSetupBar: document.getElementById("profile-setup-bar"),
+    profileSetupNameStatus: document.getElementById("profile-setup-name-status"),
+    profileSetupCityStatus: document.getElementById("profile-setup-city-status"),
+    profileSetupPhoneStatus: document.getElementById("profile-setup-phone-status"),
+    profileSetupCompleteButton: document.getElementById("profile-setup-complete-btn"),
+    profileSetupSkipButton: document.getElementById("profile-setup-skip-btn"),
     profileSaveButton: document.getElementById("profile-save-btn"),
     profileResetPasswordButton: document.getElementById("profile-reset-password-btn"),
     profileLogoutButton: document.getElementById("profile-logout-btn"),
@@ -259,6 +270,8 @@
   const views = Array.from(document.querySelectorAll("[data-view]"));
   const tabs = Array.from(document.querySelectorAll("[data-tab]"));
   const quickViewButtons = Array.from(document.querySelectorAll("[data-go-view]"));
+  const studyHubButtons = Array.from(document.querySelectorAll("[data-study-tab]"));
+  const studyHubPanels = Array.from(document.querySelectorAll("[data-study-tab-panel]"));
   const levelFilterButtons = Array.from(document.querySelectorAll("[data-level-filter]"));
   const communityFilterButtons = Array.from(document.querySelectorAll("[data-community-filter]"));
   const communityTemplateButtons = Array.from(document.querySelectorAll("[data-community-template]"));
@@ -284,6 +297,7 @@
       dailyGoal: 10,
       city: "",
       phone: "",
+      profileSetupPending: false,
       xp: 0,
       xpToday: 0,
       lastXpDate: "",
@@ -293,6 +307,9 @@
       learnSearch: "",
       learnSort: "recommended",
       learnPendingOnly: false,
+      learnFavoritesOnly: false,
+      learnSavedLessonIds: [],
+      studyHubTab: "games",
       completedLessons: {},
       lastLessonId: "",
       activeView: "home",
@@ -397,7 +414,7 @@
   }
 
   function normalizeLearnSort(value) {
-    const allowed = ["recommended", "levelAsc", "levelDesc", "xpDesc", "xpAsc"];
+    const allowed = ["recommended", "favoritesFirst", "levelAsc", "levelDesc", "xpDesc", "xpAsc"];
     const normalized = sanitizeText(value, "recommended");
     return allowed.includes(normalized) ? normalized : "recommended";
   }
@@ -406,6 +423,23 @@
     state.learnSearch = sanitizeText(state.learnSearch, "");
     state.learnSort = normalizeLearnSort(state.learnSort);
     state.learnPendingOnly = Boolean(state.learnPendingOnly);
+    state.learnFavoritesOnly = Boolean(state.learnFavoritesOnly);
+    if (!Array.isArray(state.learnSavedLessonIds)) {
+      state.learnSavedLessonIds = [];
+    } else {
+      state.learnSavedLessonIds = Array.from(new Set(state.learnSavedLessonIds.map(function(lessonId) {
+        return sanitizeText(lessonId, "");
+      }).filter(Boolean)));
+    }
+  }
+
+  function normalizeStudyHubTab(value) {
+    const normalized = sanitizeText(value, "games").toLowerCase();
+    return STUDY_HUB_TABS.includes(normalized) ? normalized : "games";
+  }
+
+  function ensureStudyHubState() {
+    state.studyHubTab = normalizeStudyHubTab(state.studyHubTab);
   }
 
   function normalizeProfilePhone(value) {
@@ -421,6 +455,10 @@
     }
 
     return (startsWithPlus ? "+" : "") + digits;
+  }
+
+  function ensureProfileSetupState() {
+    state.profileSetupPending = Boolean(state.profileSetupPending);
   }
 
   function normalizeCommunityFilter(value) {
@@ -1122,6 +1160,33 @@
     }, 850);
   }
 
+  function renderStudyHub() {
+    ensureStudyHubState();
+    const activeTab = normalizeStudyHubTab(state.studyHubTab);
+
+    studyHubButtons.forEach(function(button) {
+      const tab = normalizeStudyHubTab(button.dataset.studyTab);
+      const isActive = tab === activeTab;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-selected", isActive ? "true" : "false");
+      button.setAttribute("tabindex", isActive ? "0" : "-1");
+    });
+
+    studyHubPanels.forEach(function(panel) {
+      const tab = normalizeStudyHubTab(panel.dataset.studyTabPanel);
+      const isActive = tab === activeTab;
+      panel.hidden = !isActive;
+      panel.classList.toggle("is-active", isActive);
+    });
+  }
+
+  function setStudyHubTab(nextTab) {
+    const normalizedTab = normalizeStudyHubTab(nextTab);
+    state.studyHubTab = normalizedTab;
+    renderStudyHub();
+    saveState();
+  }
+
   function setActiveView(viewName, syncHash) {
     const nextView = resolveView(viewName);
     state.activeView = nextView;
@@ -1135,10 +1200,12 @@
     });
 
     updateOnboardingVisibility();
+    updateProfileSetupCardVisibility();
     if (nextView === "learn") {
       renderLearnNavigator();
     }
     if (nextView === "dictionary") {
+      renderStudyHub();
       renderDictionary();
       renderTranslator();
       renderGamePanel();
@@ -1209,6 +1276,37 @@
     return flattenLessons({ respectLevelFilter: false, includeLocked: true }).find(function(lesson) {
       return lesson.id === lessonId;
     }) || null;
+  }
+
+  function isLearnLessonSaved(lessonId) {
+    ensureLearnState();
+    const targetId = sanitizeText(lessonId, "");
+    if (!targetId) {
+      return false;
+    }
+    return state.learnSavedLessonIds.includes(targetId);
+  }
+
+  function toggleLearnSavedLesson(lessonId) {
+    ensureLearnState();
+    const targetId = sanitizeText(lessonId, "");
+    if (!targetId) {
+      return false;
+    }
+
+    const current = Array.isArray(state.learnSavedLessonIds) ? state.learnSavedLessonIds.slice() : [];
+    if (current.includes(targetId)) {
+      state.learnSavedLessonIds = current.filter(function(id) {
+        return id !== targetId;
+      });
+      saveState();
+      return false;
+    }
+
+    current.push(targetId);
+    state.learnSavedLessonIds = Array.from(new Set(current));
+    saveState();
+    return true;
   }
 
   function getFirstIncompleteLesson(options) {
@@ -1283,6 +1381,95 @@
     updateLearnOverview();
   }
 
+  function getProfileSetupChecklist() {
+    const profileName = sanitizeText(state.profileName, "");
+    const city = sanitizeText(state.city, "");
+    const phone = normalizeProfilePhone(state.phone);
+    const phoneDigits = phone.replace(/\D/g, "");
+
+    const nameValidation = getNameValidation(profileName);
+    const nameDone = nameValidation.valid && profileName.toLowerCase() !== "visitante";
+    const cityDone = city.length >= 2;
+    const phoneDone = phoneDigits.length >= 10;
+
+    const doneCount = Number(nameDone) + Number(cityDone) + Number(phoneDone);
+    const total = 3;
+    const ratio = doneCount / total;
+
+    return {
+      nameDone: nameDone,
+      cityDone: cityDone,
+      phoneDone: phoneDone,
+      doneCount: doneCount,
+      total: total,
+      ratio: ratio,
+      allDone: doneCount >= total
+    };
+  }
+
+  function paintProfileSetupItem(itemEl, label, done) {
+    if (!itemEl) {
+      return;
+    }
+    itemEl.classList.toggle("is-done", Boolean(done));
+    itemEl.textContent = label;
+  }
+
+  function focusFirstPendingProfileField() {
+    const checklist = getProfileSetupChecklist();
+
+    if (!checklist.nameDone && elements.profileEditNameInput) {
+      elements.profileEditNameInput.focus();
+      elements.profileEditNameInput.select();
+      return "name";
+    }
+
+    if (!checklist.cityDone && elements.profileEditCityInput) {
+      elements.profileEditCityInput.focus();
+      elements.profileEditCityInput.select();
+      return "city";
+    }
+
+    if (!checklist.phoneDone && elements.profileEditPhoneInput) {
+      elements.profileEditPhoneInput.focus();
+      elements.profileEditPhoneInput.select();
+      return "phone";
+    }
+
+    return "";
+  }
+
+  function updateProfileSetupCardVisibility() {
+    ensureProfileSetupState();
+
+    const checklist = getProfileSetupChecklist();
+    const hasUserSession = Boolean(getAuthUser());
+
+    if (elements.profileSetupProgress) {
+      elements.profileSetupProgress.textContent = checklist.doneCount + "/" + checklist.total + " completado";
+    }
+
+    if (elements.profileSetupBar) {
+      elements.profileSetupBar.style.width = Math.round(checklist.ratio * 100) + "%";
+    }
+
+    paintProfileSetupItem(elements.profileSetupNameStatus, "Nombre real y visible", checklist.nameDone);
+    paintProfileSetupItem(elements.profileSetupCityStatus, "Ciudad de referencia", checklist.cityDone);
+    paintProfileSetupItem(elements.profileSetupPhoneStatus, "Celular de recuperación", checklist.phoneDone);
+
+    if (state.profileSetupPending && checklist.allDone) {
+      state.profileSetupPending = false;
+      saveState();
+    }
+
+    if (!elements.profileSetupCard) {
+      return;
+    }
+
+    const shouldShow = hasUserSession && state.profileSetupPending && !checklist.allDone;
+    elements.profileSetupCard.hidden = !shouldShow;
+  }
+
   function updateProfilePanel() {
     elements.profileNameKpi.textContent = sanitizeText(state.profileName, "Visitante");
     elements.profileGoalKpi.textContent = Number(state.dailyGoal || 10) + " XP";
@@ -1295,6 +1482,7 @@
       elements.profilePhoneKpi.textContent = sanitizeText(state.phone, "Sin teléfono");
     }
     updateProfileEditorUI();
+    updateProfileSetupCardVisibility();
   }
 
   function updateProfileEditorUI() {
@@ -1336,6 +1524,8 @@
       const canReset = Boolean(sanitizeText(user && user.email));
       elements.profileResetPasswordButton.disabled = !canReset;
     }
+
+    updateProfileSetupCardVisibility();
   }
 
   function getLearningSummary() {
@@ -1514,6 +1704,7 @@
       !elements.learnKpiProgress &&
       !elements.learnKpiGoal &&
       !elements.learnKpiHearts &&
+      !elements.learnKpiSaved &&
       !elements.learnOverviewNote
     ) {
       return;
@@ -1523,6 +1714,8 @@
     const goalProgress = getCurrentGoalProgress();
     const hearts = Math.max(0, Number(state.hearts || 0));
     const pendingOnly = Boolean(state.learnPendingOnly);
+    const favoritesOnly = Boolean(state.learnFavoritesOnly);
+    const savedLessonIds = Array.isArray(state.learnSavedLessonIds) ? state.learnSavedLessonIds : [];
     const visibleCount = Array.isArray(visibleLessons) ? visibleLessons.length : null;
 
     if (elements.learnKpiProgress) {
@@ -1534,9 +1727,15 @@
     if (elements.learnKpiHearts) {
       elements.learnKpiHearts.textContent = "❤ " + hearts;
     }
+    if (elements.learnKpiSaved) {
+      elements.learnKpiSaved.textContent = "★ " + savedLessonIds.length + " guardadas";
+    }
 
     if (elements.learnPendingOnly) {
       elements.learnPendingOnly.checked = pendingOnly;
+    }
+    if (elements.learnFavoritesOnly) {
+      elements.learnFavoritesOnly.checked = favoritesOnly;
     }
 
     if (elements.learnContinueButton) {
@@ -1562,6 +1761,9 @@
 
     if (pendingOnly) {
       note += " Modo pendientes activo.";
+    }
+    if (favoritesOnly) {
+      note += " Modo guardadas activo.";
     }
 
     if (Number.isFinite(visibleCount)) {
@@ -1662,6 +1864,18 @@
     if (!email) {
       return { valid: false, empty: true, message: "Escribe tu correo electrónico." };
     }
+
+    if (window.authFirebase && typeof window.authFirebase.validarEmail === "function") {
+      const emailCheck = window.authFirebase.validarEmail(email);
+      return {
+        valid: Boolean(emailCheck && emailCheck.valid),
+        empty: false,
+        message: emailCheck && emailCheck.valid
+          ? "Correo válido."
+          : sanitizeText(emailCheck && emailCheck.message, "Correo inválido. Revisa el formato.")
+      };
+    }
+
     const isValid = /\S+@\S+\.\S+/.test(email);
     return {
       valid: isValid,
@@ -1688,11 +1902,40 @@
     if (!fullName) {
       return { valid: false, empty: true, message: "Escribe tu nombre completo." };
     }
-    const isValid = fullName.length >= 3;
+
+    if (window.authFirebase && typeof window.authFirebase.validarNombre === "function") {
+      const nameCheck = window.authFirebase.validarNombre(fullName);
+      return {
+        valid: Boolean(nameCheck && nameCheck.valid),
+        empty: false,
+        message: nameCheck && nameCheck.valid
+          ? "Nombre correcto."
+          : sanitizeText(nameCheck && nameCheck.message, "Escribe un nombre válido.")
+      };
+    }
+
+    const normalizedName = fullName
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+    const words = normalizedName.split(/\s+/).filter(Boolean);
+    const forbiddenWords = new Set(["test", "prueba", "usuario", "admin", "fake", "falso", "qwerty", "asdf"]);
+    const compactName = normalizedName.replace(/\s+/g, "");
+    const hasForbiddenWord = words.some(function(word) {
+      return forbiddenWords.has(word);
+    });
+    const hasDigits = /\d/.test(normalizedName);
+    const hasMinWords = words.length >= 2;
+    const hasShortWord = words.some(function(word) {
+      return word.length < 2;
+    });
+    const repeatedCharName = /^([a-z])\1{5,}$/.test(compactName);
+    const isValid = fullName.length >= 4 && hasMinWords && !hasShortWord && !hasDigits && !hasForbiddenWord && !repeatedCharName;
+
     return {
       valid: isValid,
       empty: false,
-      message: isValid ? "Nombre correcto." : "El nombre debe tener al menos 3 caracteres."
+      message: isValid ? "Nombre correcto." : "Escribe nombre y apellido reales (sin números ni palabras de prueba)."
     };
   }
 
@@ -1701,12 +1944,24 @@
     if (!phone) {
       return { valid: false, empty: true, message: "Escribe tu número celular." };
     }
+
+    if (window.authFirebase && typeof window.authFirebase.validarTelefono === "function") {
+      const phoneCheck = window.authFirebase.validarTelefono(phone);
+      return {
+        valid: Boolean(phoneCheck && phoneCheck.valid),
+        empty: false,
+        message: phoneCheck && phoneCheck.valid
+          ? "Celular válido."
+          : sanitizeText(phoneCheck && phoneCheck.message, "El celular no parece válido.")
+      };
+    }
+
     const digits = phone.replace(/\D/g, "");
-    const isValid = digits.length >= 10;
+    const isValid = digits.length >= 10 && digits.length <= 15;
     return {
       valid: isValid,
       empty: false,
-      message: isValid ? "Celular válido." : "El celular debe tener al menos 10 dígitos."
+      message: isValid ? "Celular válido." : "El celular debe tener entre 10 y 15 dígitos."
     };
   }
 
@@ -2366,6 +2621,7 @@
     }
 
     const config = options || {};
+    const hasProfileSetupPreference = Object.prototype.hasOwnProperty.call(config, "profileSetupPending");
 
     const userDisplayName = sanitizeText(user.displayName, "");
     let changed = false;
@@ -2386,6 +2642,14 @@
       changed = true;
     }
 
+    if (hasProfileSetupPreference) {
+      const shouldEnableSetup = Boolean(config.profileSetupPending);
+      if (state.profileSetupPending !== shouldEnableSetup) {
+        state.profileSetupPending = shouldEnableSetup;
+        changed = true;
+      }
+    }
+
     if (changed) {
       saveState();
     }
@@ -2395,6 +2659,7 @@
     updateTopStats();
     updateAuthUI();
     updateAdminAccessUI();
+    updateProfileSetupCardVisibility();
     syncProfileFromCloud(false).catch(function() {
       // noop
     });
@@ -2624,6 +2889,10 @@
     const currentLessonId = sanitizeText(lessonSession && lessonSession.lesson && lessonSession.lesson.id, "");
     const targetLevel = state.cefrFilter === "all" ? "all" : normalizeLevel(state.cefrFilter, "A1");
     const pendingOnly = Boolean(state.learnPendingOnly);
+    const favoritesOnly = Boolean(state.learnFavoritesOnly);
+    const savedSet = new Set((state.learnSavedLessonIds || []).map(function(lessonId) {
+      return sanitizeText(lessonId, "");
+    }));
 
     const levelWeight = { A1: 1, A2: 2, B1: 3 };
     let lessons = flattenLessons({ respectLevelFilter: true, includeLocked: true }).filter(function(lesson) {
@@ -2631,6 +2900,9 @@
         return false;
       }
       if (pendingOnly && Boolean(state.completedLessons[lesson.id])) {
+        return false;
+      }
+      if (favoritesOnly && !savedSet.has(lesson.id)) {
         return false;
       }
       if (!search) {
@@ -2667,6 +2939,15 @@
         return sanitizeText(a.title).localeCompare(sanitizeText(b.title), "es");
       }
 
+      const aSaved = savedSet.has(a.id);
+      const bSaved = savedSet.has(b.id);
+      if (sortMode === "favoritesFirst" && aSaved !== bSaved) {
+        return aSaved ? -1 : 1;
+      }
+      if (sortMode === "recommended" && aSaved !== bSaved) {
+        return aSaved ? -1 : 1;
+      }
+
       const aDone = Boolean(state.completedLessons[a.id]);
       const bDone = Boolean(state.completedLessons[b.id]);
       if (aDone !== bDone) {
@@ -2692,15 +2973,19 @@
         elements.learnListNote.textContent =
           "Visibles: " + lessons.length +
           " · Completadas: " + completedVisible +
+          " · Guardadas: " + savedSet.size +
           " · Filtro: " + (state.cefrFilter === "all" ? "Todos" : state.cefrFilter) +
-          (pendingOnly ? " · Solo pendientes" : "");
+          (pendingOnly ? " · Solo pendientes" : "") +
+          (favoritesOnly ? " · Solo guardadas" : "");
       }
     }
 
     if (!lessons.length) {
       elements.learnLessonList.innerHTML = pendingOnly
         ? "<div class=\"pv-note\">No hay lecciones pendientes con este filtro.</div>"
-        : "<div class=\"pv-note\">No encontramos lecciones con ese criterio.</div>";
+        : (favoritesOnly
+          ? "<div class=\"pv-note\">No hay lecciones guardadas para este filtro.</div>"
+          : "<div class=\"pv-note\">No encontramos lecciones con ese criterio.</div>");
       updateLearnOverview([]);
       return;
     }
@@ -2710,12 +2995,14 @@
       const done = Boolean(state.completedLessons[lesson.id]);
       const locked = isLessonPremiumLocked(lesson, { cefrLevel: lesson.unitLevel });
       const isCurrent = currentLessonId === lesson.id;
+      const isSaved = savedSet.has(lesson.id);
 
       const card = document.createElement("article");
       card.className =
         "pv-lesson pv-learn-lesson" +
         (done ? " is-done" : "") +
         (locked ? " is-locked" : "") +
+        (isSaved ? " is-favorite" : "") +
         (isCurrent ? " is-current" : "");
       card.dataset.level = lesson.normalizedLevel;
 
@@ -2733,6 +3020,17 @@
       const actions = document.createElement("div");
       actions.className = "pv-lesson-actions";
 
+      const favoriteAction = document.createElement("button");
+      favoriteAction.type = "button";
+      favoriteAction.className = "pv-lesson-fav" + (isSaved ? " is-active" : "");
+      favoriteAction.textContent = isSaved ? "★" : "☆";
+      favoriteAction.setAttribute("aria-label", isSaved ? "Quitar de guardadas" : "Guardar lección");
+      favoriteAction.setAttribute("title", isSaved ? "Quitar de guardadas" : "Guardar lección");
+      favoriteAction.addEventListener("click", function() {
+        toggleLearnSavedLesson(lesson.id);
+        renderLearnNavigator();
+      });
+
       const action = document.createElement("button");
       action.type = "button";
       action.className = "pv-lesson-go" + (locked ? " is-locked-btn" : "");
@@ -2748,6 +3046,7 @@
         setActiveView("learn");
       });
 
+      actions.appendChild(favoriteAction);
       actions.appendChild(action);
       card.appendChild(actions);
       fragment.appendChild(card);
@@ -2760,6 +3059,9 @@
     }
     if (elements.learnSearchInput && document.activeElement !== elements.learnSearchInput) {
       elements.learnSearchInput.value = sanitizeText(state.learnSearch, "");
+    }
+    if (elements.learnFavoritesOnly && document.activeElement !== elements.learnFavoritesOnly) {
+      elements.learnFavoritesOnly.checked = favoritesOnly;
     }
     updateLearnOverview(lessons);
   }
@@ -4606,6 +4908,7 @@
       await resetPhoneVerificationUI();
       setAuthNote("Sesión cerrada correctamente.", "success");
       updateAuthUI();
+      updateProfileSetupCardVisibility();
       updateAdminAccessUI();
       syncPremiumFromCloud(false);
       redirectToAccess();
@@ -4786,7 +5089,11 @@
     quickViewButtons.forEach(function(button) {
       button.addEventListener("click", function() {
         const view = button.dataset.goView;
+        const studyTab = button.dataset.goStudyTab;
         if (view) {
+          if (view === "dictionary" && studyTab) {
+            setStudyHubTab(studyTab);
+          }
           setActiveView(view);
         }
       });
@@ -4799,6 +5106,15 @@
         return;
       }
       setActiveView(hashView, false);
+    });
+  }
+
+  function wireStudyHub() {
+    studyHubButtons.forEach(function(button) {
+      button.addEventListener("click", function() {
+        const nextTab = button.dataset.studyTab;
+        setStudyHubTab(nextTab);
+      });
     });
   }
 
@@ -4888,6 +5204,7 @@
         state.learnSearch = "";
         state.learnSort = "recommended";
         state.learnPendingOnly = false;
+        state.learnFavoritesOnly = false;
         saveState();
         setActiveLevelFilter("all");
       });
@@ -4912,6 +5229,14 @@
     if (elements.learnPendingOnly) {
       elements.learnPendingOnly.addEventListener("change", function() {
         state.learnPendingOnly = Boolean(elements.learnPendingOnly.checked);
+        saveState();
+        renderLearnNavigator();
+      });
+    }
+
+    if (elements.learnFavoritesOnly) {
+      elements.learnFavoritesOnly.addEventListener("change", function() {
+        state.learnFavoritesOnly = Boolean(elements.learnFavoritesOnly.checked);
         saveState();
         renderLearnNavigator();
       });
@@ -5412,6 +5737,10 @@
       const email = sanitizeText(elements.authRegisterEmailInput && elements.authRegisterEmailInput.value).toLowerCase();
       const password = String((elements.authRegisterPasswordInput && elements.authRegisterPasswordInput.value) || "");
       const acceptedTerms = Boolean(elements.authTermsRegisterCheck && elements.authTermsRegisterCheck.checked);
+      const nameValidation = getNameValidation(fullName);
+      const phoneValidation = getPhoneValidation(phone);
+      const emailValidation = getEmailValidation(email);
+      const passwordValidation = getPasswordValidation(password);
 
       if (!acceptedTerms) {
         setAuthNote("Debes aceptar Términos y Política de Privacidad para crear la cuenta.", "error");
@@ -5419,26 +5748,26 @@
         return;
       }
 
-      if (fullName.length < 3) {
-        setAuthNote("Escribe tu nombre completo para crear la cuenta.", "error");
+      if (!nameValidation.valid) {
+        setAuthNote(nameValidation.message || "Escribe un nombre real para crear la cuenta.", "error");
         refreshAuthSubmitState();
         return;
       }
 
-      if (phone.replace(/\D/g, "").length < 10) {
-        setAuthNote("Escribe un celular válido para crear la cuenta.", "error");
+      if (!phoneValidation.valid) {
+        setAuthNote(phoneValidation.message || "Escribe un celular válido para crear la cuenta.", "error");
         refreshAuthSubmitState();
         return;
       }
 
-      if (!email || !email.includes("@")) {
-        setAuthNote("Escribe un correo válido para crear la cuenta.", "error");
+      if (!emailValidation.valid) {
+        setAuthNote(emailValidation.message || "Escribe un correo válido para crear la cuenta.", "error");
         refreshAuthSubmitState();
         return;
       }
 
-      if (password.length < 8) {
-        setAuthNote("La contraseña debe tener al menos 8 caracteres.", "error");
+      if (!passwordValidation.valid) {
+        setAuthNote(passwordValidation.message || "La contraseña no cumple los requisitos de seguridad.", "error");
         refreshAuthSubmitState();
         return;
       }
@@ -5486,17 +5815,22 @@
         state.phone = normalizeProfilePhone(phone);
         profileStateChanged = true;
       }
+      if (!state.profileSetupPending) {
+        state.profileSetupPending = true;
+        profileStateChanged = true;
+      }
       if (profileStateChanged) {
         saveState();
       }
 
       const createdUser = registerResult.user || getAuthUser();
       applyPostLoginEntry(createdUser, {
-        preferredView: "explore",
+        preferredView: "profile",
+        profileSetupPending: true,
         accessMessage: "Cuenta creada con éxito. Entrando a tu panel...",
-        dashboardMessage: "Cuenta creada y sesión activa.",
+        dashboardMessage: "Cuenta creada. Completa tu perfil para dejar tu cuenta lista.",
         transitionTitle: "¡Cuenta creada con éxito!",
-        transitionCopy: "Tu perfil básico ya está guardado. Estamos preparando tu primera ruta.",
+        transitionCopy: "Tu perfil básico ya está guardado. Te llevamos a completar los datos finales.",
         transitionDelayMs: 1280,
         transitionTone: "success"
       });
@@ -5698,8 +6032,10 @@
           updateProfilePanel();
         }
 
-        if (isNewLogin) {
-          applyPostLoginEntry(user, { preferredView: "explore" });
+        if (isNewLogin && user) {
+          const hashView = resolveView((window.location.hash || "").replace("#", ""));
+          const preferredAuthView = hashView && hashView !== "home" ? hashView : "explore";
+          applyPostLoginEntry(user, { preferredView: preferredAuthView });
         }
 
         updateAuthUI();
@@ -5784,11 +6120,23 @@
         }
         const result = await window.authFirebase.actualizarDatos(cloudPayload);
         if (!result || !result.success) {
+          updateProfileSetupCardVisibility();
           setProfileNote("Cambios locales guardados. No pudimos sincronizar todos los datos en la nube ahora.", "error");
           return;
         }
       }
 
+      const checklistAfterSave = getProfileSetupChecklist();
+      if (state.profileSetupPending && checklistAfterSave.allDone) {
+        state.profileSetupPending = false;
+        saveState();
+        updateProfileSetupCardVisibility();
+        setProfileNote("Perfil completado y guardado correctamente.", "success");
+        setAuthNote("Cuenta lista. Tu perfil ya quedó completo.", "success");
+        return;
+      }
+
+      updateProfileSetupCardVisibility();
       setProfileNote("Perfil actualizado correctamente.", "success");
       setAuthNote("Tus datos de perfil se guardaron.", "success");
     }
@@ -5830,6 +6178,9 @@
     }
 
     if (elements.profileEditNameInput) {
+      elements.profileEditNameInput.addEventListener("input", function() {
+        updateProfileSetupCardVisibility();
+      });
       elements.profileEditNameInput.addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
           event.preventDefault();
@@ -5845,6 +6196,58 @@
         sendProfileResetPassword().catch(function() {
           setProfileNote("No pudimos iniciar recuperación de contraseña.", "error");
         });
+      });
+    }
+
+    if (elements.profileEditCityInput) {
+      elements.profileEditCityInput.addEventListener("input", function() {
+        updateProfileSetupCardVisibility();
+      });
+    }
+
+    if (elements.profileEditPhoneInput) {
+      elements.profileEditPhoneInput.addEventListener("input", function() {
+        updateProfileSetupCardVisibility();
+      });
+    }
+
+    if (elements.profileSetupCompleteButton) {
+      elements.profileSetupCompleteButton.addEventListener("click", function() {
+        if (!state.profileSetupPending) {
+          state.profileSetupPending = true;
+          saveState();
+        }
+
+        updateProfileSetupCardVisibility();
+        setActiveView("profile");
+        const focusedField = focusFirstPendingProfileField();
+
+        if (!focusedField) {
+          setProfileNote("Tu perfil ya está completo. Puedes seguir con tu ruta.", "success");
+          return;
+        }
+
+        if (focusedField === "name") {
+          setProfileNote("Completa tu nombre visible para asegurar tu cuenta.", "success");
+          return;
+        }
+        if (focusedField === "city") {
+          setProfileNote("Agrega tu ciudad para personalizar retos y comunidad.", "success");
+          return;
+        }
+        setProfileNote("Confirma tu celular para recuperación de acceso.", "success");
+      });
+    }
+
+    if (elements.profileSetupSkipButton) {
+      elements.profileSetupSkipButton.addEventListener("click", function() {
+        if (!state.profileSetupPending) {
+          return;
+        }
+        state.profileSetupPending = false;
+        saveState();
+        updateProfileSetupCardVisibility();
+        setProfileNote("Podrás completar estos datos luego desde tu perfil.", "success");
       });
     }
 
@@ -5951,7 +6354,7 @@
       return;
     }
 
-    navigator.serviceWorker.register("./sw.js?v=20260511q", { updateViaCache: "none" }).then(function(registration) {
+    navigator.serviceWorker.register("./sw.js?v=20260513b", { updateViaCache: "none" }).then(function(registration) {
       if (registration && typeof registration.update === "function") {
         registration.update().catch(function() {
           // noop
@@ -5969,8 +6372,11 @@
     ensureTranslatorState();
     ensureGameState();
     ensureLearnState();
+    ensureStudyHubState();
+    ensureProfileSetupState();
     syncDailyState();
     wireTabs();
+    wireStudyHub();
     wireOnboarding();
     wireLevelFilters();
     wireLearningActions();
@@ -5997,6 +6403,7 @@
     renderTranslator();
     startGameRound(state.game && state.game.mode ? state.game.mode : "hidden-word");
     renderGamePanel();
+    renderStudyHub();
     renderWordOfDay();
     hydrateLessonUIWithoutSession();
 

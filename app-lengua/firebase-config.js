@@ -29,12 +29,13 @@ let phoneRecaptchaWidgetId = null;
 let phoneConfirmationResult = null;
 let phoneAuthContext = null;
 const MEMBER_LEVEL = 'Comunidad Benko';
-const DATA_SCHEMA_VERSION = 2;
+const DATA_SCHEMA_VERSION = 3;
 const TEMP_STORAGE_KEYS = {
   reservations: 'reservasTemp'
 };
 const COLLECTION_KEYS = {
   users: 'usuarios',
+  phoneRegistry: 'telefonos_registrados',
   reservationRequests: 'solicitudes_reserva'
 };
 const DEFAULT_BENEFITS = [
@@ -42,6 +43,31 @@ const DEFAULT_BENEFITS = [
   'Preferencias guardadas',
   'Perfil activo en Benko Tour'
 ];
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+  'mailinator.com',
+  'tempmail.com',
+  '10minutemail.com',
+  'guerrillamail.com',
+  'yopmail.com',
+  'trashmail.com',
+  'dispostable.com',
+  'maildrop.cc',
+  'tempmailo.com',
+  'fakeinbox.com',
+  'sharklasers.com'
+]);
+const SUSPICIOUS_EMAIL_LOCAL_PARTS = new Set([
+  'test',
+  'testing',
+  'prueba',
+  'usuario',
+  'admin',
+  'fake',
+  'falso',
+  'qwerty',
+  'asdf',
+  'demo'
+]);
 
 // Inicializar Firebase
 document.addEventListener('DOMContentLoaded', function() {
@@ -80,6 +106,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function sanitizeText(value) {
   return String(value || '').trim();
+}
+
+function normalizeAscii(value) {
+  return sanitizeText(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
 }
 
 function getActiveUser() {
@@ -166,11 +199,50 @@ function validatePhoneNumber(value) {
     };
   }
 
+  const compactDigits = digits;
+  const hasSequentialRun = compactDigits.includes('0123456')
+    || compactDigits.includes('1234567')
+    || compactDigits.includes('2345678')
+    || compactDigits.includes('3456789');
+  if (hasSequentialRun) {
+    return {
+      valid: false,
+      code: 'client/invalid-phone',
+      message: 'El número parece de prueba. Usa un celular real para continuar.'
+    };
+  }
+
+  const local10 = compactDigits.length >= 10 ? compactDigits.slice(-10) : compactDigits;
+  const e164 = compactDigits.length === 10
+    ? `+57${compactDigits}`
+    : `+${compactDigits}`;
+
   return {
     valid: true,
     value: phone,
-    digits
+    digits: compactDigits,
+    local10,
+    e164
   };
+}
+
+function buildPhoneRegistryKeys(phoneCheck) {
+  const keys = [];
+  const digits = sanitizeText(phoneCheck?.digits);
+  const local10 = sanitizeText(phoneCheck?.local10);
+  const e164 = sanitizeText(phoneCheck?.e164);
+
+  if (digits) {
+    keys.push(`digits_${digits}`);
+  }
+  if (local10) {
+    keys.push(`local10_${local10}`);
+  }
+  if (e164) {
+    keys.push(`e164_${e164.replace('+', '')}`);
+  }
+
+  return Array.from(new Set(keys));
 }
 
 function normalizeCountryCode(value) {
@@ -328,8 +400,63 @@ function validatePasswordStrength(value) {
     };
   }
 
+  const normalizedPassword = password.toLowerCase();
+  const weakPasswordSet = new Set([
+    '12345678',
+    '87654321',
+    'password',
+    'qwerty12',
+    'qwerty123',
+    'abc12345'
+  ]);
+
+  if (weakPasswordSet.has(normalizedPassword) || /^([a-z0-9])\1{7,}$/i.test(password)) {
+    return {
+      valid: false,
+      code: 'client/weak-password-format',
+      message: 'Esa contraseña es muy común. Elige una combinación más segura.'
+    };
+  }
+
   return {
     valid: true
+  };
+}
+
+function validateDisplayName(value) {
+  const fullName = sanitizeText(value);
+  if (!fullName) {
+    return {
+      valid: false,
+      code: 'client/missing-name',
+      message: 'Escribe tu nombre completo para crear la cuenta.'
+    };
+  }
+
+  const normalizedName = normalizeAscii(fullName);
+  const words = normalizedName.split(/\s+/).filter(Boolean);
+  const compact = normalizedName.replace(/\s+/g, '');
+  const forbiddenWords = new Set(['test', 'prueba', 'usuario', 'admin', 'fake', 'falso', 'qwerty', 'asdf']);
+
+  if (/\d/.test(normalizedName) || words.length < 2 || words.some((word) => word.length < 2) || /^([a-z])\1{5,}$/.test(compact)) {
+    return {
+      valid: false,
+      code: 'client/invalid-name',
+      message: 'Escribe nombre y apellido reales (sin números ni texto de prueba).'
+    };
+  }
+
+  if (words.some((word) => forbiddenWords.has(word))) {
+    return {
+      valid: false,
+      code: 'client/invalid-name',
+      message: 'Ese nombre parece de prueba. Usa tu nombre real para continuar.'
+    };
+  }
+
+  return {
+    valid: true,
+    value: fullName
   };
 }
 
@@ -396,6 +523,34 @@ function validateEmailAddress(value) {
       valid: false,
       code: 'client/invalid-email-format',
       message: 'El dominio del correo no es válido.'
+    };
+  }
+
+  const normalizedDomain = normalizeAscii(domainPart);
+  const normalizedLocal = normalizeAscii(localPart).replace(/[^a-z0-9._-]/g, '');
+
+  if (DISPOSABLE_EMAIL_DOMAINS.has(normalizedDomain)) {
+    return {
+      valid: false,
+      code: 'client/disposable-email-not-allowed',
+      message: 'No aceptamos correos temporales. Usa un correo personal real.'
+    };
+  }
+
+  if (SUSPICIOUS_EMAIL_LOCAL_PARTS.has(normalizedLocal) || /^\d{6,}$/.test(normalizedLocal)) {
+    return {
+      valid: false,
+      code: 'client/suspicious-email',
+      message: 'Ese correo parece de prueba. Usa un correo personal real para registrar tu cuenta.'
+    };
+  }
+
+  const condensedLocal = normalizedLocal.replace(/[._-]/g, '');
+  if (/^([a-z0-9])\1{5,}$/.test(condensedLocal)) {
+    return {
+      valid: false,
+      code: 'client/suspicious-email',
+      message: 'Ese correo parece de prueba. Verifica el correo antes de continuar.'
     };
   }
 
@@ -640,6 +795,11 @@ function normalizeUserData(raw = {}, user = null) {
   const reservas = Array.isArray(raw.reservas) ? raw.reservas.map((reserva) => normalizeReservationRecord(reserva, user)) : [];
   const compras = Array.isArray(raw.compras) ? raw.compras.map((compra) => normalizePurchaseRecord(compra, user)) : [];
   const carrito = normalizeCartItems(raw.carrito);
+  const rawPhone = sanitizeText(raw.telefono || raw.phone);
+  const rawPhoneDigits = sanitizeText(raw.telefonoDigitos || raw.phoneDigits || rawPhone.replace(/\D/g, ''));
+  const rawPhoneLocal10 = sanitizeText(raw.telefonoLocal10 || (rawPhoneDigits.length >= 10 ? rawPhoneDigits.slice(-10) : ''));
+  const rawPhoneE164 = sanitizeText(raw.telefonoE164 || (rawPhoneDigits ? (rawPhoneDigits.length === 10 ? `+57${rawPhoneDigits}` : `+${rawPhoneDigits}`) : ''));
+  const rawPhoneKeys = Array.isArray(raw.telefonoKeys) ? raw.telefonoKeys : [];
   const hasRuntimeVerificationState = typeof user?.emailVerified === 'boolean';
   const emailVerificado = hasRuntimeVerificationState
     ? Boolean(user.emailVerified)
@@ -650,7 +810,11 @@ function normalizeUserData(raw = {}, user = null) {
     ...raw,
     schemaVersion: typeof raw.schemaVersion === 'number' ? raw.schemaVersion : DATA_SCHEMA_VERSION,
     nombre: sanitizeText(raw.nombre),
-    telefono: sanitizeText(raw.telefono),
+    telefono: rawPhone,
+    telefonoDigitos: rawPhoneDigits,
+    telefonoE164: rawPhoneE164,
+    telefonoLocal10: rawPhoneLocal10,
+    telefonoKeys: rawPhoneKeys.filter((key) => sanitizeText(key)),
     ciudad: sanitizeText(raw.ciudad),
     email: sanitizeText(raw.email || user?.email || '').toLowerCase(),
     reservas,
@@ -699,10 +863,22 @@ function normalizeUserData(raw = {}, user = null) {
 }
 
 function buildUserDocument(user, email, datos = {}) {
+  const phoneSource = sanitizeText(datos.telefono || datos.phone);
+  const phoneCheck = phoneSource ? validatePhoneNumber(phoneSource) : null;
+  const phoneDigitos = sanitizeText(datos.telefonoDigitos || (phoneCheck?.valid ? phoneCheck.digits : ''));
+  const phoneLocal10 = sanitizeText(datos.telefonoLocal10 || (phoneCheck?.valid ? phoneCheck.local10 : ''));
+  const phoneE164 = sanitizeText(datos.telefonoE164 || (phoneCheck?.valid ? phoneCheck.e164 : ''));
+  const phoneKeys = Array.isArray(datos.telefonoKeys) && datos.telefonoKeys.length
+    ? datos.telefonoKeys
+    : (phoneCheck?.valid ? buildPhoneRegistryKeys(phoneCheck) : []);
   const draft = normalizeUserData({
     schemaVersion: DATA_SCHEMA_VERSION,
     nombre: datos.nombre || datos.name,
-    telefono: datos.telefono || datos.phone,
+    telefono: phoneSource,
+    telefonoDigitos: phoneDigitos,
+    telefonoE164: phoneE164,
+    telefonoLocal10: phoneLocal10,
+    telefonoKeys: phoneKeys,
     ciudad: datos.ciudad || datos.city,
     email,
     reservas: [],
@@ -753,6 +929,10 @@ function buildUserMergePayload(data = {}, user = null, overrides = {}) {
     nombre: normalized.nombre,
     ciudad: normalized.ciudad,
     telefono: normalized.telefono,
+    telefonoDigitos: normalized.telefonoDigitos,
+    telefonoE164: normalized.telefonoE164,
+    telefonoLocal10: normalized.telefonoLocal10,
+    telefonoKeys: normalized.telefonoKeys,
     email: normalized.email,
     recogida: normalized.recogida,
     preferencias: normalized.preferencias,
@@ -999,6 +1179,116 @@ async function guardarCarritoUsuario(items = []) {
   }
 }
 
+async function claimPhoneRegistry(user, phoneCheck, metadata = {}) {
+  if (!db || !user || !phoneCheck || !phoneCheck.valid) {
+    return {
+      success: true,
+      keys: []
+    };
+  }
+
+  const keys = buildPhoneRegistryKeys(phoneCheck);
+  if (!keys.length) {
+    return {
+      success: true,
+      keys: []
+    };
+  }
+
+  const claimedKeys = [];
+  const registry = db.collection(COLLECTION_KEYS.phoneRegistry);
+  const payloadBase = {
+    uid: user.uid,
+    telefono: phoneCheck.value,
+    telefonoDigitos: phoneCheck.digits,
+    telefonoE164: phoneCheck.e164,
+    telefonoLocal10: phoneCheck.local10,
+    origen: sanitizeText(metadata.origen) || 'email-password',
+    email: sanitizeText(metadata.email || user.email || '').toLowerCase(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  try {
+    for (const key of keys) {
+      const phoneDocRef = registry.doc(key);
+      await db.runTransaction(async (transaction) => {
+        const snapshot = await transaction.get(phoneDocRef);
+        const ownerUid = sanitizeText(snapshot.data()?.uid);
+
+        if (snapshot.exists && ownerUid && ownerUid !== user.uid) {
+          const duplicateError = new Error('El teléfono ya está registrado en otra cuenta.');
+          duplicateError.code = 'client/phone-already-in-use';
+          throw duplicateError;
+        }
+
+        transaction.set(phoneDocRef, {
+          ...payloadBase,
+          key,
+          createdAt: snapshot.exists
+            ? (snapshot.data()?.createdAt || firebase.firestore.FieldValue.serverTimestamp())
+            : firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+      });
+      claimedKeys.push(key);
+    }
+
+    return {
+      success: true,
+      keys: claimedKeys
+    };
+  } catch (error) {
+    if (claimedKeys.length) {
+      try {
+        const cleanupBatch = db.batch();
+        claimedKeys.forEach((key) => {
+          cleanupBatch.delete(registry.doc(key));
+        });
+        await cleanupBatch.commit();
+      } catch (cleanupError) {
+        console.warn('No se pudieron limpiar algunos bloqueos de teléfono tras un error.', cleanupError);
+      }
+    }
+
+    return {
+      success: false,
+      error: resolveFirebaseErrorMessage(error, 'No pudimos validar el número de celular.'),
+      errorCode: error?.code || 'client/phone-registry-failed'
+    };
+  }
+}
+
+async function releasePhoneRegistryByUid(uid, keys = []) {
+  if (!db || !sanitizeText(uid) || !Array.isArray(keys) || !keys.length) {
+    return;
+  }
+
+  const registry = db.collection(COLLECTION_KEYS.phoneRegistry);
+  const batch = db.batch();
+  let hasDeletes = false;
+
+  for (const key of keys) {
+    const cleanKey = sanitizeText(key);
+    if (!cleanKey) {
+      continue;
+    }
+
+    const docRef = registry.doc(cleanKey);
+    try {
+      const snapshot = await docRef.get();
+      if (snapshot.exists && sanitizeText(snapshot.data()?.uid) === uid) {
+        batch.delete(docRef);
+        hasDeletes = true;
+      }
+    } catch (_) {
+      // noop
+    }
+  }
+
+  if (hasDeletes) {
+    await batch.commit();
+  }
+}
+
 /**
  * Registrar nuevo usuario
  * @param {string} email - Correo electrónico
@@ -1006,8 +1296,12 @@ async function guardarCarritoUsuario(items = []) {
  * @param {object} datos - Datos adicionales del usuario
  */
 async function registrarUsuario(email, password, datos = {}) {
+  let createdUser = null;
+  let claimedPhoneKeys = [];
+
   try {
     const emailCheck = validateEmailAddress(email);
+    const nameCheck = validateDisplayName(datos.nombre || datos.name);
     const rawPhone = sanitizeText(datos.telefono || datos.phone);
     const phoneCheck = rawPhone
       ? validatePhoneNumber(rawPhone)
@@ -1019,6 +1313,14 @@ async function registrarUsuario(email, password, datos = {}) {
         success: false,
         error: emailCheck.message,
         errorCode: emailCheck.code
+      };
+    }
+
+    if (!nameCheck.valid) {
+      return {
+        success: false,
+        error: nameCheck.message,
+        errorCode: nameCheck.code
       };
     }
 
@@ -1040,10 +1342,43 @@ async function registrarUsuario(email, password, datos = {}) {
 
     const userCredential = await auth.createUserWithEmailAndPassword(emailCheck.value, password);
     const user = userCredential.user;
+    createdUser = user;
     const userRef = db.collection(COLLECTION_KEYS.users).doc(user.uid);
+    const phoneRegistryResult = rawPhone
+      ? await claimPhoneRegistry(user, phoneCheck, {
+          origen: 'email-password',
+          email: emailCheck.value
+        })
+      : { success: true, keys: [] };
+
+    if (!phoneRegistryResult.success) {
+      try {
+        await user.delete();
+      } catch (deleteError) {
+        console.warn('No se pudo revertir la cuenta tras fallo de validación de teléfono.', deleteError);
+      }
+
+      return {
+        success: false,
+        error: phoneRegistryResult.error || 'No pudimos validar el número de celular.',
+        errorCode: phoneRegistryResult.errorCode || 'client/phone-registry-failed'
+      };
+    }
+
+    claimedPhoneKeys = Array.isArray(phoneRegistryResult.keys) ? phoneRegistryResult.keys : [];
     const payload = buildUserDocument(user, emailCheck.value, {
       ...datos,
-      ...(rawPhone ? { telefono: phoneCheck.value, phone: phoneCheck.value } : {})
+      nombre: nameCheck.value,
+      ...(rawPhone
+        ? {
+            telefono: phoneCheck.value,
+            phone: phoneCheck.value,
+            telefonoDigitos: phoneCheck.digits,
+            telefonoE164: phoneCheck.e164,
+            telefonoLocal10: phoneCheck.local10,
+            telefonoKeys: claimedPhoneKeys
+          }
+        : {})
     });
     let verificationSent = false;
 
@@ -1084,6 +1419,14 @@ async function registrarUsuario(email, password, datos = {}) {
       mensaje: 'Usuario registrado exitosamente' 
     };
   } catch (error) {
+    if (claimedPhoneKeys.length && createdUser?.uid) {
+      try {
+        await releasePhoneRegistryByUid(createdUser.uid, claimedPhoneKeys);
+      } catch (releaseError) {
+        console.warn('No se pudo liberar el bloqueo de teléfono tras error de registro.', releaseError);
+      }
+    }
+
     console.error('Error en registro:', error);
     return { 
       success: false, 
@@ -1325,10 +1668,16 @@ async function verificarCodigoTelefono(code, profileHints = {}) {
 
     const refreshedSnapshot = await userRef.get();
     const baseData = normalizeUserData(refreshedSnapshot.data(), currentUser);
+    const phoneValue = sanitizeText(phoneAuthContext?.phone || mergedHints.telefono || baseData.telefono);
+    const phoneValueCheck = phoneValue ? validatePhoneNumber(phoneValue) : null;
     const mergedData = normalizeUserData({
       ...baseData,
       nombre: sanitizeText(mergedHints.nombre || baseData.nombre || currentUser.displayName || 'Usuario'),
-      telefono: sanitizeText(phoneAuthContext?.phone || mergedHints.telefono || baseData.telefono),
+      telefono: phoneValue,
+      telefonoDigitos: phoneValueCheck?.valid ? phoneValueCheck.digits : baseData.telefonoDigitos,
+      telefonoE164: phoneValueCheck?.valid ? phoneValueCheck.e164 : baseData.telefonoE164,
+      telefonoLocal10: phoneValueCheck?.valid ? phoneValueCheck.local10 : baseData.telefonoLocal10,
+      telefonoKeys: phoneValueCheck?.valid ? buildPhoneRegistryKeys(phoneValueCheck) : baseData.telefonoKeys,
       email: sanitizeText(baseData.email || currentUser.email || ''),
       cuenta: {
         ...(baseData.cuenta || {}),
@@ -1347,6 +1696,17 @@ async function verificarCodigoTelefono(code, profileHints = {}) {
       acceptedAtClient,
       acceptedAtServer: firebase.firestore.FieldValue.serverTimestamp()
     };
+
+    if (phoneValueCheck?.valid) {
+      const claimResult = await claimPhoneRegistry(currentUser, phoneValueCheck, {
+        origen: 'phone-sms',
+        email: sanitizeText(baseData.email || currentUser.email || '')
+      });
+
+      if (claimResult?.success) {
+        mergedData.telefonoKeys = claimResult.keys;
+      }
+    }
 
     await userRef.set(buildUserMergePayload(mergedData, currentUser, {
       ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp(),
@@ -1669,6 +2029,25 @@ async function eliminarCuentaActual() {
     const userToDelete = currentUser;
     const userId = userToDelete.uid;
     const userEmail = userToDelete.email || '';
+    let userPhoneKeys = [];
+
+    try {
+      const profileSnapshot = await db.collection(COLLECTION_KEYS.users).doc(userId).get();
+      const profileData = profileSnapshot.exists ? profileSnapshot.data() : {};
+      userPhoneKeys = Array.isArray(profileData?.telefonoKeys)
+        ? profileData.telefonoKeys
+        : [];
+    } catch (_) {
+      userPhoneKeys = [];
+    }
+
+    if (userPhoneKeys.length) {
+      try {
+        await releasePhoneRegistryByUid(userId, userPhoneKeys);
+      } catch (releaseError) {
+        console.warn('No se pudo limpiar el índice de teléfono antes de cerrar la cuenta.', releaseError);
+      }
+    }
 
     await userToDelete.delete();
     currentUser = null;
@@ -1744,6 +2123,8 @@ async function actualizarDatosUsuario(datos) {
     const phoneCheck = shouldValidatePhone
       ? validatePhoneNumber(datos.telefono)
       : { valid: true, value: currentData?.telefono || '' };
+    const previousPhoneKeys = Array.isArray(currentData?.telefonoKeys) ? currentData.telefonoKeys : [];
+    let nextPhoneKeys = previousPhoneKeys;
 
     if (shouldValidatePhone && !phoneCheck.valid) {
       return {
@@ -1753,11 +2134,32 @@ async function actualizarDatosUsuario(datos) {
       };
     }
 
+    if (shouldValidatePhone && phoneCheck.valid) {
+      const claimResult = await claimPhoneRegistry(currentUser, phoneCheck, {
+        origen: 'profile-update',
+        email: currentUser.email || currentData?.email || ''
+      });
+
+      if (!claimResult.success) {
+        return {
+          success: false,
+          error: claimResult.error || 'No pudimos validar el número de celular.',
+          errorCode: claimResult.errorCode || 'client/phone-registry-failed'
+        };
+      }
+
+      nextPhoneKeys = claimResult.keys;
+    }
+
     const mergedData = normalizeUserData({
       ...currentData,
       nombre: datos.nombre ?? currentData?.nombre,
       ciudad: datos.ciudad ?? currentData?.ciudad,
       telefono: shouldValidatePhone ? phoneCheck.value : currentData?.telefono,
+      telefonoDigitos: shouldValidatePhone ? phoneCheck.digits : currentData?.telefonoDigitos,
+      telefonoE164: shouldValidatePhone ? phoneCheck.e164 : currentData?.telefonoE164,
+      telefonoLocal10: shouldValidatePhone ? phoneCheck.local10 : currentData?.telefonoLocal10,
+      telefonoKeys: shouldValidatePhone ? nextPhoneKeys : previousPhoneKeys,
       reservas: Array.isArray(datos.reservas) ? datos.reservas : currentData?.reservas,
       compras: Array.isArray(datos.compras) ? datos.compras : currentData?.compras,
       carrito: Array.isArray(datos.carrito) ? datos.carrito : currentData?.carrito,
@@ -1772,6 +2174,13 @@ async function actualizarDatosUsuario(datos) {
     await db.collection(COLLECTION_KEYS.users).doc(currentUser.uid).set(buildUserMergePayload(mergedData, currentUser, {
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
     }), { merge: true });
+
+    if (shouldValidatePhone && previousPhoneKeys.length) {
+      const keysToRelease = previousPhoneKeys.filter((key) => !nextPhoneKeys.includes(key));
+      if (keysToRelease.length) {
+        await releasePhoneRegistryByUid(currentUser.uid, keysToRelease);
+      }
+    }
 
     return { success: true, mensaje: 'Datos actualizados' };
   } catch (error) {
@@ -1791,10 +2200,16 @@ function traducirErrorFirebase(codigo) {
   const errores = {
     'client/no-active-session': 'No hay una sesión activa para completar esta acción.',
     'client/missing-email': 'Escribe un correo electrónico para continuar.',
+    'client/missing-name': 'Escribe tu nombre completo para continuar.',
+    'client/invalid-name': 'Nombre inválido. Usa nombre y apellido reales.',
     'client/missing-phone': 'Escribe un número de teléfono o WhatsApp válido.',
     'client/missing-password': 'Escribe tu contraseña para continuar.',
     'client/invalid-phone': 'El número de teléfono no parece válido.',
     'client/invalid-email-format': 'El correo electrónico no tiene un formato válido.',
+    'client/disposable-email-not-allowed': 'No aceptamos correos temporales. Usa un correo personal real.',
+    'client/suspicious-email': 'Ese correo parece de prueba. Usa un correo personal real.',
+    'client/phone-already-in-use': 'Este número celular ya está registrado en otra cuenta.',
+    'client/phone-registry-failed': 'No pudimos validar el número de celular. Intenta nuevamente.',
     'client/invalid-country-code': 'Selecciona un código de país válido.',
     'client/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
     'client/weak-password-format': 'La contraseña debe tener al menos 8 caracteres e incluir letras y números.',
@@ -1838,6 +2253,7 @@ function traducirErrorFirebase(codigo) {
     'auth/session-expired': 'La sesión del código expiró. Solicita uno nuevo.',
     'auth/quota-exceeded': 'Se alcanzó el límite de envíos SMS. Intenta más tarde.',
     'auth/credential-already-in-use': 'Ese número ya está asociado a otra cuenta.',
+    'permission-denied': 'Faltan permisos para validar este registro. Verifica las reglas de Firestore del proyecto.',
     'auth/unauthorized-domain': 'Este dominio no está autorizado en Firebase Authentication.',
     'auth/operation-not-supported-in-this-environment': 'Este entorno no permite acceso social en esta URL. Abre la página desde localhost o un dominio HTTPS autorizado en Firebase.',
     'auth/account-exists-with-different-credential': 'Este correo ya existe con otro método de acceso. Inicia con ese método y luego enlaza el proveedor.'
@@ -1993,6 +2409,7 @@ window.authFirebase = {
   deleteAccount: eliminarCuentaActual,
   resetPassword: restablecerPassword,
   reenviarVerificacion: reenviarVerificacionCorreo,
+  validarNombre: validateDisplayName,
   validarEmail: validateEmailAddress,
   validarTelefono: validatePhoneNumber,
   obtenerDatos: obtenerDatosUsuario,

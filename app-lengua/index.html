@@ -12,15 +12,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./app.css?v=20260511q">
-  <script src="./config.js?v=20260511q" onerror="this.onerror=null;this.src='../config.js?v=20260511q';"></script>
+  <link rel="stylesheet" href="./app.css?v=20260513b">
+  <script src="./config.js?v=20260513b" onerror="this.onerror=null;this.src='../config.js?v=20260513b';"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="./firebase-config.js?v=20260511q" onerror="this.onerror=null;this.src='../firebase-config.js?v=20260511q';"></script>
+  <script src="./firebase-config.js?v=20260513b" onerror="this.onerror=null;this.src='../firebase-config.js?v=20260513b';"></script>
   <script src="./assets/data/lengua-palenquera-dictionary.js" onerror="this.onerror=null;this.src='../assets/data/lengua-palenquera-dictionary.js';"></script>
-  <script src="./lessons-data.js?v=20260511q"></script>
-  <script src="./app.js?v=20260511q" defer></script>
+  <script src="./lessons-data.js?v=20260513b"></script>
+  <script src="./app.js?v=20260513b" defer></script>
 </head>
 <body class="pv-mode-access">
   <div class="pv-splash" id="pv-splash" aria-hidden="true">
@@ -86,7 +86,10 @@
             </label>
             <button class="pv-btn pv-auth-submit" id="auth-email-submit-btn" type="button" disabled>Entrar</button>
             <small class="pv-auth-helper">Entra con tu correo y contraseña para sincronizar progreso.</small>
-            <button class="pv-auth-switch" id="auth-open-register-btn" type="button">¿No tienes cuenta? Crear cuenta</button>
+            <div class="pv-auth-register-cta">
+              <small class="pv-auth-register-copy">¿Primera vez en Kumaina?</small>
+              <button class="pv-btn-ghost pv-auth-create-account-btn" id="auth-open-register-btn" type="button">Crear cuenta nueva</button>
+            </div>
           </div>
 
           <div class="pv-auth-login" id="auth-register-wrap" hidden>
@@ -116,7 +119,7 @@
             </label>
             <button class="pv-btn pv-auth-submit" id="auth-register-submit-btn" type="button" disabled>Crear cuenta</button>
             <small class="pv-auth-helper">Tu cuenta se guarda en la base de datos para continuar luego desde cualquier dispositivo.</small>
-            <button class="pv-auth-switch" id="auth-back-login-btn" type="button">Ya tengo cuenta, quiero entrar</button>
+            <button class="pv-auth-back-login-btn" id="auth-back-login-btn" type="button">Ya tengo cuenta, quiero entrar</button>
           </div>
 
           <div class="pv-auth-divider"><span>o</span></div>
@@ -276,7 +279,7 @@
 
             <div class="pv-actions">
               <button class="pv-btn" id="home-focus-primary-btn" data-go-view="learn" type="button">Abrir lección</button>
-              <button class="pv-btn-ghost" id="home-focus-secondary-btn" data-go-view="dictionary" type="button">Practicar en juegos</button>
+              <button class="pv-btn-ghost" id="home-focus-secondary-btn" data-go-view="dictionary" data-go-study-tab="games" type="button">Practicar en juegos</button>
             </div>
           </article>
 
@@ -298,7 +301,7 @@
                 <li>Escucha y responde</li>
               </ul>
               <div class="pv-actions">
-                <button class="pv-btn-ghost" data-go-view="dictionary" type="button">Abrir juegos</button>
+                <button class="pv-btn-ghost" data-go-view="dictionary" data-go-study-tab="games" type="button">Abrir juegos</button>
               </div>
             </article>
 
@@ -341,6 +344,7 @@
                 <span class="pv-chip" id="learn-kpi-progress">0/0 completadas</span>
                 <span class="pv-chip" id="learn-kpi-goal">Meta 0/10 XP</span>
                 <span class="pv-chip" id="learn-kpi-hearts">❤ 5</span>
+                <span class="pv-chip" id="learn-kpi-saved">★ 0 guardadas</span>
               </div>
               <p id="learn-overview-note">Selecciona una lección para iniciar tu ruta.</p>
               <div class="pv-actions">
@@ -359,6 +363,7 @@
                   <label for="learn-sort-select">Ordenar</label>
                   <select id="learn-sort-select">
                     <option value="recommended" selected>Recomendadas</option>
+                    <option value="favoritesFirst">Favoritas primero</option>
                     <option value="levelAsc">Nivel: A1 → B1</option>
                     <option value="levelDesc">Nivel: B1 → A1</option>
                     <option value="xpDesc">Más XP primero</option>
@@ -369,6 +374,12 @@
                   <label class="pv-check-inline" for="learn-pending-only">
                     <input id="learn-pending-only" type="checkbox">
                     Solo pendientes
+                  </label>
+                </div>
+                <div class="pv-field pv-field-inline">
+                  <label class="pv-check-inline" for="learn-favorites-only">
+                    <input id="learn-favorites-only" type="checkbox">
+                    Solo guardadas
                   </label>
                 </div>
               </div>
@@ -394,7 +405,16 @@
         </section>
 
         <section class="pv-view" id="view-dictionary" data-view="dictionary">
-          <article class="pv-card pv-games">
+          <article class="pv-card pv-module-switcher">
+            <span class="pv-pill">Módulos</span>
+            <div class="pv-module-switch" role="tablist" aria-label="Secciones de aprendizaje interactivo">
+              <button class="pv-module-switch-btn is-active" data-study-tab="games" type="button" role="tab" aria-selected="true">Juegos</button>
+              <button class="pv-module-switch-btn" data-study-tab="translator" type="button" role="tab" aria-selected="false">Traductor</button>
+              <button class="pv-module-switch-btn" data-study-tab="dictionary" type="button" role="tab" aria-selected="false">Diccionario</button>
+            </div>
+          </article>
+
+          <article class="pv-card pv-games" data-study-tab-panel="games">
             <span class="pv-pill">Game Center</span>
             <h3>Módulo de juegos</h3>
             <p class="pv-games-copy">Practica jugando: memoria visual, palabra oculta, escucha activa y desafíos culturales.</p>
@@ -446,7 +466,7 @@
             </article>
           </article>
 
-          <article class="pv-card pv-translator">
+          <article class="pv-card pv-translator" data-study-tab-panel="translator" hidden>
             <span class="pv-pill">Traductor vivo</span>
             <div class="pv-translator-head">
               <div>
@@ -477,7 +497,7 @@
             <div class="pv-note" id="translator-note">Traduce frases entre español y palenquero con apoyo del diccionario.</div>
           </article>
 
-          <article class="pv-card pv-dictionary">
+          <article class="pv-card pv-dictionary" data-study-tab-panel="dictionary" hidden>
             <span class="pv-pill">Diccionario vivo</span>
             <div class="pv-grid pv-dictionary-tools">
               <div class="pv-field">
@@ -667,6 +687,25 @@
               <span class="pv-rank-chip">Maestro</span>
               <span class="pv-rank-chip">Raíz ancestral</span>
             </div>
+
+            <section class="pv-profile-setup" id="profile-setup-card" hidden>
+              <div class="pv-profile-setup-head">
+                <span class="pv-pill">Nueva cuenta</span>
+                <b id="profile-setup-progress">0/3 completado</b>
+              </div>
+              <h3>Completa tu perfil en 1 minuto</h3>
+              <p>Refuerza seguridad y personaliza tu experiencia de aprendizaje.</p>
+              <ul class="pv-profile-setup-list">
+                <li id="profile-setup-name-status">Nombre real y visible</li>
+                <li id="profile-setup-city-status">Ciudad de referencia</li>
+                <li id="profile-setup-phone-status">Celular de recuperación</li>
+              </ul>
+              <div class="pv-progress-bar"><span id="profile-setup-bar" style="width: 0%"></span></div>
+              <div class="pv-actions pv-profile-setup-actions">
+                <button class="pv-btn" id="profile-setup-complete-btn" type="button">Completar ahora</button>
+                <button class="pv-btn-ghost" id="profile-setup-skip-btn" type="button">Lo haré luego</button>
+              </div>
+            </section>
 
             <div class="pv-profile-settings">
               <h3 class="pv-profile-title">Cuenta y preferencias</h3>
